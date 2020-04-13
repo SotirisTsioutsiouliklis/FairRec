@@ -14,6 +14,58 @@ pagerank_algorithms::pagerank_algorithms(graph &g) : g(g), is_cache_valid(false)
 	// nothing to do here
 }
 
+// PageRank.
+pagerank_v pagerank_algorithms::get_pagerank(const double C, const double eps, const int max_iter)
+{
+	// initialize
+	const unsigned int nnodes = g.get_num_nodes();
+	pagerank_v pagerankv(nnodes);
+	unsigned int i, node;
+	#pragma omp parallel for firstprivate(nnodes)
+	for (i = 0; i < nnodes; ++i) {
+		pagerankv[i].node_id = i;
+		pagerankv[i].pagerank = 1.0 / nnodes;
+	}
+
+	// compute pagerank for each node
+	std::vector<double> tmp_pagerank(nnodes);
+	std::vector<double> tmp_pagerank_jump(nnodes); // for personalization
+	int iter = 0;
+	for (; iter < max_iter; ++iter) {
+		double sum = 0.0;
+		#pragma omp parallel for firstprivate(nnodes) reduction(+:sum)
+		for (node = 0; node < nnodes; ++node) {
+			tmp_pagerank[node] = 0.0;
+			for (const int &neighbor : g.get_in_neighbors(node)) {
+				int neigh_degree = g.get_out_degree(neighbor);
+				if (neigh_degree > 0)
+					tmp_pagerank[node] += pagerankv[neighbor].pagerank / neigh_degree;
+			}
+			tmp_pagerank[node] *= C;
+			sum += tmp_pagerank[node];
+		}
+
+		// re-insert "leaked" pagerank
+		double diff = 0.0, new_val;
+		const double leaked = (C - sum) / nnodes;
+		
+		compute_pagerank_no_personalization_vector(tmp_pagerank_jump, 1 - C);
+		#pragma omp parallel for firstprivate(nnodes, tmp_pagerank, tmp_pagerank_jump) private(new_val) reduction(+:diff)
+		for (node = 0; node < nnodes; ++node) {
+			new_val = tmp_pagerank[node] + leaked + tmp_pagerank_jump[node];
+			diff += std::fabs(new_val - pagerankv[node].pagerank);
+			pagerankv[node].pagerank = new_val;
+		}
+		if (diff < eps) break;
+	}
+
+	if (iter == max_iter)
+		std::cerr << "[WARN]: Pagerank algorithm reached " << max_iter << " iterations." << std::endl;
+	cached_pagerank = pagerankv;
+	is_cache_valid = true;
+	return pagerankv;
+}
+
 // Personilized pagerank to Red for all nodes.
 pagerank_v pagerank_algorithms::get_pers_pagerank(const double C, const double eps, const int max_iter)
 {
@@ -60,6 +112,16 @@ pagerank_v pagerank_algorithms::get_pers_pagerank(const double C, const double e
 		std::cerr << "[WARN]: Pagerank algorithm reached " << max_iter << " iterations." << std::endl;
 	
 	return pagerankv;
+}
+
+void pagerank_algorithms::compute_pagerank_no_personalization_vector(std::vector<double> &pagerankv,
+		double total_pagerank)
+{
+	const double new_pagerank = total_pagerank / (double)g.get_num_nodes();
+	#pragma omp parallel for
+	for (unsigned int node = 0; node < pagerankv.size(); ++node) {
+		pagerankv[node] = new_pagerank;
+	}
 }
 
 void pagerank_algorithms::sort_pagerank_vector(pagerank_v &pagerank)

@@ -6,6 +6,7 @@
 
 typedef struct {
 	std::vector<int> out_neighbors;
+	std::vector<int> in_neighbors;
 	std::vector<int> in_neighbors_per_community; // we need this just for printing
 	std::vector<int> out_neighbors_per_community;
 	int out_degree;
@@ -58,12 +59,14 @@ public:
 	int get_num_nodes() const {return nnodes;}
 	int get_num_edges() const {return nedges;}
 	int get_num_communities() const {return ncommunities;}
+	int get_in_degree(const int node_id) const;
 	int get_out_degree(const int node_id) const;
 
 	int get_community(const int node) const ;
 	int count_in_neighbors_with_community(const int node_id, const int target_community);
 	int count_out_neighbors_with_community(const int node_id, const int target_community);
 	const std::vector<int> &get_out_neighbors(int node_id) const;
+	const std::vector<int> &get_in_neighbors(int node_id) const;
 	std::vector<double> get_pagerank_per_community(pagerank_v pagerankv) const;
 	community_t *get_communities();
 	int get_community_size(const int community_id);

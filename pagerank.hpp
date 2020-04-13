@@ -17,15 +17,17 @@ class pagerank_algorithms
 public:
 	pagerank_algorithms(graph &g);
 
+	// Famous PageRank.
+	pagerank_v get_pagerank(const double C=0.85, const double eps=1e-4, const int max_iter=100);
 	// Personilized pagerank to Red for all nodes.
 	pagerank_v get_pers_pagerank(const double C=0.85, const double eps=1e-4, const int max_iter=100);
 
 	void sort_pagerank_vector(pagerank_v &pagerank);
 
 private:
+	void compute_pagerank_no_personalization_vector(std::vector<double> &pagerankv, double total_pagerank);
 
 	graph &g;
-
 	personalization_t personalization_type;
 	int personalization_extra_info;
 	std::vector<double> jump_vector;

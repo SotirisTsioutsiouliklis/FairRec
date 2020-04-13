@@ -30,7 +30,6 @@ static void save_pagerank(std::string filename_prefix, pagerank_v &pagerankv)
 int main()
 {
 	graph g("out_graph.txt", "out_community.txt");
-
 	pagerank_algorithms algs(g);
 
 	// print_algo_info("Pagerank", out_summary, personalize_type, jump_prob, personalize_extra);

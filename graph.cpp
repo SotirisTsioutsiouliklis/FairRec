@@ -125,6 +125,7 @@ double graph::get_community_percentage(const int community) const
 void graph::add_edge(const int src_node, const int dest_node)
 {
 	nodes[src_node].out_neighbors.push_back(dest_node);
+	nodes[dest_node].in_neighbors.push_back(src_node);
 	++nodes[src_node].out_neighbors_per_community[nodes[dest_node].community];
 	++nodes[dest_node].in_neighbors_per_community[nodes[src_node].community];
 	++nodes[src_node].out_degree;
@@ -139,6 +140,16 @@ const std::vector<int> &graph::get_out_neighbors(int node_id) const
 int graph::get_out_degree(const int node_id) const
 {
 	return nodes[node_id].out_degree;
+}
+
+const std::vector<int> &graph::get_in_neighbors(int node_id) const
+{
+	return nodes[node_id].in_neighbors;
+}
+
+int graph::get_in_degree(const int node_id) const
+{
+	return nodes[node_id].in_neighbors.size();
 }
 
 int graph::get_community(const int node) const
