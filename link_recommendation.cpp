@@ -7,7 +7,7 @@
 #include <vector>
 #include "graph.hpp"
 #include "pagerank.hpp"
-#include "edge_addition_algorithms.hpp"
+#include "edge_add.hpp"
 
 
 
@@ -48,7 +48,7 @@ error:
 int main(int argc, char **argv) {
     // Init arguments.
     algorithm_mode algo_mode;
-    int n_source;
+    int n_source = 1;
 
     if (!get_options(argc, argv, algo_mode, n_source)) return 1;
 
