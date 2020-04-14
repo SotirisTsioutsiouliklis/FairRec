@@ -126,7 +126,7 @@ pagerank_v pagerank_algorithms::get_blue_abs_prob(const double C, const double e
 		pagerankv[i].pagerank = (g.get_community(i)) ? 0 : (1-C);
 	}
 
-	// Compute Red personilized for each node.
+	// Compute Blue personilized for each node.
 	std::vector<double> tmp_pagerank(nnodes);
 	int iter = 0;
 	for (; iter < max_iter; ++iter) {
@@ -143,7 +143,7 @@ pagerank_v pagerank_algorithms::get_blue_abs_prob(const double C, const double e
 				}
 			}
 			tmp_pagerank[node] *= C;
-			tmp_pagerank[node] += g.get_community(node) ? (1-C) : 0;
+			tmp_pagerank[node] += g.get_community(node) ? 0 : (1-C);
 		}
 		
 		// Check convergence.
@@ -163,7 +163,7 @@ pagerank_v pagerank_algorithms::get_blue_abs_prob(const double C, const double e
 }
 
 // Get absorbing probabilities to node <abs_node>.
-pagerank_v pagerank_algorithms::get_node_abs_prob(int abs_node, const double C=0.85, const double eps=1e-4, const int max_iter=100) {
+pagerank_v pagerank_algorithms::get_node_abs_prob(int abs_node, const double C, const double eps, const int max_iter) {
 	// initialize
 	const unsigned int nnodes = g.get_num_nodes();
 	pagerank_v pagerankv(nnodes);
@@ -191,8 +191,8 @@ pagerank_v pagerank_algorithms::get_node_abs_prob(int abs_node, const double C=0
 				}
 			}
 			tmp_pagerank[node] *= C;
-			tmp_pagerank[node] += g.get_community(node) ? (1-C) : 0;
 		}
+		tmp_pagerank[abs_node] += (1-C);
 		
 		// Check convergence.
 		double diff = 0.0;

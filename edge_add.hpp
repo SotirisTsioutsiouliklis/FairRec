@@ -25,7 +25,6 @@ class Edge_addition {
         pagerank_v get_best_source_nodes(int n = 10);
         // Return values of Objective function.
         pagerank_v get_objective_val(int s_node);
-        double get_prediction(pagerank_t node);
 
         graph &g;
         pagerank_algorithms &algs;

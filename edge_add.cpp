@@ -24,7 +24,7 @@ void Edge_addition::greedy() {
     // Get source nodes.
     source_nodes = get_best_source_nodes(n_source);
     // Get number of nodes.
-    int nnodes = g.get_num_nodes;
+    const int nnodes = g.get_num_nodes();
     // For each Source nodes.
     for (int s_node = 0; s_node < n_source ; s_node++) {
         // Print Source node. Test print to know it runs.
@@ -64,7 +64,7 @@ void Edge_addition::greedy() {
                 }
             }
             // Add prediction to log.
-            log_vec[s_node + t_node].red_pagerank_prediction = get_prediction(target_node);
+            log_vec[s_node + t_node].red_pagerank_prediction = target_node.pagerank;
             // Add best node to source node.
             g.add_edge(s_node, target_node.node_id);
         }
@@ -88,7 +88,7 @@ void Edge_addition::fast_greedy() {
     // Get source nodes.
     source_nodes = get_best_source_nodes(n_source);
     // Get number of nodes.
-    int nnodes = g.get_num_nodes;
+    const int nnodes = g.get_num_nodes();
     for (int s_node = 0; s_node < n_source ; s_node++) {
         // Print source node. Test print to know it runs.
         std::cout << "Sourece node: " << s_node << std::endl;
@@ -127,7 +127,7 @@ void Edge_addition::fast_greedy() {
                 }
             }
             // Add prediction to log.
-            log_vec[s_node + t_node].red_pagerank_prediction = get_prediction(target_node);
+            log_vec[s_node + t_node].red_pagerank_prediction = target_node.pagerank;
             // Add best node to source node.
             g.add_edge(s_node, target_node.node_id);
             // Remove this node from procedure. Do that by
@@ -176,7 +176,7 @@ pagerank_v Edge_addition::get_objective_val(int s_node) {
     pagerank_v objective_val, rank_vector, red_absorbing_probs, source_absorbing_probs;
     std::vector<int> neighbors;
     double red_pagerank, nominator_const, denominator_const, obj_nominator, obj_denominator;
-    int s_out_degree, neighbor, nnodes;
+    int s_out_degree, neighbor;
 
     // Get source out degree.
     s_out_degree = g.get_out_degree(s_node);
@@ -206,7 +206,7 @@ pagerank_v Edge_addition::get_objective_val(int s_node) {
     denominator_const *= (1 / s_out_degree);
     // Calculate the Quantity. Not just the important part but
     // All so as to have a sanity check.
-    nnodes = g.get_num_nodes;
+    const int nnodes = g.get_num_nodes();
     // For all nodes.
     for (int t_node = 0; t_node < nnodes; t_node++) {
         // Calculate nominator.
