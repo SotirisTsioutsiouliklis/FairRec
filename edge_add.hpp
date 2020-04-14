@@ -20,22 +20,18 @@ class Edge_addition {
         //void fast_approx();
     
     private:
-        // n best nodes.
-        void get_best_source_nodes(int n = 10);
-        // k best nodes for the u node. Edge (u, k_i).
-        pagerank_v get_best_target_nodes(int u, int k = 100);
-        // Return Value of Objective function.
+        // Get n best source nodes.
+        pagerank_v get_best_source_nodes(int n = 10);
+        // Return values of Objective function.
         pagerank_v get_objective_val(int s_node);
         double get_prediction(pagerank_t node);
 
         graph &g;
         pagerank_algorithms &algs;
-        int n_source, n_target; // Number of source, target nodes.
-        pagerank_v rank_vector, red_pagerank, objective_val, top_source_nodes, top_target_nodes;
         std::vector<step_log> log_vec;
-        double red_pagerank;
-        pagerank_s target_node;
-        std::vector<int> neighbors;
+
+        double jump_prob = 0.15;
+        int n_source, n_target; // Number of source, target nodes.
 };
 
 #endif /* _EDGE_ADD_HPP */
