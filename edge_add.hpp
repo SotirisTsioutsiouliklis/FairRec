@@ -18,6 +18,7 @@ class Edge_addition {
         void fast_greedy();
         //void approx();
         //void fast_approx();
+        void save_logs();
     
     private:
         // Get n best source nodes.
