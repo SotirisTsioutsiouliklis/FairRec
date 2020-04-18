@@ -55,6 +55,7 @@ public:
 	double get_community_percentage(const int community) const;
 
 	void add_edge(const int src_node, const int dest_node);
+	void remove_edge(const int src_node, const int dest_node);
 
 	int get_num_nodes() const {return nnodes;}
 	int get_num_edges() const {return nedges;}

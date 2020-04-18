@@ -132,6 +132,15 @@ void graph::add_edge(const int src_node, const int dest_node)
 	++nedges;
 }
 
+void graph::remove_edge(const int src_node, const int dest_node) {
+	nodes[src_node].out_neighbors.pop_back();
+	nodes[dest_node].in_neighbors.pop_back();
+	--nodes[src_node].out_neighbors_per_community[nodes[dest_node].community];
+	--nodes[dest_node].in_neighbors_per_community[nodes[src_node].community];
+	--nodes[src_node].out_degree;
+	--nedges;
+}
+
 const std::vector<int> &graph::get_out_neighbors(int node_id) const
 {
 	return nodes[node_id].out_neighbors;
