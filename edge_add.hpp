@@ -14,7 +14,7 @@ struct edge {
     int destination;
 };
 
-enum class algorithm_mode {GREEDY, FAST_GREEDY, APPROX, FAST_APPROX};
+enum class algorithm_mode {GREEDY, FAST_GREEDY, APPROX, FAST_APPROX, RANDOM, RAND_SRC};
 
 class Edge_addition {
     public:
@@ -22,6 +22,7 @@ class Edge_addition {
         void greedy(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void fast_greedy(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void random_edges(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        void random_sources(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         //void approx();
         //void fast_approx();
         void save_logs(std::string algo_name);

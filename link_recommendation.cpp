@@ -34,6 +34,16 @@ static bool get_options(const int argc, char ** const argv, algorithm_mode &algo
         n_source = std::atoi(argv[3]);
         n_target = std::atoi(argv[5]);
 
+    } else if (!std::strcmp(argv[1], "-rnd") && !std::strcmp(argv[2], "-s") && !std::strcmp(argv[4], "-t")) {
+        algo_mode = algorithm_mode::RANDOM;
+        n_source = std::atoi(argv[3]);
+        n_target = std::atoi(argv[5]);
+
+    } else if (!std::strcmp(argv[1], "-rsrc") && !std::strcmp(argv[2], "-s") && !std::strcmp(argv[4], "-t")) {
+        algo_mode = algorithm_mode::RAND_SRC;
+        n_source = std::atoi(argv[3]);
+        n_target = std::atoi(argv[5]);
+
     } else {
         goto error;
     }
@@ -105,6 +115,18 @@ int main(int argc, char **argv) {
     case algorithm_mode::FAST_GREEDY :
         link_rec.fast_greedy();
         link_rec.save_logs("fast_greedy");
+        break;
+    case algorithm_mode::RANDOM :
+        for (int i = 0; i < 10; i++) {
+            link_rec.random_edges();
+            link_rec.save_logs("random_edges_" + std::to_string(i));
+        }
+        break;
+    case algorithm_mode::RAND_SRC :
+        for (int i = 0; i < 10; i++) {
+            link_rec.random_sources();
+            link_rec.save_logs("random_sources_" + std::to_string(i));
+        }
         break;
     default:
         std::cout << "Not supported yet\n";
