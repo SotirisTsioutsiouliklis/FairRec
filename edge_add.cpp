@@ -318,9 +318,9 @@ void Edge_addition::random_sources(const double C, const double eps, const int m
         }
         save_src_logs("random_sources_node", src_node, src_log);
         //Remove edges from the graph.
-        //for (std::vector<edge>::iterator i = new_edges.begin(); i < new_edges.end(); i++) {
-          //  g.remove_edge(i->source, i->destination);
-        //}
+        for (std::vector<edge>::iterator i = new_edges.begin(); i < new_edges.end(); i++) {
+            g.remove_edge(i->source, i->destination);
+        }
     }
 }
 
