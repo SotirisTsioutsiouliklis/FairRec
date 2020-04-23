@@ -19,16 +19,17 @@ enum class algorithm_mode {GREEDY, FAST_GREEDY, APPROX, FAST_APPROX, RANDOM, RAN
 class Edge_addition {
     public:
         Edge_addition(graph &g, pagerank_algorithms &algs, int n_source = 10, int n_target = 100);
-        void greedy(const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        void fast_greedy(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        void greedy_per_one(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        void greedy_all(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        void fast_greedy_per_one(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        void fast_greedy_all(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void random_edges(const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        void random_sources(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        void random_sources_per_one(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        void random_sources_all(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         //void approx();
         //void fast_approx();
-        void save_logs(std::string algo_name);
-        void save_src_logs(std::string algo_name, int src_node, std::vector<step_log> vec);
-        int get_log_size();
-        std::vector<step_log> get_log_vec();
+        void save_logs(std::string algo_name, std::vector<step_log> log_vec);
+        void save_logs_per_node(std::string algo_name, int src_node, std::vector<step_log> vec);
     
     private:
         // Get n best source nodes.
@@ -38,7 +39,7 @@ class Edge_addition {
 
         graph &g;
         pagerank_algorithms &algs;
-        std::vector<step_log> log_vec;
+        //std::vector<step_log> log_vec;
 
         double jump_prob = 0.15;
         int n_source, n_target; // Number of source, target nodes.

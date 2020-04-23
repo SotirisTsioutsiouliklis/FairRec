@@ -14,27 +14,40 @@ Edge_addition::Edge_addition(graph &g, pagerank_algorithms &algs, int n_source, 
         // Nothing to do here.
 }
 
-void Edge_addition::greedy(const double C, const double eps, const int max_iter) {
+void Edge_addition::greedy_per_one(const double C, const double eps, const int max_iter) {
     // Declare local variables.
     pagerank_v objective_val, rank_vector, source_nodes;
     std::vector<int> neighbors;
     std::vector<edge> new_edges;
-    std::vector<step_log> src_log;
-
+    std::vector<step_log> log_vec;
     pagerank_s target_node;
     edge new_edge;
+    step_log log_point;
     double red_pagerank;
     int s_out_degree, src_node, max_edges;
     int wanted_target = n_target;
+
     // Get number of nodes.
     const int nnodes = g.get_num_nodes();
 
     // Get source nodes.
     source_nodes = get_best_source_nodes(n_source, C, eps, max_iter);
+
     // For each Source nodes.
     for (int s_node = 0; s_node < n_source; s_node++) {
         // Zeroing new edges list.
         new_edges.clear();
+        // Zeroing log vector.
+        log_vec.clear();
+        // Get pagerank.
+        rank_vector = algs.get_pagerank(C, eps, max_iter);
+        // Get Red pagerank.
+        red_pagerank = g.get_pagerank_per_community(rank_vector)[1];
+        // Renew log point.
+        log_point.red_pagerank = red_pagerank;
+        log_point.red_pagerank_prediction = red_pagerank;
+        // Store to log vector.
+        log_vec.push_back(log_point);
         // Get source node id.
         src_node = source_nodes[s_node].node_id;
         // Print Source node.
@@ -47,9 +60,6 @@ void Edge_addition::greedy(const double C, const double eps, const int max_iter)
             std::cout << "too many nodes. I'll do my best" << std::endl;
             n_target = max_edges;
         }
-        // Fix size for log vectors.
-        //log_vec.resize(log_vec.size() + n_target);
-        src_log.resize(n_target);
         std::cout << "ntarget: " << n_target << "\n";
         // Find n_target nodes to connect.
         for (int t_node = 0; t_node < n_target; t_node++) {
@@ -57,19 +67,18 @@ void Edge_addition::greedy(const double C, const double eps, const int max_iter)
             objective_val = get_objective_val(src_node, C, eps, max_iter);
             // Get out degree for source node.
             s_out_degree = g.get_out_degree(src_node);
-            // Remove neighbors of source node from finding the
-            // best procedure. Do that by zeroing their objective value.
+            // Remove neighbors of source node from "finding the
+            // best" procedure. Do that by setting their objective value to -2.
             neighbors = g.get_out_neighbors(src_node);
             for (int nei = 0; nei < s_out_degree; nei++) { 
-                objective_val[neighbors[nei]].pagerank = 0;
+                objective_val[neighbors[nei]].pagerank = -2;
             }
-            // Remove self from finding the best procedure.
-            // Do that by zeroing its objective value.
-            objective_val[src_node].pagerank = 0;
-            // Find best edge to add. Assume best is node 0.
-            target_node.node_id = 0;
-            target_node.pagerank = 0;
-            //target_node.pagerank = objective_val[0].pagerank;
+            // Remove self from "finding the best procedure".
+            // Do that by setting its objective value to -2.
+            objective_val[src_node].pagerank = -2;
+            // Find best edge to add.
+            target_node.node_id = -2;
+            target_node.pagerank = -2;
             // Search all nodes.
             for (int cand = 0; cand < nnodes; cand++) {
                 // If there is better, Renew node information.
@@ -87,96 +96,304 @@ void Edge_addition::greedy(const double C, const double eps, const int max_iter)
             rank_vector = algs.get_pagerank(C, eps, max_iter);
             // Get Red pagerank.
             red_pagerank = g.get_pagerank_per_community(rank_vector)[1];
-            // Store red pagerank to log vector.
-            //log_vec[(s_node * n_target) + t_node].red_pagerank = red_pagerank;
-            src_log[t_node].red_pagerank = red_pagerank;
-            // Add prediction to log.
-            //log_vec[(s_node * n_target) + t_node].red_pagerank_prediction = target_node.pagerank;
-            src_log[t_node].red_pagerank_prediction = target_node.pagerank;
+            // Renew log point.
+            log_point.red_pagerank = red_pagerank;
+            log_point.red_pagerank_prediction = target_node.pagerank;
+            // Store to log vector.
+            log_vec.push_back(log_point);
         }
-        save_src_logs("greedy", src_node, src_log);
         //Remove edges from the graph.
         for (std::vector<edge>::iterator i = new_edges.begin(); i < new_edges.end(); i++) {
             g.remove_edge(i->source, i->destination);
         }
+        // Save per node logs.
+        save_logs_per_node("greedy_per_one", src_node, log_vec);
     }
+    
 }
-// Needs a lot of fixes.
-void Edge_addition::fast_greedy(const double C, const double eps, const int max_iter) {
+
+void Edge_addition::greedy_all(const double C, const double eps, const int max_iter) {
     // Declare local variables.
     pagerank_v objective_val, rank_vector, source_nodes;
     std::vector<int> neighbors;
-
+    std::vector<edge> new_edges;
+    std::vector<step_log> log_vec;
     pagerank_s target_node;
+    step_log log_point;
     double red_pagerank;
-    int s_out_degree, src_node;
+    int s_out_degree, src_node, max_edges;
+    int wanted_target = n_target;
+
+    // Get number of nodes.
+    const int nnodes = g.get_num_nodes();
 
     // Get source nodes.
     source_nodes = get_best_source_nodes(n_source, C, eps, max_iter);
-    // Get number of nodes.
-    const int nnodes = g.get_num_nodes();
-    for (int s_node = 0; s_node < n_source ; s_node++) {
-        // Print source node. Test print to know it runs.
-        std::cout << "Source node: top " << s_node << std::endl;
+    // Get pagerank.
+    rank_vector = algs.get_pagerank(C, eps, max_iter);
+    // Get Red pagerank.
+    red_pagerank = g.get_pagerank_per_community(rank_vector)[1];
+    // Renew log point.
+    log_point.red_pagerank = red_pagerank;
+    log_point.red_pagerank_prediction = red_pagerank;
+    // Store to log vector.
+    log_vec.push_back(log_point);
+
+    // For each Source nodes.
+    for (int s_node = 0; s_node < n_source; s_node++) {
+        // Zeroing new edges list.
+        new_edges.clear();
         // Get source node id.
         src_node = source_nodes[s_node].node_id;
-        // Get out degree for source node.
-        s_out_degree = g.get_out_degree(src_node);
-        // Get objective values.
-        objective_val = get_objective_val(src_node, C, eps, max_iter);
-        // Remove neighbors of source node from finding the
-        // best procedure. Do that by zeroing their objective value.
-        neighbors.resize(s_out_degree);
-        neighbors = g.get_out_neighbors(src_node);
-        for (int nei = 0; nei < s_out_degree; nei++) {  
-            objective_val[neighbors[nei]].pagerank = 0;
+        // Print Source node.
+        std::cout << "---------------------------------------\n";
+        std::cout << "Source node: " << src_node << std::endl;
+        // Find valide number of new edges.
+        max_edges = (g.get_num_nodes() - 1) - g.get_out_degree(src_node);
+        n_target = wanted_target;
+        if (n_target > max_edges) {
+            std::cout << "too many nodes. I'll do my best" << std::endl;
+            n_target = max_edges;
         }
-        // Remove self from finding the best procedure.
-        // Do that by zeroing its objective value.
-        objective_val[src_node].pagerank = 0;
+        std::cout << "ntarget: " << n_target << "\n";
         // Find n_target nodes to connect.
         for (int t_node = 0; t_node < n_target; t_node++) {
-            // Get pagerank.
-            rank_vector = algs.get_pagerank(C, eps, max_iter);
-            // Get Red pagerank.
-            red_pagerank = g.get_pagerank_per_community(rank_vector)[1];
-            // Store pagerank to log vector.
-            log_vec[(s_node * n_target) + t_node].red_pagerank = red_pagerank;
-            // Find best edge to add. Assume 0 to eb the best.
-            target_node.node_id = 0;
-            target_node.pagerank = objective_val[0].pagerank;
-            // Check all nodes.
+            // Get objective values for all nodes.
+            objective_val = get_objective_val(src_node, C, eps, max_iter);
+            // Get out degree for source node.
+            s_out_degree = g.get_out_degree(src_node);
+            // Remove neighbors of source node from "finding the
+            // best" procedure. Do that by setting their objective value to -2.
+            neighbors = g.get_out_neighbors(src_node);
+            for (int nei = 0; nei < s_out_degree; nei++) { 
+                objective_val[neighbors[nei]].pagerank = -2;
+            }
+            // Remove self from "finding the best procedure".
+            // Do that by setting its objective value to -2.
+            objective_val[src_node].pagerank = -2;
+            // Find best edge to add.
+            target_node.node_id = -2;
+            target_node.pagerank = -2;
+            // Search all nodes.
             for (int cand = 0; cand < nnodes; cand++) {
-                // If there is a better node, renew target node informations.
+                // If there is better, Renew node information.
                 if (objective_val[cand].pagerank > target_node.pagerank) {
                     target_node.node_id = cand;
                     target_node.pagerank = objective_val[cand].pagerank;
                 }
             }
-            // Add prediction to log.
-            log_vec[(s_node * n_target) + t_node + 1].red_pagerank_prediction = target_node.pagerank;
             // Add best node to source node.
             g.add_edge(src_node, target_node.node_id);
-            // Remove this node from procedure. Do that by
-            // zeroing its objective value.
-            objective_val[target_node.node_id].node_id = 0;
+            // Get pagerank.
+            rank_vector = algs.get_pagerank(C, eps, max_iter);
+            // Get Red pagerank.
+            red_pagerank = g.get_pagerank_per_community(rank_vector)[1];
+            // Renew log point.
+            log_point.red_pagerank = red_pagerank;
+            log_point.red_pagerank_prediction = target_node.pagerank;
+            // Store to log vector.
+            log_vec.push_back(log_point);
         }
     }
-    // Get pagerank
+    // Save log vector.
+    save_logs("greedy_all", log_vec);
+}
+
+// Needs a lot of fixes.
+void Edge_addition::fast_greedy_per_one(const double C, const double eps, const int max_iter) {
+    // Declare local variables.
+    pagerank_v objective_val, rank_vector, source_nodes;
+    std::vector<int> neighbors;
+    std::vector<edge> new_edges;
+    std::vector<step_log> log_vec;
+    pagerank_s target_node;
+    edge new_edge;
+    step_log log_point;
+    double red_pagerank;
+    int s_out_degree, src_node, max_edges;
+    int wanted_target = n_target;
+
+    // Get number of nodes.
+    const int nnodes = g.get_num_nodes();
+
+    // Get source nodes.
+    source_nodes = get_best_source_nodes(n_source, C, eps, max_iter);
+
+    // For each Source nodes.
+    for (int s_node = 0; s_node < n_source; s_node++) {
+        // Zeroing new edges list.
+        new_edges.clear();
+        // Zeroing log vector.
+        log_vec.clear();
+        // Get pagerank.
+        rank_vector = algs.get_pagerank(C, eps, max_iter);
+        // Get Red pagerank.
+        red_pagerank = g.get_pagerank_per_community(rank_vector)[1];
+        // Renew log point.
+        log_point.red_pagerank = red_pagerank;
+        log_point.red_pagerank_prediction = red_pagerank;
+        // Store to log vector.
+        log_vec.push_back(log_point);
+        // Get source node id.
+        src_node = source_nodes[s_node].node_id;
+        // Print Source node.
+        std::cout << "---------------------------------------\n";
+        std::cout << "Source node: " << src_node << std::endl;
+        // Find valide number of new edges.
+        max_edges = (g.get_num_nodes() - 1) - g.get_out_degree(src_node);
+        n_target = wanted_target;
+        if (n_target > max_edges) {
+            std::cout << "too many nodes. I'll do my best" << std::endl;
+            n_target = max_edges;
+        }
+        std::cout << "ntarget: " << n_target << "\n";
+        // Get objective values for all nodes.
+        objective_val = get_objective_val(src_node, C, eps, max_iter);
+        // Find n_target nodes to connect.
+        for (int t_node = 0; t_node < n_target; t_node++) {
+            // Get out degree for source node.
+            s_out_degree = g.get_out_degree(src_node);
+            // Remove neighbors of source node from "finding the
+            // best" procedure. Do that by setting their objective value to -2.
+            neighbors = g.get_out_neighbors(src_node);
+            for (int nei = 0; nei < s_out_degree; nei++) { 
+                objective_val[neighbors[nei]].pagerank = -2;
+            }
+            // Remove self from "finding the best procedure".
+            // Do that by setting its objective value to -2.
+            objective_val[src_node].pagerank = -2;
+            // Find best edge to add.
+            target_node.node_id = -2;
+            target_node.pagerank = -2;
+            // Search all nodes.
+            for (int cand = 0; cand < nnodes; cand++) {
+                // If there is better, Renew node information.
+                if (objective_val[cand].pagerank > target_node.pagerank) {
+                    target_node.node_id = cand;
+                    target_node.pagerank = objective_val[cand].pagerank;
+                }
+            }
+            // Add best node to source node.
+            g.add_edge(src_node, target_node.node_id);
+            new_edge.source = src_node;
+            new_edge.destination = target_node.node_id;
+            new_edges.push_back(new_edge);
+            // Get pagerank.
+            rank_vector = algs.get_pagerank(C, eps, max_iter);
+            // Get Red pagerank.
+            red_pagerank = g.get_pagerank_per_community(rank_vector)[1];
+            // Renew log point.
+            log_point.red_pagerank = red_pagerank;
+            log_point.red_pagerank_prediction = target_node.pagerank;
+            // Store to log vector.
+            log_vec.push_back(log_point);
+        }
+        //Remove edges from the graph.
+        for (std::vector<edge>::iterator i = new_edges.begin(); i < new_edges.end(); i++) {
+            g.remove_edge(i->source, i->destination);
+        }
+        // Save per node logs.
+        save_logs_per_node("fast_greedy_per_one", src_node, log_vec);
+    }
+}
+
+// Needs a lot of fixes.
+void Edge_addition::fast_greedy_all(const double C, const double eps, const int max_iter) {
+    // Declare local variables.
+    pagerank_v objective_val, objective_val_init, rank_vector, source_nodes;
+    std::vector<int> neighbors;
+    std::vector<edge> new_edges;
+    std::vector<step_log> log_vec;
+    pagerank_s target_node;
+    step_log log_point;
+    double red_pagerank;
+    int s_out_degree, src_node, max_edges;
+    int wanted_target = n_target;
+
+    // Get number of nodes.
+    const int nnodes = g.get_num_nodes();
+
+    // Get source nodes.
+    source_nodes = get_best_source_nodes(n_source, C, eps, max_iter);
+    // Get pagerank.
     rank_vector = algs.get_pagerank(C, eps, max_iter);
-    // Write last log informations.
-    log_vec[n_source * n_target].red_pagerank = g.get_pagerank_per_community(rank_vector)[1];
-    log_vec[0].red_pagerank_prediction = log_vec[0].red_pagerank;
+    // Get Red pagerank.
+    red_pagerank = g.get_pagerank_per_community(rank_vector)[1];
+    // Renew log point.
+    log_point.red_pagerank = red_pagerank;
+    log_point.red_pagerank_prediction = red_pagerank;
+    // Store to log vector.
+    log_vec.push_back(log_point);
+    // Get objective values for all nodes.
+    objective_val_init = get_objective_val(src_node, C, eps, max_iter);
+
+    // For each Source nodes.
+    for (int s_node = 0; s_node < n_source; s_node++) {
+        // Zeroing new edges list.
+        new_edges.clear();
+        // Get source node id.
+        src_node = source_nodes[s_node].node_id;
+        // Print Source node.
+        std::cout << "---------------------------------------\n";
+        std::cout << "Source node: " << src_node << std::endl;
+        // Find valide number of new edges.
+        max_edges = (g.get_num_nodes() - 1) - g.get_out_degree(src_node);
+        n_target = wanted_target;
+        if (n_target > max_edges) {
+            std::cout << "too many nodes. I'll do my best" << std::endl;
+            n_target = max_edges;
+        }
+        std::cout << "ntarget: " << n_target << "\n";
+        // Find n_target nodes to connect.
+        objective_val = objective_val_init;
+        for (int t_node = 0; t_node < n_target; t_node++) {
+            // Get out degree for source node.
+            s_out_degree = g.get_out_degree(src_node);
+            // Remove neighbors of source node from "finding the
+            // best" procedure. Do that by setting their objective value to -2.
+            neighbors = g.get_out_neighbors(src_node);
+            for (int nei = 0; nei < s_out_degree; nei++) { 
+                objective_val[neighbors[nei]].pagerank = -2;
+            }
+            // Remove self from "finding the best procedure".
+            // Do that by setting its objective value to -2.
+            objective_val[src_node].pagerank = -2;
+            // Find best edge to add.
+            target_node.node_id = -2;
+            target_node.pagerank = -2;
+            // Search all nodes.
+            for (int cand = 0; cand < nnodes; cand++) {
+                // If there is better, Renew node information.
+                if (objective_val[cand].pagerank > target_node.pagerank) {
+                    target_node.node_id = cand;
+                    target_node.pagerank = objective_val[cand].pagerank;
+                }
+            }
+            // Add best node to source node.
+            g.add_edge(src_node, target_node.node_id);
+            // Get pagerank.
+            rank_vector = algs.get_pagerank(C, eps, max_iter);
+            // Get Red pagerank.
+            red_pagerank = g.get_pagerank_per_community(rank_vector)[1];
+            // Renew log point.
+            log_point.red_pagerank = red_pagerank;
+            log_point.red_pagerank_prediction = target_node.pagerank;
+            // Store to log vector.
+            log_vec.push_back(log_point);
+        }
+    }
+    // Save log vector.
+    save_logs("fast_greedy_all", log_vec);
 }
 
 void Edge_addition::random_edges(const double C, const double eps, const int max_iter) {
-    // Clear log_vec.
-    log_vec.clear();
     // Declare local variables.
     pagerank_v rank_vector;
     std::vector<edge> new_edges;
     std::vector<int> neighbors, no_neighbors;
+    std::vector<step_log> log_vec;
     edge new_edge;
+    step_log log_point;
     int n_of_edges = n_source * n_target;
     int nnodes = g. get_num_nodes();
     std::vector<int> all_nodes(nnodes);
@@ -185,7 +402,10 @@ void Edge_addition::random_edges(const double C, const double eps, const int max
     }
 
     // Resize log_vec.
-    log_vec.resize(n_of_edges);
+    log_vec.resize(n_of_edges + 1);
+    // Get pagerank.
+    rank_vector = algs.get_pagerank(C, eps, max_iter);
+    log_vec[0].red_pagerank = g.get_pagerank_per_community(rank_vector)[1];
     // Init seed.
     srand(time(NULL));
     // Find valide edges.
@@ -198,45 +418,51 @@ void Edge_addition::random_edges(const double C, const double eps, const int max
         // Sort vectors for difference.
         std::sort(all_nodes.begin(), all_nodes.end());
         std::sort(neighbors.begin(), neighbors.end());
-        std::vector<int> difference;
+        //std::vector<int> difference;
         std::set_difference(
             all_nodes.begin(), all_nodes.end(),
             neighbors.begin(), neighbors.end(),
             std::back_inserter( no_neighbors )
         );
-        // Get random target.
-        new_edge.destination = no_neighbors[(rand() % no_neighbors.size())];
-        std::cout << "edge: " << new_edge.source << " , " << new_edge.destination << std::endl;
-        // Clear no_neighbors.
-        no_neighbors.clear();
-        g.add_edge(new_edge.source, new_edge.destination);
-        // Get pagerank.
-        rank_vector = algs.get_pagerank(C, eps, max_iter);
-        log_vec[i].red_pagerank = g.get_pagerank_per_community(rank_vector)[1];
+        // Check if there are acceptable edges.
+        if (no_neighbors.size() != 0) {
+            // Get random target.
+            new_edge.destination = no_neighbors[(rand() % no_neighbors.size())];
+            std::cout << "edge: " << new_edge.source << " , " << new_edge.destination << std::endl;
+            // Clear no_neighbors.
+            no_neighbors.clear();
+            // Add edge.
+            g.add_edge(new_edge.source, new_edge.destination);
+            // Get pagerank.
+            rank_vector = algs.get_pagerank(C, eps, max_iter);
+            log_vec[i + 1].red_pagerank = g.get_pagerank_per_community(rank_vector)[1];
+        } else {
+            i--;
+        }
     }
+    // Save log vector.
+    save_logs("random_edges", log_vec);
 }
 
-void Edge_addition::random_sources(const double C, const double eps, const int max_iter) {
-    // Clear log_vec.
-    log_vec.clear();
+void Edge_addition::random_sources_per_one(const double C, const double eps, const int max_iter) {
     // Declare local variables.
-    pagerank_v objective_val, rank_vector;
-    std::vector<int> neighbors, source_nodes;
+    pagerank_v objective_val, rank_vector, source_nodes;
+    std::vector<int> neighbors;
     std::vector<edge> new_edges;
-    std::vector<step_log> src_log;
-
+    std::vector<step_log> log_vec;
     pagerank_s target_node;
     edge new_edge;
+    step_log log_point;
     double red_pagerank;
     int s_out_degree, src_node, max_edges;
     int wanted_target = n_target;
+    bool is_source;
+
     // Get number of nodes.
     const int nnodes = g.get_num_nodes();
-    bool is_source;
+
     // Init seed.
     srand(time(NULL));
-    // Resize log_vec.
-    log_vec.resize(n_source * n_target);
     // Get random source nodes.
     source_nodes.resize(n_source);
     for (int i = 0; i < n_source; i++) {
@@ -251,16 +477,26 @@ void Edge_addition::random_sources(const double C, const double eps, const int m
             }
         } while (is_source);
         // Add node to sources.
-        source_nodes[i] = src_node;
-        std::cout << "::: " << source_nodes[i] << std::endl;
+        source_nodes[i].node_id = src_node;
     }
 
     // For each Source nodes.
     for (int s_node = 0; s_node < n_source; s_node++) {
         // Zeroing new edges list.
         new_edges.clear();
+        // Zeroing log vector.
+        log_vec.clear();
+        // Get pagerank.
+        rank_vector = algs.get_pagerank(C, eps, max_iter);
+        // Get Red pagerank.
+        red_pagerank = g.get_pagerank_per_community(rank_vector)[1];
+        // Renew log point.
+        log_point.red_pagerank = red_pagerank;
+        log_point.red_pagerank_prediction = red_pagerank;
+        // Store to log vector.
+        log_vec.push_back(log_point);
         // Get source node id.
-        src_node = source_nodes[s_node];
+        src_node = source_nodes[s_node].node_id;
         // Print Source node.
         std::cout << "---------------------------------------\n";
         std::cout << "Source node: " << src_node << std::endl;
@@ -271,7 +507,6 @@ void Edge_addition::random_sources(const double C, const double eps, const int m
             std::cout << "too many nodes. I'll do my best" << std::endl;
             n_target = max_edges;
         }
-        src_log.resize(n_target);
         std::cout << "ntarget: " << n_target << "\n";
         // Find n_target nodes to connect.
         for (int t_node = 0; t_node < n_target; t_node++) {
@@ -279,19 +514,18 @@ void Edge_addition::random_sources(const double C, const double eps, const int m
             objective_val = get_objective_val(src_node, C, eps, max_iter);
             // Get out degree for source node.
             s_out_degree = g.get_out_degree(src_node);
-            // Remove neighbors of source node from finding the
-            // best procedure. Do that by zeroing their objective value.
+            // Remove neighbors of source node from "finding the
+            // best" procedure. Do that by setting their objective value to -2.
             neighbors = g.get_out_neighbors(src_node);
             for (int nei = 0; nei < s_out_degree; nei++) { 
-                objective_val[neighbors[nei]].pagerank = 0;
+                objective_val[neighbors[nei]].pagerank = -2;
             }
-            // Remove self from finding the best procedure.
-            // Do that by zeroing its objective value.
-            objective_val[src_node].pagerank = 0;
-            // Find best edge to add. Assume best is node 0.
-            target_node.node_id = 0;
-            target_node.pagerank = 0;
-            //target_node.pagerank = objective_val[0].pagerank;
+            // Remove self from "finding the best procedure".
+            // Do that by setting its objective value to -2.
+            objective_val[src_node].pagerank = -2;
+            // Find best edge to add.
+            target_node.node_id = -2;
+            target_node.pagerank = -2;
             // Search all nodes.
             for (int cand = 0; cand < nnodes; cand++) {
                 // If there is better, Renew node information.
@@ -309,19 +543,124 @@ void Edge_addition::random_sources(const double C, const double eps, const int m
             rank_vector = algs.get_pagerank(C, eps, max_iter);
             // Get Red pagerank.
             red_pagerank = g.get_pagerank_per_community(rank_vector)[1];
-            // Store red pagerank to log vector.
-            log_vec[(s_node * n_target) + t_node].red_pagerank = red_pagerank;
-            src_log[t_node].red_pagerank = red_pagerank;
-            // Add prediction to log.
-            log_vec[(s_node * n_target) + t_node].red_pagerank_prediction = target_node.pagerank;
-            src_log[t_node].red_pagerank_prediction = target_node.pagerank;
+            // Renew log point.
+            log_point.red_pagerank = red_pagerank;
+            log_point.red_pagerank_prediction = target_node.pagerank;
+            // Store to log vector.
+            log_vec.push_back(log_point);
         }
-        save_src_logs("random_sources_node", src_node, src_log);
         //Remove edges from the graph.
         for (std::vector<edge>::iterator i = new_edges.begin(); i < new_edges.end(); i++) {
             g.remove_edge(i->source, i->destination);
         }
+        // Save per node logs.
+        save_logs_per_node("random_source_per_one", src_node, log_vec);
     }
+
+}
+
+void Edge_addition::random_sources_all(const double C, const double eps, const int max_iter) {
+    // Declare local variables.
+    pagerank_v objective_val, rank_vector, source_nodes;
+    std::vector<int> neighbors;
+    std::vector<edge> new_edges;
+    std::vector<step_log> log_vec;
+    pagerank_s target_node;
+    step_log log_point;
+    double red_pagerank;
+    int s_out_degree, src_node, max_edges;
+    int wanted_target = n_target;
+    bool is_source;
+
+    // Get number of nodes.
+    const int nnodes = g.get_num_nodes();
+
+    // Init seed.
+    srand(time(NULL));
+    // Get random source nodes.
+    source_nodes.resize(n_source);
+    for (int i = 0; i < n_source; i++) {
+        do {
+            // Get random int from 0 to nnodes - 1.
+            src_node = (rand() % nnodes);
+            // Check if alwready exists.
+            if (std::find(source_nodes.begin(), source_nodes.end(), src_node) != source_nodes.end()) {
+                is_source = true;
+            } else {
+                is_source = false;
+            }
+        } while (is_source);
+        // Add node to sources.
+        source_nodes[i].node_id = src_node;
+    }
+    // Get pagerank.
+    rank_vector = algs.get_pagerank(C, eps, max_iter);
+    // Get Red pagerank.
+    red_pagerank = g.get_pagerank_per_community(rank_vector)[1];
+    // Renew log point.
+    log_point.red_pagerank = red_pagerank;
+    log_point.red_pagerank_prediction = red_pagerank;
+    // Store to log vector.
+    log_vec.push_back(log_point);
+
+    // For each Source nodes.
+    for (int s_node = 0; s_node < n_source; s_node++) {
+        // Zeroing new edges list.
+        new_edges.clear();
+        // Get source node id.
+        src_node = source_nodes[s_node].node_id;
+        // Print Source node.
+        std::cout << "---------------------------------------\n";
+        std::cout << "Source node: " << src_node << std::endl;
+        // Find valide number of new edges.
+        max_edges = (g.get_num_nodes() - 1) - g.get_out_degree(src_node);
+        n_target = wanted_target;
+        if (n_target > max_edges) {
+            std::cout << "too many nodes. I'll do my best" << std::endl;
+            n_target = max_edges;
+        }
+        std::cout << "ntarget: " << n_target << "\n";
+        // Find n_target nodes to connect.
+        for (int t_node = 0; t_node < n_target; t_node++) {
+            // Get objective values for all nodes.
+            objective_val = get_objective_val(src_node, C, eps, max_iter);
+            // Get out degree for source node.
+            s_out_degree = g.get_out_degree(src_node);
+            // Remove neighbors of source node from "finding the
+            // best" procedure. Do that by setting their objective value to -2.
+            neighbors = g.get_out_neighbors(src_node);
+            for (int nei = 0; nei < s_out_degree; nei++) { 
+                objective_val[neighbors[nei]].pagerank = -2;
+            }
+            // Remove self from "finding the best procedure".
+            // Do that by setting its objective value to -2.
+            objective_val[src_node].pagerank = -2;
+            // Find best edge to add.
+            target_node.node_id = -2;
+            target_node.pagerank = -2;
+            // Search all nodes.
+            for (int cand = 0; cand < nnodes; cand++) {
+                // If there is better, Renew node information.
+                if (objective_val[cand].pagerank > target_node.pagerank) {
+                    target_node.node_id = cand;
+                    target_node.pagerank = objective_val[cand].pagerank;
+                }
+            }
+            // Add best node to source node.
+            g.add_edge(src_node, target_node.node_id);
+            // Get pagerank.
+            rank_vector = algs.get_pagerank(C, eps, max_iter);
+            // Get Red pagerank.
+            red_pagerank = g.get_pagerank_per_community(rank_vector)[1];
+            // Renew log point.
+            log_point.red_pagerank = red_pagerank;
+            log_point.red_pagerank_prediction = target_node.pagerank;
+            // Store to log vector.
+            log_vec.push_back(log_point);
+        }
+    }
+    // Save log vector.
+    save_logs("random_source_all", log_vec);
 }
 
 pagerank_v Edge_addition::get_best_source_nodes(int n, const double C, const double eps, const int max_iter) {
@@ -408,7 +747,7 @@ pagerank_v Edge_addition::get_objective_val(int s_node, const double C, const do
     return objective_val;
 }
 
-void Edge_addition::save_logs(std::string algo_name) {
+void Edge_addition::save_logs(std::string algo_name, std::vector<step_log> log_vec) {
     // Declare local variables.
     int records = log_vec.size();
 
@@ -425,27 +764,19 @@ void Edge_addition::save_logs(std::string algo_name) {
     log_file.close();
 }
 
-void Edge_addition::save_src_logs(std::string algo_name, int src_node, std::vector<step_log> vec) {
+void Edge_addition::save_logs_per_node(std::string algo_name, int src_node, std::vector<step_log> log_vec) {
     // Declare local variables.
-    int records = vec.size();
+    int records = log_vec.size();
 
     // Open log file.
     std::ofstream log_file("out_" + algo_name + "_" + std::to_string(src_node) + "_log.txt");
 
     // Write logs to file.
-    log_file << "Edge_Addition\tPagerank\tPrediction\n";
+    log_file << "New Edges\tPg\tPr\n";
     for (int i = 0; i < records; i++) {
-        log_file << i << "\t" << vec[i].red_pagerank << "\t" << vec[i].red_pagerank_prediction << std::endl;
+        log_file << i << "\t" << log_vec[i].red_pagerank << "\t" << log_vec[i].red_pagerank_prediction << std::endl;
     }
 
     // Close file.
     log_file.close();
-}
-
-int Edge_addition::get_log_size() {
-    return log_vec.size();
-}
-
-std::vector<step_log> Edge_addition::get_log_vec() {
-    return log_vec;
 }
