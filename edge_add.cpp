@@ -199,7 +199,6 @@ void Edge_addition::greedy_all(const double C, const double eps, const int max_i
     save_logs("greedy_all", log_vec);
 }
 
-// Needs a lot of fixes.
 void Edge_addition::fast_greedy_per_one(const double C, const double eps, const int max_iter) {
     // Declare local variables.
     pagerank_v objective_val, rank_vector, source_nodes;
@@ -297,7 +296,6 @@ void Edge_addition::fast_greedy_per_one(const double C, const double eps, const 
     }
 }
 
-// Needs a lot of fixes.
 void Edge_addition::fast_greedy_all(const double C, const double eps, const int max_iter) {
     // Declare local variables.
     pagerank_v objective_val, objective_val_init, rank_vector, source_nodes;
@@ -324,8 +322,6 @@ void Edge_addition::fast_greedy_all(const double C, const double eps, const int 
     log_point.red_pagerank_prediction = red_pagerank;
     // Store to log vector.
     log_vec.push_back(log_point);
-    // Get objective values for all nodes.
-    objective_val_init = get_objective_val(src_node, C, eps, max_iter);
 
     // For each Source nodes.
     for (int s_node = 0; s_node < n_source; s_node++) {
@@ -333,6 +329,8 @@ void Edge_addition::fast_greedy_all(const double C, const double eps, const int 
         new_edges.clear();
         // Get source node id.
         src_node = source_nodes[s_node].node_id;
+        // Get objective values for all nodes.
+        objective_val_init = get_objective_val(src_node, C, eps, max_iter);
         // Print Source node.
         std::cout << "---------------------------------------\n";
         std::cout << "Source node: " << src_node << std::endl;
@@ -386,14 +384,13 @@ void Edge_addition::fast_greedy_all(const double C, const double eps, const int 
     save_logs("fast_greedy_all", log_vec);
 }
 
-void Edge_addition::random_edges(const double C, const double eps, const int max_iter) {
+void Edge_addition::random_edges(int exp, const double C, const double eps, const int max_iter) {
     // Declare local variables.
     pagerank_v rank_vector;
     std::vector<edge> new_edges;
     std::vector<int> neighbors, no_neighbors;
     std::vector<step_log> log_vec;
     edge new_edge;
-    step_log log_point;
     int n_of_edges = n_source * n_target;
     int nnodes = g. get_num_nodes();
     std::vector<int> all_nodes(nnodes);
@@ -433,6 +430,8 @@ void Edge_addition::random_edges(const double C, const double eps, const int max
             no_neighbors.clear();
             // Add edge.
             g.add_edge(new_edge.source, new_edge.destination);
+            // Add to new edges vector.
+            new_edges.push_back(new_edge);
             // Get pagerank.
             rank_vector = algs.get_pagerank(C, eps, max_iter);
             log_vec[i + 1].red_pagerank = g.get_pagerank_per_community(rank_vector)[1];
@@ -441,13 +440,17 @@ void Edge_addition::random_edges(const double C, const double eps, const int max
         }
     }
     // Save log vector.
-    save_logs("random_edges", log_vec);
+    save_logs("random_edges_" + std::to_string(exp), log_vec);
+    //Remove edges from the graph.
+    for (std::vector<edge>::iterator i = new_edges.begin(); i < new_edges.end(); i++) {
+        g.remove_edge(i->source, i->destination);
+    }
 }
 
 void Edge_addition::random_sources_per_one(const double C, const double eps, const int max_iter) {
     // Declare local variables.
-    pagerank_v objective_val, rank_vector, source_nodes;
-    std::vector<int> neighbors;
+    pagerank_v objective_val, rank_vector;
+    std::vector<int> neighbors, source_nodes;
     std::vector<edge> new_edges;
     std::vector<step_log> log_vec;
     pagerank_s target_node;
@@ -469,7 +472,7 @@ void Edge_addition::random_sources_per_one(const double C, const double eps, con
         do {
             // Get random int from 0 to nnodes - 1.
             src_node = (rand() % nnodes);
-            // Check if alwready exists.
+            // Check if already exists.
             if (std::find(source_nodes.begin(), source_nodes.end(), src_node) != source_nodes.end()) {
                 is_source = true;
             } else {
@@ -477,7 +480,7 @@ void Edge_addition::random_sources_per_one(const double C, const double eps, con
             }
         } while (is_source);
         // Add node to sources.
-        source_nodes[i].node_id = src_node;
+        source_nodes[i] = src_node;
     }
 
     // For each Source nodes.
@@ -496,7 +499,7 @@ void Edge_addition::random_sources_per_one(const double C, const double eps, con
         // Store to log vector.
         log_vec.push_back(log_point);
         // Get source node id.
-        src_node = source_nodes[s_node].node_id;
+        src_node = source_nodes[s_node];
         // Print Source node.
         std::cout << "---------------------------------------\n";
         std::cout << "Source node: " << src_node << std::endl;
@@ -554,15 +557,15 @@ void Edge_addition::random_sources_per_one(const double C, const double eps, con
             g.remove_edge(i->source, i->destination);
         }
         // Save per node logs.
-        save_logs_per_node("random_source_per_one", src_node, log_vec);
+        save_logs_per_node("random_source_per_one", s_node, log_vec);
     }
 
 }
 
 void Edge_addition::random_sources_all(const double C, const double eps, const int max_iter) {
     // Declare local variables.
-    pagerank_v objective_val, rank_vector, source_nodes;
-    std::vector<int> neighbors;
+    pagerank_v objective_val, rank_vector;
+    std::vector<int> neighbors, source_nodes;
     std::vector<edge> new_edges;
     std::vector<step_log> log_vec;
     pagerank_s target_node;
@@ -591,7 +594,7 @@ void Edge_addition::random_sources_all(const double C, const double eps, const i
             }
         } while (is_source);
         // Add node to sources.
-        source_nodes[i].node_id = src_node;
+        source_nodes[i] = src_node;
     }
     // Get pagerank.
     rank_vector = algs.get_pagerank(C, eps, max_iter);
@@ -608,7 +611,7 @@ void Edge_addition::random_sources_all(const double C, const double eps, const i
         // Zeroing new edges list.
         new_edges.clear();
         // Get source node id.
-        src_node = source_nodes[s_node].node_id;
+        src_node = source_nodes[s_node];
         // Print Source node.
         std::cout << "---------------------------------------\n";
         std::cout << "Source node: " << src_node << std::endl;
@@ -688,6 +691,12 @@ pagerank_v Edge_addition::get_best_source_nodes(int n, const double C, const dou
     algs.sort_pagerank_vector(top_source_nodes);
     // Keep n top source nodes by this ranking.
     top_source_nodes.resize(n);
+    // Print best nodes in order.
+    std::cout << "----------Best source nodes---------" << std::endl;
+    for (int i = 0; i < n; i++) {
+        std::cout << top_source_nodes[i].node_id << ", ";
+    }
+    std::cout << std::endl;
 
     return top_source_nodes;
 }
@@ -715,18 +724,34 @@ pagerank_v Edge_addition::get_objective_val(int s_node, const double C, const do
     neighbors = g.get_out_neighbors(s_node);
     // Get average Red pagerank of neighbors for nominator.
     nominator_const = 0;
-    for (int nei = 0; nei < s_out_degree; nei++) {
-        neighbor = neighbors[nei];
-        nominator_const += red_absorbing_probs[neighbor].pagerank;
+    if (s_out_degree > 0) {
+        for (int nei = 0; nei < s_out_degree; nei++) {
+            neighbor = neighbors[nei];
+            nominator_const += red_absorbing_probs[neighbor].pagerank;
+        }
+        nominator_const *= (1 / s_out_degree);
+    } else {
+        for (int nei = 0; nei < nnodes; nei++) {
+            neighbor = nei;
+            nominator_const += red_absorbing_probs[neighbor].pagerank;
+        }
+        nominator_const *= (1 / nnodes);
     }
-    nominator_const *= (1 / s_out_degree);
     // Get average Source pagerank of neighbors for denominator.
     denominator_const = 0;
-    for (int nei = 0; nei < s_out_degree; nei++) {
-        neighbor = neighbors[nei];
-        denominator_const += source_absorbing_probs[neighbor].pagerank;
+    if (s_out_degree > 0) {
+        for (int nei = 0; nei < s_out_degree; nei++) {
+            neighbor = neighbors[nei];
+            denominator_const += source_absorbing_probs[neighbor].pagerank;
+        }
+        denominator_const *= (1 / s_out_degree);
+    } else {
+        for (int nei = 0; nei < nnodes; nei++) {
+            neighbor = nei;
+            denominator_const += source_absorbing_probs[neighbor].pagerank;
+        }
+        denominator_const *= (1 / nnodes);
     }
-    denominator_const *= (1 / s_out_degree);
     // Calculate the Quantity. Not just the important part but
     // all so as to have a sanity check.
     // For all nodes.

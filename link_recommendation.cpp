@@ -86,15 +86,13 @@ int main(int argc, char **argv) {
         link_rec.fast_greedy_all();
         break;
     case algorithm_mode::RANDOM :
-        for (int i = 0; i < 10; i++) {
-            link_rec.random_edges();
+        for (int exp = 0; exp < 10; exp++) {
+            link_rec.random_edges(exp);
         }
         break;
     case algorithm_mode::RAND_SRC :
-        for (int i = 0; i < 10; i++) {
-            link_rec.random_sources_per_one();
-            link_rec.random_sources_all();
-        }
+        link_rec.random_sources_per_one();
+        link_rec.random_sources_all();
         break;
     default:
         std::cout << "Not supported yet\n";
