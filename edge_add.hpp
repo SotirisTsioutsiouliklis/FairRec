@@ -23,7 +23,7 @@ class Edge_addition {
         void greedy_per_one(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void greedy_all(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void fast_greedy_per_one(const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        void fast_greedy_all(const double C=0.85, const double eps=1e-10, const int max_iter=1000);
+        void fast_greedy_all(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void random_edges(int exp, const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void random_sources_per_one(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void random_sources_all(const double C=0.85, const double eps=1e-4, const int max_iter=100);
