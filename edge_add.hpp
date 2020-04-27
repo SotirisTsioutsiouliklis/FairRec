@@ -19,10 +19,11 @@ enum class algorithm_mode {GREEDY, FAST_GREEDY, APPROX, FAST_APPROX, RANDOM, RAN
 class Edge_addition {
     public:
         Edge_addition(graph &g, pagerank_algorithms &algs, int n_source = 10, int n_target = 100);
-        void greedy_per_one(const double C=0.85, const double eps=1e-10, const int max_iter=1000);
+        void greedy_per_one(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void greedy_all(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        void greedy_per_one_generalized(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void fast_greedy_per_one(const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        void fast_greedy_all(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        void fast_greedy_all(const double C=0.85, const double eps=1e-10, const int max_iter=1000);
         void random_edges(int exp, const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void random_sources_per_one(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void random_sources_all(const double C=0.85, const double eps=1e-4, const int max_iter=100);
