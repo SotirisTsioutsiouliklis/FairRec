@@ -34,20 +34,30 @@ int main () {
     //if (!get_options(argc, argv, node)) return 1;
 
     // Make array as argument.
-    int nodes[] = {60, 50, 33, 51, 48, 37, 34, 49, 42, 22};
+    int nodes[] = {759, 812, 749, 786};
 
     // Declare variables.
     graph g("out_graph.txt", "out_community.txt");
     pagerank_algorithms algs(g);
     pagerank_v rank_vector;
+    std::vector<int> neighbors;
+    std::vector<int>::iterator nei;
     int degree;
 
     // Open log file.
     std::ofstream log_file("source_node_infos.txt");
     log_file << "Node\tPagerank\tOwn Personilized\tRed Personilized\tOut Degree\tOut Red Degree\n";
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 4; i++) {
         log_file << nodes[i] << "\t";
+
+        // Print out neighbors.
+        neighbors = g.get_out_neighbors(nodes[i]);
+        std::cout << "Out neighors:\n";
+        for (nei = neighbors.begin(); nei < neighbors.end(); nei++) {
+            std::cout << *nei << " , ";
+        }
+        std::cout << std::endl;
         
         // Get pagerank. 
         rank_vector = algs.get_pagerank();

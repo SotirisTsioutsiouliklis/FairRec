@@ -79,7 +79,7 @@ int main(int argc, char **argv) {
     {
     case algorithm_mode::GREEDY :
         link_rec.greedy_per_one();
-        link_rec.greedy_all();
+        //link_rec.greedy_all();
         break;
     case algorithm_mode::FAST_GREEDY :
         link_rec.fast_greedy_per_one();

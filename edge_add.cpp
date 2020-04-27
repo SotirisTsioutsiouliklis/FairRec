@@ -729,13 +729,13 @@ pagerank_v Edge_addition::get_objective_val(int s_node, const double C, const do
             neighbor = neighbors[nei];
             nominator_const += red_absorbing_probs[neighbor].pagerank;
         }
-        nominator_const *= (1 / s_out_degree);
+        nominator_const *= (1 / (float)s_out_degree);
     } else {
         for (int nei = 0; nei < nnodes; nei++) {
             neighbor = nei;
             nominator_const += red_absorbing_probs[neighbor].pagerank;
         }
-        nominator_const *= (1 / nnodes);
+        nominator_const *= (1 / (float)nnodes);
     }
     // Get average Source pagerank of neighbors for denominator.
     denominator_const = 0;
@@ -744,13 +744,13 @@ pagerank_v Edge_addition::get_objective_val(int s_node, const double C, const do
             neighbor = neighbors[nei];
             denominator_const += source_absorbing_probs[neighbor].pagerank;
         }
-        denominator_const *= (1 / s_out_degree);
+        denominator_const *= (1 / (float)s_out_degree);
     } else {
         for (int nei = 0; nei < nnodes; nei++) {
             neighbor = nei;
             denominator_const += source_absorbing_probs[neighbor].pagerank;
         }
-        denominator_const *= (1 / nnodes);
+        denominator_const *= (1 / (float)nnodes);
     }
     // Calculate the Quantity. Not just the important part but
     // all so as to have a sanity check.
