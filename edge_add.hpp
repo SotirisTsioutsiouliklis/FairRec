@@ -7,6 +7,7 @@
 struct step_log {
     double red_pagerank;
     double red_pagerank_prediction;
+    double red_pagerank_generalized_prediction;
 };
 
 struct edge {
@@ -21,7 +22,6 @@ class Edge_addition {
         Edge_addition(graph &g, pagerank_algorithms &algs, int n_source = 10, int n_target = 100);
         void greedy_per_one(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void greedy_all(const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        void greedy_per_one_generalized(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void fast_greedy_per_one(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void fast_greedy_all(const double C=0.85, const double eps=1e-10, const int max_iter=1000);
         void random_edges(int exp, const double C=0.85, const double eps=1e-4, const int max_iter=100);
@@ -37,6 +37,8 @@ class Edge_addition {
         pagerank_v get_best_source_nodes(int n = 10, const double C=0.85, const double eps=1e-4, const int max_iter=100);
         // Return values of Objective function.
         pagerank_v get_objective_val(int s_node, const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        double get_generalized_objective_val(double init_red_pagerank, double init_source_pagerank, pagerank_v init_red_abs_prob, pagerank_v init_src_abs_prob,
+            std::vector<int> init_src_nei, std::vector<edge> new_edges);
 
         graph &g;
         pagerank_algorithms &algs;
