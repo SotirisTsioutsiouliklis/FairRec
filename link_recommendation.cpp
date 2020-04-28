@@ -98,5 +98,4 @@ int main(int argc, char **argv) {
         std::cout << "Not supported yet\n";
         return 1;
     }
-    
 }

@@ -116,7 +116,7 @@ void Edge_addition::greedy_per_one(const double C, const double eps, const int m
             g.remove_edge(i->source, i->destination);
         }
         // Save per node logs.
-        save_logs_per_node("greedy_per_one", src_node, log_vec);
+        save_logs_per_node("greedy", src_node, log_vec);
     }
     
 }
@@ -860,7 +860,7 @@ void Edge_addition::save_logs(std::string algo_name, std::vector<step_log> log_v
     std::ofstream log_file("out_" + algo_name + "_log.txt");
 
     // Write logs to file.
-    log_file << "Edge_Addition\tPagerank\tPrediction\n";
+    log_file << "Edge\tPagerank\tPrediction\n";
     for (int i = 0; i < records; i++) {
         log_file << i << "\t" << log_vec[i].red_pagerank << "\t" << log_vec[i].red_pagerank_prediction << std::endl;
     }
@@ -877,7 +877,7 @@ void Edge_addition::save_logs_per_node(std::string algo_name, int src_node, std:
     std::ofstream log_file("out_" + algo_name + "_" + std::to_string(src_node) + "_log.txt");
 
     // Write logs to file.
-    log_file << "New Edges\tPg\tPr\tGPr\n";
+    log_file << "Edge\tPagerank\tPrediction\tSum_Prediction\n";
     for (int i = 0; i < records; i++) {
         log_file << i << "\t" << log_vec[i].red_pagerank << "\t" << log_vec[i].red_pagerank_prediction << "\t" << log_vec[i].red_pagerank_generalized_prediction << std::endl;
     }

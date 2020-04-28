@@ -70,5 +70,5 @@ def clean_dataset():
     """
     pass
 
-#check_for_double_edges()
-#remove_double_edges()
+check_for_double_edges()
+remove_double_edges()
