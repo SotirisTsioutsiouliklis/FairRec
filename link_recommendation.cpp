@@ -55,7 +55,8 @@ error:
 		"-gd -s <number of source nodes> -t <number of target nodes>\t\t\t Greedy \n"
 		"-fgd -s <number of source nodes> -t <number of target nodes>\t\t\t Fast Greedy\n"
 		"-apx -s <number of source nodes> -t <number of target nodes>\t\t\t  Approximation\n"
-		"-fapx -s <number of source nodes> -t <number of target nodes>\t\t\t Fast Approximation" << std::endl;
+		"-fapx -s <number of source nodes> -t <number of target nodes>\t\t\t Fast Approximation\n"
+		"-rsrc -s <number of source nodes> -t <number of target nodes>\t\t\t Random Source nodes" << std::endl;
 	return false;
 }
 
@@ -78,7 +79,7 @@ int main(int argc, char **argv) {
     switch (algo_mode)
     {
     case algorithm_mode::GREEDY :
-        link_rec.greedy_per_one();
+        //link_rec.greedy_per_one();
         link_rec.greedy_all();
         break;
     case algorithm_mode::FAST_GREEDY :
@@ -91,7 +92,7 @@ int main(int argc, char **argv) {
         }
         break;
     case algorithm_mode::RAND_SRC :
-        link_rec.random_sources_per_one();
+        //link_rec.random_sources_per_one();
         link_rec.random_sources_all();
         break;
     default:

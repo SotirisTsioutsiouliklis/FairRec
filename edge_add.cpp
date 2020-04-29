@@ -422,12 +422,8 @@ void Edge_addition::random_edges(int exp, const double C, const double eps, cons
         // Sort vectors for difference.
         std::sort(all_nodes.begin(), all_nodes.end());
         std::sort(neighbors.begin(), neighbors.end());
-        //std::vector<int> difference;
-        std::set_difference(
-            all_nodes.begin(), all_nodes.end(),
-            neighbors.begin(), neighbors.end(),
-            std::back_inserter( no_neighbors )
-        );
+        // Get difference.
+        std::set_difference(all_nodes.begin(), all_nodes.end(), neighbors.begin(), neighbors.end(), std::back_inserter(no_neighbors));
         // Check if there are acceptable edges.
         if (no_neighbors.size() != 0) {
             // Get random target.
@@ -456,14 +452,14 @@ void Edge_addition::random_edges(int exp, const double C, const double eps, cons
 
 void Edge_addition::random_sources_per_one(const double C, const double eps, const int max_iter) {
     // Declare local variables.
-    pagerank_v objective_val, rank_vector;
-    std::vector<int> neighbors, source_nodes;
+    pagerank_v objective_val, rank_vector, init_red_abs_prob, init_src_abs_prob;
+    std::vector<int> neighbors, source_nodes, init_src_nei;
     std::vector<edge> new_edges;
     std::vector<step_log> log_vec;
     pagerank_s target_node;
     edge new_edge;
     step_log log_point;
-    double red_pagerank;
+    double red_pagerank, init_red_pagerank, init_source_pagerank;
     int s_out_degree, src_node, max_edges;
     int wanted_target = n_target;
     bool is_source;
@@ -503,10 +499,17 @@ void Edge_addition::random_sources_per_one(const double C, const double eps, con
         // Renew log point.
         log_point.red_pagerank = red_pagerank;
         log_point.red_pagerank_prediction = red_pagerank;
+        log_point.red_pagerank_generalized_prediction = red_pagerank;
         // Store to log vector.
         log_vec.push_back(log_point);
         // Get source node id.
         src_node = source_nodes[s_node];
+        // Keep infos for generalized prediction.
+        init_red_pagerank = red_pagerank;
+        init_red_abs_prob = algs.get_red_abs_prob(C, eps, max_iter);
+        init_source_pagerank = rank_vector[src_node].pagerank;
+        init_src_abs_prob = algs.get_node_abs_prob(src_node, C, eps, max_iter);
+        init_src_nei = g.get_out_neighbors(src_node);
         // Print Source node.
         std::cout << "---------------------------------------\n";
         std::cout << "Source node: " << src_node << std::endl;
@@ -556,6 +559,8 @@ void Edge_addition::random_sources_per_one(const double C, const double eps, con
             // Renew log point.
             log_point.red_pagerank = red_pagerank;
             log_point.red_pagerank_prediction = target_node.pagerank;
+            log_point.red_pagerank_generalized_prediction = get_generalized_objective_val(init_red_pagerank, init_source_pagerank, init_red_abs_prob,
+                init_src_abs_prob, init_src_nei, new_edges);
             // Store to log vector.
             log_vec.push_back(log_point);
         }
@@ -564,7 +569,7 @@ void Edge_addition::random_sources_per_one(const double C, const double eps, con
             g.remove_edge(i->source, i->destination);
         }
         // Save per node logs.
-        save_logs_per_node("random_source_per_one", s_node, log_vec);
+        save_logs_per_node("random_source", src_node, log_vec);
     }
 
 }
@@ -615,8 +620,6 @@ void Edge_addition::random_sources_all(const double C, const double eps, const i
 
     // For each Source nodes.
     for (int s_node = 0; s_node < n_source; s_node++) {
-        // Zeroing new edges list.
-        new_edges.clear();
         // Get source node id.
         src_node = source_nodes[s_node];
         // Print Source node.
