@@ -17,7 +17,8 @@ Edge_addition::Edge_addition(graph &g, pagerank_algorithms &algs, int n_source, 
 void Edge_addition::greedy_per_one(const double C, const double eps, const int max_iter) {
     // Declare local variables.
     pagerank_v objective_val, rank_vector, source_nodes, init_red_abs_prob, init_src_abs_prob;
-    std::vector<int> neighbors, init_src_nei;
+    std::vector<int> neighbors, init_src_nei, int_src;
+    std::vector<double> impact(g.get_num_nodes(), 0);
     std::vector<edge> new_edges;
     std::vector<step_log> log_vec;
     pagerank_s target_node;
@@ -32,7 +33,11 @@ void Edge_addition::greedy_per_one(const double C, const double eps, const int m
 
     // Get source nodes.
     source_nodes = get_best_source_nodes(n_source, C, eps, max_iter);
-
+    // Save source nodes.
+    for (int i = 0; i < n_source; i++) {
+        int_src.push_back(source_nodes[i].node_id);
+    }
+    save_source_nodes("greedy_per_one", int_src);
     // For each Source nodes.
     for (int s_node = 0; s_node < n_source; s_node++) {
         // Zeroing new edges list.
@@ -51,6 +56,7 @@ void Edge_addition::greedy_per_one(const double C, const double eps, const int m
         log_vec.push_back(log_point);
         // Get source node id.
         src_node = source_nodes[s_node].node_id;
+        impact[src_node] = red_pagerank;
         // Keep infos for generalized prediction.
         init_red_pagerank = red_pagerank;
         init_red_abs_prob = algs.get_red_abs_prob(C, eps, max_iter);
@@ -103,6 +109,10 @@ void Edge_addition::greedy_per_one(const double C, const double eps, const int m
             rank_vector = algs.get_pagerank(C, eps, max_iter);
             // Get Red pagerank.
             red_pagerank = g.get_pagerank_per_community(rank_vector)[1];
+            // Renew Impact.
+            if (red_pagerank > impact[src_node]) {
+                impact[src_node] = red_pagerank;
+            }
             // Renew log point.
             log_point.red_pagerank = red_pagerank;
             log_point.red_pagerank_prediction = target_node.pagerank;
@@ -118,13 +128,15 @@ void Edge_addition::greedy_per_one(const double C, const double eps, const int m
         // Save per node logs.
         save_logs_per_node("greedy", src_node, log_vec);
     }
+    // Save impact.
+    save_impact(impact);
     
 }
 
 void Edge_addition::greedy_all(const double C, const double eps, const int max_iter) {
     // Declare local variables.
     pagerank_v objective_val, rank_vector, source_nodes;
-    std::vector<int> neighbors;
+    std::vector<int> neighbors, int_src;
     std::vector<step_log> log_vec;
     pagerank_s target_node;
     step_log log_point;
@@ -137,6 +149,11 @@ void Edge_addition::greedy_all(const double C, const double eps, const int max_i
 
     // Get source nodes.
     source_nodes = get_best_source_nodes(n_source, C, eps, max_iter);
+    // Save source nodes.
+    for (int i = 0; i < n_source; i++) {
+        int_src.push_back(source_nodes[i].node_id);
+    }
+    save_source_nodes("greedy", int_src);
     // Get pagerank.
     rank_vector = algs.get_pagerank(C, eps, max_iter);
     // Get Red pagerank.
@@ -209,7 +226,7 @@ void Edge_addition::greedy_all(const double C, const double eps, const int max_i
 void Edge_addition::fast_greedy_per_one(const double C, const double eps, const int max_iter) {
     // Declare local variables.
     pagerank_v objective_val, rank_vector, source_nodes;
-    std::vector<int> neighbors;
+    std::vector<int> neighbors, int_src;
     std::vector<edge> new_edges;
     std::vector<step_log> log_vec;
     pagerank_s target_node;
@@ -224,6 +241,11 @@ void Edge_addition::fast_greedy_per_one(const double C, const double eps, const 
 
     // Get source nodes.
     source_nodes = get_best_source_nodes(n_source, C, eps, max_iter);
+    // Save source nodes.
+    for (int i = 0; i < n_source; i++) {
+        int_src.push_back(source_nodes[i].node_id);
+    }
+    save_source_nodes("fast_greedy_per_one",int_src);
 
     // For each Source nodes.
     for (int s_node = 0; s_node < n_source; s_node++) {
@@ -306,7 +328,7 @@ void Edge_addition::fast_greedy_per_one(const double C, const double eps, const 
 void Edge_addition::fast_greedy_all(const double C, const double eps, const int max_iter) {
     // Declare local variables.
     pagerank_v objective_val, objective_val_init, rank_vector, source_nodes;
-    std::vector<int> neighbors;
+    std::vector<int> neighbors, int_src;
     std::vector<edge> new_edges;
     std::vector<step_log> log_vec;
     pagerank_s target_node;
@@ -320,6 +342,11 @@ void Edge_addition::fast_greedy_all(const double C, const double eps, const int 
 
     // Get source nodes.
     source_nodes = get_best_source_nodes(n_source, C, eps, max_iter);
+    // Save source nodes.
+    for (int i = 0; i < n_source; i++) {
+        int_src.push_back(source_nodes[i].node_id);
+    }
+    save_source_nodes("fast_greedy", int_src);
     // Get pagerank.
     rank_vector = algs.get_pagerank(C, eps, max_iter);
     // Get Red pagerank.
@@ -454,6 +481,7 @@ void Edge_addition::random_sources_per_one(const double C, const double eps, con
     // Declare local variables.
     pagerank_v objective_val, rank_vector, init_red_abs_prob, init_src_abs_prob;
     std::vector<int> neighbors, source_nodes, init_src_nei;
+    std::vector<double> impact(g.get_num_nodes(), 0);
     std::vector<edge> new_edges;
     std::vector<step_log> log_vec;
     pagerank_s target_node;
@@ -485,6 +513,8 @@ void Edge_addition::random_sources_per_one(const double C, const double eps, con
         // Add node to sources.
         source_nodes[i] = src_node;
     }
+    // Save source nodes.
+    save_source_nodes("random_source_per_one", source_nodes);
 
     // For each Source nodes.
     for (int s_node = 0; s_node < n_source; s_node++) {
@@ -504,6 +534,7 @@ void Edge_addition::random_sources_per_one(const double C, const double eps, con
         log_vec.push_back(log_point);
         // Get source node id.
         src_node = source_nodes[s_node];
+        impact[src_node] = red_pagerank;
         // Keep infos for generalized prediction.
         init_red_pagerank = red_pagerank;
         init_red_abs_prob = algs.get_red_abs_prob(C, eps, max_iter);
@@ -556,6 +587,8 @@ void Edge_addition::random_sources_per_one(const double C, const double eps, con
             rank_vector = algs.get_pagerank(C, eps, max_iter);
             // Get Red pagerank.
             red_pagerank = g.get_pagerank_per_community(rank_vector)[1];
+            // Renew Impact.
+            if (red_pagerank > impact[src_node]) impact[src_node] = red_pagerank;
             // Renew log point.
             log_point.red_pagerank = red_pagerank;
             log_point.red_pagerank_prediction = target_node.pagerank;
@@ -571,6 +604,8 @@ void Edge_addition::random_sources_per_one(const double C, const double eps, con
         // Save per node logs.
         save_logs_per_node("random_source", src_node, log_vec);
     }
+    // Save impact.
+    save_impact(impact);
 
 }
 
@@ -608,6 +643,8 @@ void Edge_addition::random_sources_all(const double C, const double eps, const i
         // Add node to sources.
         source_nodes[i] = src_node;
     }
+    // Save source nodes.
+    save_source_nodes("random_source", source_nodes);
     // Get pagerank.
     rank_vector = algs.get_pagerank(C, eps, max_iter);
     // Get Red pagerank.
@@ -887,4 +924,31 @@ void Edge_addition::save_logs_per_node(std::string algo_name, int src_node, std:
 
     // Close file.
     log_file.close();
+}
+
+// Save Source Nodes.
+void Edge_addition::save_source_nodes(std::string algo_name, std::vector<int> sources) {
+    // Declare Variables
+    int n_src = sources.size();
+    std::ofstream log_file(algo_name + "_source_nodes.txt");
+    // Write nodes.
+    for (int i = 0; i < n_src; i++) {
+        log_file << sources[i] << "\n";
+    }
+    // Close file.
+    log_file.close();
+}
+
+// Save impact.
+void Edge_addition::save_impact(std::vector<double> impact_v) {
+    // Declare Variables.
+    int nnodes = g.get_num_nodes();
+    std::ofstream my_file("impact.txt");
+    // Write impact.
+    std::cout << impact_v[50] <<std::endl;
+    for (int i = 0; i < nnodes; i++) {
+        my_file << impact_v[i] << "\n";
+    }
+    // Close file.
+    my_file.close();
 }

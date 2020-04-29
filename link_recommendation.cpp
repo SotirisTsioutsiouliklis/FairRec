@@ -65,7 +65,6 @@ int main(int argc, char **argv) {
     algorithm_mode algo_mode;
     int n_source = 1;
     int n_target = 1;
-
     if (!get_options(argc, argv, algo_mode, n_source, n_target)) return 1;
 
     // Init graph and algorithms.
@@ -79,7 +78,7 @@ int main(int argc, char **argv) {
     switch (algo_mode)
     {
     case algorithm_mode::GREEDY :
-        //link_rec.greedy_per_one();
+        link_rec.greedy_per_one();
         link_rec.greedy_all();
         break;
     case algorithm_mode::FAST_GREEDY :
@@ -92,7 +91,7 @@ int main(int argc, char **argv) {
         }
         break;
     case algorithm_mode::RAND_SRC :
-        //link_rec.random_sources_per_one();
+        link_rec.random_sources_per_one();
         link_rec.random_sources_all();
         break;
     default:
