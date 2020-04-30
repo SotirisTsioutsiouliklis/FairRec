@@ -13,7 +13,7 @@
 
 
 static bool get_options(const int argc, char ** const argv, algorithm_mode &algo_mode, int &n_source, int &n_target) {
-    if (argc != 6) goto error;
+    if (argc != 6 && argc != 2) goto error;
     if (!std::strcmp(argv[1], "-gd") && !std::strcmp(argv[2], "-s") && !std::strcmp(argv[4], "-t")) {
         algo_mode = algorithm_mode::GREEDY;
         n_source = std::atoi(argv[3]);
@@ -44,6 +44,12 @@ static bool get_options(const int argc, char ** const argv, algorithm_mode &algo
         n_source = std::atoi(argv[3]);
         n_target = std::atoi(argv[5]);
 
+    } else if (!std::strcmp(argv[1], "-otag")) {
+        algo_mode = algorithm_mode::ONE_TO_ALL_G;
+    } else if (!std::strcmp(argv[1], "-otar")) {
+        algo_mode = algorithm_mode::ONE_TO_ALL_R;
+    } else if (!std::strcmp(argv[1], "-otafg")) {
+        algo_mode = algorithm_mode::ONE_TO_ALL_FG;
     } else {
         goto error;
     }
@@ -56,7 +62,8 @@ error:
 		"-fgd -s <number of source nodes> -t <number of target nodes>\t\t\t Fast Greedy\n"
 		"-apx -s <number of source nodes> -t <number of target nodes>\t\t\t  Approximation\n"
 		"-fapx -s <number of source nodes> -t <number of target nodes>\t\t\t Fast Approximation\n"
-		"-rsrc -s <number of source nodes> -t <number of target nodes>\t\t\t Random Source nodes" << std::endl;
+		"-rsrc -s <number of source nodes> -t <number of target nodes>\t\t\t Random Source nodes\n"
+		"-ota \t\t\t One to All" << std::endl;
 	return false;
 }
 
@@ -93,6 +100,15 @@ int main(int argc, char **argv) {
     case algorithm_mode::RAND_SRC :
         link_rec.random_sources_per_one();
         link_rec.random_sources_all();
+        break;
+    case algorithm_mode::ONE_TO_ALL_G :
+        link_rec.one_to_all_greedy();
+        break;
+    case algorithm_mode::ONE_TO_ALL_FG :
+        link_rec.one_to_all_fast_greedy();
+        break;
+    case algorithm_mode::ONE_TO_ALL_R :
+        link_rec.one_to_all_random();
         break;
     default:
         std::cout << "Not supported yet\n";

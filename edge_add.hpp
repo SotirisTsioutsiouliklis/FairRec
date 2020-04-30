@@ -15,7 +15,7 @@ struct edge {
     int destination;
 };
 
-enum class algorithm_mode {GREEDY, FAST_GREEDY, APPROX, FAST_APPROX, RANDOM, RAND_SRC};
+enum class algorithm_mode {GREEDY, FAST_GREEDY, APPROX, FAST_APPROX, RANDOM, RAND_SRC, ONE_TO_ALL_G, ONE_TO_ALL_FG, ONE_TO_ALL_R};
 
 class Edge_addition {
     public:
@@ -27,7 +27,11 @@ class Edge_addition {
         void random_edges(int exp, const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void random_sources_per_one(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void random_sources_all(const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        void one_to_all(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        // Every edge I calculate again.
+        void one_to_all_greedy(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        // All conections are Calculated in the beginning.
+        void one_to_all_fast_greedy(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        void one_to_all_random(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         //void approx();
         //void fast_approx();
         void save_logs(std::string algo_name, std::vector<step_log> log_vec);
@@ -42,6 +46,7 @@ class Edge_addition {
             std::vector<int> init_src_nei, std::vector<edge> new_edges);
         // Save Source Nodes.
         void save_source_nodes(std::string algo_name, std::vector<int> sources);
+        void save_target_nodes(std::string algo_name, std::vector<int> sources);
         // Save impact.
         void save_impact(std::vector<double> impact_v);
 
