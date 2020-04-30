@@ -820,7 +820,7 @@ pagerank_v Edge_addition::get_objective_val(int s_node, const double C, const do
     return objective_val;
 }
 
-void Edge_addition::one_to_all(const double C=0.85, const double eps=1e-4, const int max_iter=100) {
+void Edge_addition::one_to_all(const double C, const double eps, const int max_iter) {
     // Declare local variables.
     pagerank_v objective_val, rank_vector, source_nodes;
     std::vector<int> neighbors, int_src;
@@ -828,7 +828,7 @@ void Edge_addition::one_to_all(const double C=0.85, const double eps=1e-4, const
     pagerank_s target_node;
     step_log log_point;
     double red_pagerank;
-    int s_out_degree, src_node, max_edges;
+    int s_out_degree;
 
     // Get number of nodes.
     const int nnodes = g.get_num_nodes();
