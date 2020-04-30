@@ -888,7 +888,7 @@ void Edge_addition::one_to_all(const double C, const double eps, const int max_i
         }   
     }
     // Save log vector.
-    save_logs("greedy_all", log_vec);
+    save_logs("one_to_all", log_vec);
 }
 
 double Edge_addition::get_generalized_objective_val(double init_red_pagerank, double init_source_pagerank, pagerank_v init_red_abs_prob, pagerank_v init_src_abs_prob,
