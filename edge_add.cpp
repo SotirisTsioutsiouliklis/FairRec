@@ -936,6 +936,48 @@ void Edge_addition::one_to_all_random(const double C, const double eps, const in
     save_target_nodes("otar", target_nodes);
 }
 
+void Edge_addition::source_and_targets(const double C, const double eps, const int max_iter) {
+    // Declare Variables.
+    pagerank_v rank_vector;
+    int src_node;
+    int nnodes = g.get_num_nodes();
+    bool is_sourc;
+    std::vector<int> src_nodes(n_source);
+    std::vector<double> s_impact_1(n_source), s_impact_10(n_source), s_impact_max(n_source);
+    std::vector<double> t_impact(n_target);
+    double red_pgrnk, src_red_pgrnk, node_red_pgrnk;
+
+    // Get random source nodes.
+    for (int i = 0; i < n_source; i++) {
+        do {
+            // Get random int from 0 to nnodes - 1.
+            src_node = (rand() % nnodes);
+            // Check if already exists.
+            if (std::find(src_nodes.begin(), src_nodes.end(), src_node) != src_nodes.end()) {
+                is_source = true;
+            } else {
+                is_source = false;
+            }
+        } while (is_source);
+        // Add node to sources.
+        src_nodes[i] = src_node;
+    }
+    // For each source node.
+    for (src_node = 0; src_node < n_source; src_node++) {
+        // Clear log vector.
+        t_impact.clear();
+        // Get pagerank.
+        rank_vector = algs.get_pagerank();
+        // Get red pagerank.
+        src_red_pgrnk = g.get_pagerank_per_community(rank_vector)[1];
+        s_impact.push_back(0);
+        // For each edge.
+
+    }
+
+}
+
+
 // Help Functions.
 pagerank_v Edge_addition::get_best_source_nodes(int n, const double C, const double eps, const int max_iter) {
     // Declare local variables.
