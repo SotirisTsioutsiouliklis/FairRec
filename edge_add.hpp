@@ -15,7 +15,7 @@ struct edge {
     int destination;
 };
 
-enum class algorithm_mode {GREEDY, FAST_GREEDY, APPROX, FAST_APPROX, RANDOM, RAND_SRC, ONE_TO_ALL_G, ONE_TO_ALL_FG, ONE_TO_ALL_R};
+enum class algorithm_mode {GREEDY, FAST_GREEDY, APPROX, FAST_APPROX, RANDOM, RAND_SRC, ONE_TO_ALL_G, ONE_TO_ALL_FG, ONE_TO_ALL_R, SRC_ST, TAR_ST};
 
 class Edge_addition {
     public:
@@ -32,7 +32,8 @@ class Edge_addition {
         // All conections are Calculated in the beginning.
         void one_to_all_fast_greedy(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void one_to_all_random(const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        void source_and_targets(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        void source_stats(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        void targets_stats(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         //void approx();
         //void fast_approx();
         void save_logs(std::string algo_name, std::vector<step_log> log_vec);
@@ -49,13 +50,17 @@ class Edge_addition {
         void save_source_nodes(std::string algo_name, std::vector<int> sources);
         void save_target_nodes(std::string algo_name, std::vector<int> sources);
         // Save impact.
-        void save_impact(std::vector<double> impact_v);
+        void save_impact(std::string name, std::vector<double> impact_v);
+        // Save edge list.
+        void save_edge_list(std::vector<edge> edges);
 
         graph &g;
         pagerank_algorithms &algs;
 
         double jump_prob = 0.15;
         int n_source, n_target; // Number of source, target nodes.
+
+        std::vector<int> source_nodes;
 };
 
 #endif /* _EDGE_ADD_HPP */

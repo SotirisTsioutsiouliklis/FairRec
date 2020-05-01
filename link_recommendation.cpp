@@ -50,6 +50,14 @@ static bool get_options(const int argc, char ** const argv, algorithm_mode &algo
         algo_mode = algorithm_mode::ONE_TO_ALL_R;
     } else if (!std::strcmp(argv[1], "-otafg")) {
         algo_mode = algorithm_mode::ONE_TO_ALL_FG;
+    } else if (!std::strcmp(argv[1], "-srcst") && !std::strcmp(argv[2], "-s") && !std::strcmp(argv[4], "-t")) {
+        algo_mode = algorithm_mode::SRC_ST;
+        n_source = std::atoi(argv[3]);
+        n_target = std::atoi(argv[5]);
+    } else if (!std::strcmp(argv[1], "-tarst") && !std::strcmp(argv[2], "-s") && !std::strcmp(argv[4], "-t")) {
+        algo_mode = algorithm_mode::TAR_ST;
+        n_source = std::atoi(argv[3]);
+        n_target = std::atoi(argv[5]);
     } else {
         goto error;
     }
@@ -63,6 +71,8 @@ error:
 		"-apx -s <number of source nodes> -t <number of target nodes>\t\t\t  Approximation\n"
 		"-fapx -s <number of source nodes> -t <number of target nodes>\t\t\t Fast Approximation\n"
 		"-rsrc -s <number of source nodes> -t <number of target nodes>\t\t\t Random Source nodes\n"
+		"-srcst -s <number of source nodes> -t <number of target nodes>\t\t\t Sources Statistics\n"
+		"-tarst -s <number of source nodes> -t <number of target nodes>\t\t\t Target Statistics\n"
 		"-ota \t\t\t One to All" << std::endl;
 	return false;
 }
@@ -109,6 +119,13 @@ int main(int argc, char **argv) {
         break;
     case algorithm_mode::ONE_TO_ALL_R :
         link_rec.one_to_all_random();
+        break;
+    case algorithm_mode::SRC_ST :
+        link_rec.source_stats();
+        link_rec.targets_stats();
+        break;
+    case algorithm_mode::TAR_ST :
+        link_rec.targets_stats();
         break;
     default:
         std::cout << "Not supported yet\n";
