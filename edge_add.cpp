@@ -497,6 +497,7 @@ pagerank_v Edge_addition::get_objective_val(int s_node, const double C, const do
     pagerank_v objective_val, rank_vector, red_absorbing_probs, source_absorbing_probs;
     std::vector<int> neighbors;
     double red_pagerank, nominator_const, denominator_const, obj_nominator, obj_denominator;
+    double jump_prob = 1 - C;
     int s_out_degree, neighbor;
     const int nnodes = g.get_num_nodes();
     objective_val.resize(nnodes);
@@ -572,6 +573,7 @@ double Edge_addition::get_gen_objective_val(double init_red_pagerank, double ini
     int s_out_degree = init_src_nei.size();
     int n_new_edges = new_edges.size();
     int nnodes = g.get_num_nodes();
+    double jump_prob = 1 - C;
 
     // Probably useless.
     if (n_new_edges <= 0) {
