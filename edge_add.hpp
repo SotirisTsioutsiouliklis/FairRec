@@ -45,9 +45,6 @@ enum class log_kind {NONE, PER_EDGE, PER_SOURCE, ALL_EDGES};
 
 class Edge_addition {
     public:
-        /**
-         *
-        */
         // Constractor.   
         Edge_addition(graph &g, pagerank_algorithms &algs, int n_source = 10, int n_target = 100);
         // Source heuristics.
