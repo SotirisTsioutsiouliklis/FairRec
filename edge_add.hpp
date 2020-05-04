@@ -15,29 +15,46 @@ struct edge {
     int destination;
 };
 
-enum class algorithm_mode {RND_E, RND_ST, RND_S_GRD_T, GRD_S_RND_T, GRD_ST};
-// CRITERION ONE: keep 2* best by pagerank, keep 1* best by blue abs prob.
-// CRITERION TWO: 
+/**
+ * Greedy: Calculates criterion after every edge addition.
+ * Approximation one: Calculates criterion one time in the beginning. 
+ */
+enum class algorithm_mode {GREEDY, APPROX_ONE};
+/**
+ * Criterion one: Get 2*n best by pagerank. Keep those with the 
+ *  biggest blue absorbing probability.
+ */
 enum class source_criterion {RANDOM, CRITERION_ONE};
-enum class target_criterion {RANDOM, PREDICTION, GENERILIZED_PREDICTION};
-enum class edge_criterion {RANDOM, CRITERION_ONE};
+/**
+ * Step prediction: Calculate the maximum gain from the formula
+ *  of the theory for only one edge addition.
+ */
+enum class target_criterion {RANDOM, STEP_PREDICTION};
+/**
+ * Criterion one: Create a score for each edge which is source pagerank
+ *  destination red absorbing probability. Select the one with the
+ *  greater score.
+ */ 
+enum class edge_criterion {RANDOM, CRITERION_ONE, CRITERION_TWO};
 enum class prediction_kind {NONE, STEP, GENERILIZED};
 enum class log_kind {NONE, PER_EDGE, PER_SOURCE, ALL_EDGES};
 
 class Edge_addition {
     public:
+        /**
+         *
+        */
         Edge_addition(graph &g, pagerank_algorithms &algs, int n_source = 10, int n_target = 100);
-        void greedy(const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        void greedy_per_source(const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        void greedy_all_sources(const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        void add_edges(int exp, const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        void add_edges_per_one(int exp, const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        void add_edges_all(int exp, const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        // Every edge I calculate again.
-        void one_to_all_greedy(const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        // All conections are Calculated in the beginning.
-        void one_to_all_fast_greedy(const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        void one_to_all_random(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        // Source heuristics.
+        void source_heuristic(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        void source_heuristic_per_one(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        void source_heuristic_per_source(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        void source_heuristic_all_sources(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        // Edge heuristics.
+        void edge_heuristic(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        void edge_heuristic_per_one(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        void edge_heuristic_all(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        //
         void source_stats(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void targets_stats(const double C=0.85, const double eps=1e-4, const int max_iter=100);
     
