@@ -18,11 +18,11 @@ struct edge {
 enum class algorithm_mode {RND_E, RND_ST, RND_S_GRD_T, GRD_S_RND_T, GRD_ST};
 // CRITERION ONE: keep 2* best by pagerank, keep 1* best by blue abs prob.
 // CRITERION TWO: 
-enum class source_criterion {RANDOM, CRITERION_ONE, CRITERION_TWO};
+enum class source_criterion {RANDOM, CRITERION_ONE};
 enum class target_criterion {RANDOM, PREDICTION, GENERILIZED_PREDICTION};
 enum class edge_criterion {RANDOM, CRITERION_ONE};
 enum class prediction_kind {NONE, STEP, GENERILIZED};
-enum class log_kind {NONE, PER_EDGE, PER_SOURCE, ALL_SOURCES};
+enum class log_kind {NONE, PER_EDGE, PER_SOURCE, ALL_EDGES};
 
 class Edge_addition {
     public:
@@ -30,11 +30,9 @@ class Edge_addition {
         void greedy(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void greedy_per_source(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void greedy_all_sources(const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        void fast_greedy_per_one(const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        void fast_greedy_all(const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        void random_edges(int exp, const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        void random_sources_per_one(const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        void random_sources_all(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        void add_edges(int exp, const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        void add_edges_per_one(int exp, const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        void add_edges_all(int exp, const double C=0.85, const double eps=1e-4, const int max_iter=100);
         // Every edge I calculate again.
         void one_to_all_greedy(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         // All conections are Calculated in the beginning.
@@ -79,7 +77,7 @@ class Edge_addition {
         pagerank_algorithms &algs;
 
         double jump_prob = 0.15;
-        int n_source, n_target; // Number of source, target nodes.
+        int n_source, n_target, n_edges; // Number of source, target nodes, edges.
         source_criterion s_criterion;
         target_criterion t_criterion;
         edge_criterion e_criterion;
