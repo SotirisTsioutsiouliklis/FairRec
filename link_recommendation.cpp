@@ -18,46 +18,6 @@ static bool get_options(const int argc, char ** const argv, algorithm_mode &algo
         algo_mode = algorithm_mode::GREEDY;
         n_source = std::atoi(argv[3]);
         n_target = std::atoi(argv[5]);
-
-    } else if (!std::strcmp(argv[1], "-fgd") && !std::strcmp(argv[2], "-s") && !std::strcmp(argv[4], "-t")) {
-        algo_mode = algorithm_mode::FAST_GREEDY;
-        n_source = std::atoi(argv[3]);
-        n_target = std::atoi(argv[5]);
-
-    } else if (!std::strcmp(argv[1], "-apx") && !std::strcmp(argv[2], "-s") && !std::strcmp(argv[4], "-t")) {
-        algo_mode = algorithm_mode::APPROX;
-        n_source = std::atoi(argv[3]);
-        n_target = std::atoi(argv[5]);
-
-    } else if (!std::strcmp(argv[1], "-fapx") && !std::strcmp(argv[2], "-s") && !std::strcmp(argv[4], "-t")) {
-        algo_mode = algorithm_mode::FAST_APPROX;
-        n_source = std::atoi(argv[3]);
-        n_target = std::atoi(argv[5]);
-
-    } else if (!std::strcmp(argv[1], "-rnd") && !std::strcmp(argv[2], "-s") && !std::strcmp(argv[4], "-t")) {
-        algo_mode = algorithm_mode::RANDOM;
-        n_source = std::atoi(argv[3]);
-        n_target = std::atoi(argv[5]);
-
-    } else if (!std::strcmp(argv[1], "-rsrc") && !std::strcmp(argv[2], "-s") && !std::strcmp(argv[4], "-t")) {
-        algo_mode = algorithm_mode::RAND_SRC;
-        n_source = std::atoi(argv[3]);
-        n_target = std::atoi(argv[5]);
-
-    } else if (!std::strcmp(argv[1], "-otag")) {
-        algo_mode = algorithm_mode::ONE_TO_ALL_G;
-    } else if (!std::strcmp(argv[1], "-otar")) {
-        algo_mode = algorithm_mode::ONE_TO_ALL_R;
-    } else if (!std::strcmp(argv[1], "-otafg")) {
-        algo_mode = algorithm_mode::ONE_TO_ALL_FG;
-    } else if (!std::strcmp(argv[1], "-srcst") && !std::strcmp(argv[2], "-s") && !std::strcmp(argv[4], "-t")) {
-        algo_mode = algorithm_mode::SRC_ST;
-        n_source = std::atoi(argv[3]);
-        n_target = std::atoi(argv[5]);
-    } else if (!std::strcmp(argv[1], "-tarst") && !std::strcmp(argv[2], "-s") && !std::strcmp(argv[4], "-t")) {
-        algo_mode = algorithm_mode::TAR_ST;
-        n_source = std::atoi(argv[3]);
-        n_target = std::atoi(argv[5]);
     } else {
         goto error;
     }
@@ -91,7 +51,7 @@ int main(int argc, char **argv) {
 
     // Precision testing.
     //check_precision_effect(link_rec);
-    
+    /*
     switch (algo_mode)
     {
     case algorithm_mode::GREEDY :
@@ -131,4 +91,6 @@ int main(int argc, char **argv) {
         std::cout << "Not supported yet\n";
         return 1;
     }
+    */
+   std::cout << "oal kala?? \n";
 }

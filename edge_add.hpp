@@ -31,9 +31,13 @@ enum class source_criterion {RANDOM, CRITERION_ONE};
  */
 enum class target_criterion {RANDOM, STEP_PREDICTION};
 /**
- * Criterion one: Create a score for each edge which is source pagerank
+ * Criterion one - two: Create a score for each edge which is source pagerank
  *  destination red absorbing probability. Select the one with the
  *  greater score.
+ * Criterion one: Product of pagerank source with target's red absorbing
+ *  probability
+ * Criterion one: Sum of pagerank source with target's red absorbing
+ *  probability
  */ 
 enum class edge_criterion {RANDOM, CRITERION_ONE, CRITERION_TWO};
 enum class prediction_kind {NONE, STEP, GENERILIZED};
@@ -54,23 +58,21 @@ class Edge_addition {
         void edge_heuristic(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void edge_heuristic_per_one(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void edge_heuristic_all(const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        //
-        void source_stats(const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        void targets_stats(const double C=0.85, const double eps=1e-4, const int max_iter=100);
     
     private:
         // Get source nodes.
         std::vector<int> get_source_nodes(int n = 10, const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        std::vector<int> get_source_nodes_random(int n = 10, const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        std::vector<int> get_source_nodes_random(int n = 10);
         std::vector<int> get_source_nodes_one(int n = 10, const double C=0.85, const double eps=1e-4, const int max_iter=100);
         // Get target nodes.
-        std::vector<int> get_target_nodes(int s_node, int no_targets);
-        std::vector<int> get_target_nodes_random(int s_node, int no_targets);
-        std::vector<int> get_target_nodes_pred(int s_node, int no_targets);
+        pagerank_v get_target_nodes(int s_node, unsigned int no_targets);
+        pagerank_v get_target_nodes_random(int s_node, unsigned int no_targets);
+        pagerank_v get_target_nodes_pred(int s_node, unsigned int no_targets);
         // Get random edges.
-        std::vector<edge> get_edges(int no_edges);
+        std::vector<edge> get_edges(int no_edges, const double C=0.85, const double eps=1e-4, const int max_iter=100);
         std::vector<edge> get_edges_random(int no_edges);
-        std::vector<edge> get_edges_one(int no_edges);
+        std::vector<edge> get_edges_one(int no_edges, const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        std::vector<edge> get_edges_two(int no_edges, const double C=0.85, const double eps=1e-4, const int max_iter=100);
         // Remove new edges.
         void remove_new_edges(std::vector<edge> &new_edges);
         // std::vector<int> get_target_nodes_gen_pred(int s_node, int no_targets); Needs approximation it can't work greedy!!!
