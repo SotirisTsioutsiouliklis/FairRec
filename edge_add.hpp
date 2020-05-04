@@ -20,14 +20,16 @@ enum class algorithm_mode {RND_E, RND_ST, RND_S_GRD_T, GRD_S_RND_T, GRD_ST};
 // CRITERION TWO: 
 enum class source_criterion {RANDOM, CRITERION_ONE, CRITERION_TWO};
 enum class target_criterion {RANDOM, PREDICTION, GENERILIZED_PREDICTION};
+enum class edge_criterion {RANDOM, CRITERION_ONE};
 enum class prediction_kind {NONE, STEP, GENERILIZED};
 enum class log_kind {NONE, PER_EDGE, PER_SOURCE, ALL_SOURCES};
 
 class Edge_addition {
     public:
         Edge_addition(graph &g, pagerank_algorithms &algs, int n_source = 10, int n_target = 100);
-        void greedy_per_one(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void greedy(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        void greedy_per_source(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        void greedy_all_sources(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void fast_greedy_per_one(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void fast_greedy_all(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void random_edges(int exp, const double C=0.85, const double eps=1e-4, const int max_iter=100);
@@ -46,13 +48,16 @@ class Edge_addition {
         std::vector<int> get_source_nodes(int n = 10, const double C=0.85, const double eps=1e-4, const int max_iter=100);
         std::vector<int> get_source_nodes_random(int n = 10, const double C=0.85, const double eps=1e-4, const int max_iter=100);
         std::vector<int> get_source_nodes_one(int n = 10, const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        std::vector<int> get_source_nodes_two(int n = 10, const double C=0.85, const double eps=1e-4, const int max_iter=100);
         // Get target nodes.
         std::vector<int> get_target_nodes(int s_node, int no_targets);
         std::vector<int> get_target_nodes_random(int s_node, int no_targets);
         std::vector<int> get_target_nodes_pred(int s_node, int no_targets);
         // Get random edges.
+        std::vector<edge> get_edges(int no_edges);
         std::vector<edge> get_edges_random(int no_edges);
+        std::vector<edge> get_edges_one(int no_edges);
+        // Remove new edges.
+        void remove_new_edges(std::vector<edge> &new_edges);
         // std::vector<int> get_target_nodes_gen_pred(int s_node, int no_targets); Needs approximation it can't work greedy!!!
         // Returns n_target or max number of of possible edges to add to a source node if n_target >.
         int get_valide_no_edges(int s_node);
@@ -77,6 +82,7 @@ class Edge_addition {
         int n_source, n_target; // Number of source, target nodes.
         source_criterion s_criterion;
         target_criterion t_criterion;
+        edge_criterion e_criterion;
         prediction_kind p_kind = prediction_kind::NONE;
         log_kind l_kind = log_kind::NONE;
 };
