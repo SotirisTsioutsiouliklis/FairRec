@@ -19,7 +19,7 @@ struct edge {
  * Greedy: Calculates criterion after every edge addition.
  * Approximation one: Calculates criterion one time in the beginning. 
  */
-enum class algorithm_mode {GREEDY, APPROX_ONE};
+// enum class algorithm_mode {GREEDY, APPROX_ONE};
 /**
  * Criterion one: Get 2*n best by pagerank. Keep those with the 
  *  biggest blue absorbing probability.
@@ -46,11 +46,17 @@ enum class log_kind {NONE, PER_EDGE, PER_SOURCE, ALL_EDGES};
 class Edge_addition {
     public:
         // Constractor.   
-        Edge_addition(graph &g, pagerank_algorithms &algs, int n_source = 10, int n_target = 100);
+        Edge_addition(graph &g, pagerank_algorithms &algs, int n_source = 10, int n_target = 100, int n_edges = 1000);
         // Source heuristics.
         void source_heuristic(const double C=0.85, const double eps=1e-4, const int max_iter=100);   
         // Edge heuristics.
-        void edge_heuristic(const double C=0.85, const double eps=1e-4, const int max_iter=100);  
+        void edge_heuristic(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        // Setters.
+        void set_criterion(source_criterion s_crit);
+        void set_criterion(target_criterion t_crit);
+        void set_criterion(edge_criterion e_crit);
+        void set_criterion(prediction_kind p_crit);
+        void set_criterion(log_kind l_crit);
     private:
         // Source heuristics.
         void source_heuristic_per_one(const double C=0.85, const double eps=1e-4, const int max_iter=100);
@@ -64,9 +70,9 @@ class Edge_addition {
         std::vector<int> get_source_nodes_random(int n = 10);
         std::vector<int> get_source_nodes_one(int n = 10, const double C=0.85, const double eps=1e-4, const int max_iter=100);
         // Get target nodes.
-        pagerank_v get_target_nodes(int s_node, unsigned int no_targets);
-        pagerank_v get_target_nodes_random(int s_node, unsigned int no_targets);
-        pagerank_v get_target_nodes_pred(int s_node, unsigned int no_targets);
+        pagerank_v get_target_nodes(int s_node, int no_targets);
+        pagerank_v get_target_nodes_random(int s_node, int no_targets);
+        pagerank_v get_target_nodes_pred(int s_node, int no_targets);
         // Get random edges.
         std::vector<edge> get_edges(int no_edges, const double C=0.85, const double eps=1e-4, const int max_iter=100);
         std::vector<edge> get_edges_random(int no_edges);
@@ -86,8 +92,7 @@ class Edge_addition {
         void add_log_point(std::vector<step_log> &log_vec, double red_pagerank = 0, double prediction = 0, double gen_prediction = 0);
         // Return values of Objective function.
         pagerank_v get_objective_val(int s_node, const double C=0.85, const double eps=1e-4, const int max_iter=100);
-        double get_gen_objective_val(double init_red_pagerank, double init_source_pagerank, pagerank_v init_red_abs_prob, pagerank_v init_src_abs_prob,
-            std::vector<int> init_src_nei, std::vector<edge> new_edges);
+        double get_gen_objective_val(int s_node, std::vector<edge> new_edges,  const double C=0.85);
 
         graph &g;
         pagerank_algorithms &algs;
@@ -95,8 +100,8 @@ class Edge_addition {
         source_criterion s_criterion;
         target_criterion t_criterion;
         edge_criterion e_criterion;
-        prediction_kind p_kind = prediction_kind::NONE;
-        log_kind l_kind = log_kind::NONE;
+        prediction_kind p_kind;
+        log_kind l_kind;
 };
 
 #endif /* _EDGE_ADD_HPP */
