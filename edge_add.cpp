@@ -255,8 +255,7 @@ std::vector<int> Edge_addition::get_source_nodes_random(int n) {
     int s_node;
     bool is_source;
     int no_nodes = g.get_num_nodes();
-    // Init seed.
-    srand(time(NULL));
+
     // Get random source nodes.
     for (int i = 0; i < n; i++) {
         do {
@@ -327,8 +326,6 @@ pagerank_v Edge_addition::get_target_nodes_random(int s_node, int no_targets) {
     std::vector<int> neighbors, all_nodes, no_neighbors;
     pagerank_v t_nodes(no_targets);
     int no_nodes = g.get_num_nodes();
-    // Init seed.
-    srand(time(NULL));
 
     // Init all_nodes.
     for (int i = 0; i < no_nodes; i++) {

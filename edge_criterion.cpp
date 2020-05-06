@@ -15,6 +15,8 @@
 
 int main () {
     // Declare variables.
+    // Init seed.
+    srand(time(NULL));
     // algorithm_mode algo_mode;
     source_criterion s_criterion;
     target_criterion t_criterion;
