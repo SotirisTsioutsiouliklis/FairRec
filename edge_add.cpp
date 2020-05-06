@@ -416,7 +416,8 @@ std::vector<edge> Edge_addition::get_edges_random(int no_edges) {
         if (no_valide_edges > 0) {
             // Get random target.
             new_edge.destination = get_target_nodes(new_edge.source, 1)[0].node_id;
-            if (std::find(new_edges.begin(), new_edges.end(), new_edge)) {
+            // if new already exists in new edges.
+            if (std::find(new_edges.begin(), new_edges.end(), new_edge) != new_edges.end()) {
                 i--;
             } else {
                 new_edges.push_back(new_edge);
