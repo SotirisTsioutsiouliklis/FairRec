@@ -204,6 +204,8 @@ void Edge_addition::edge_heuristic_all(const double C, const double eps, const i
         save_vector("out_one_edges.txt", new_edges);
     } else if (e_criterion == edge_criterion::SUM) {
         save_vector("out_two_edges.txt", new_edges);
+    } else if (e_criterion == edge_criterion::FORMULA) {
+        save_vector("out_three_edges.txt", new_edges);
     } else {
         std::cout << "Not supported edge criterion!\n";
         exit(0);
@@ -229,6 +231,8 @@ void Edge_addition::edge_heuristic_all(const double C, const double eps, const i
         save_vector("out_one_edges_all.txt", log_vec);
     } else if (e_criterion == edge_criterion::SUM) {
         save_vector("out_two_edges_all.txt", log_vec);
+    } else if (e_criterion == edge_criterion::FORMULA) {
+        save_vector("out_three_edges_all.txt", log_vec);
     } else {
         std::cout << "Not supported edge criterion!\n";
         exit(0);
@@ -404,7 +408,7 @@ std::vector<edge> Edge_addition::get_edges(int no_edges, const double C, const d
 
 std::vector<edge> Edge_addition::get_edges_random(int no_edges) {
     std::cout << "Edges random\n";
-    std::vector<edge> new_edges;
+    std::vector<edge> new_edges, temp;
     edge new_edge;
     int no_valide_edges, j;
 
@@ -412,16 +416,14 @@ std::vector<edge> Edge_addition::get_edges_random(int no_edges) {
     for (int i = 0; i < no_edges; i++) {
         // Get random source from 0 to nnodes - 1.
         new_edge.source = get_source_nodes(1)[0];
+        std::cout << "edge\n";
+        std::cout << new_edge.source << " , ";
         no_valide_edges = get_valide_no_edges(new_edge.source);
         if (no_valide_edges > 0) {
             // Get random target.
             new_edge.destination = get_target_nodes(new_edge.source, 1)[0].node_id;
-            // if new already exists in new edges.
-            if (std::find(new_edges.begin(), new_edges.end(), new_edge) != new_edges.end()) {
-                i--;
-            } else {
-                new_edges.push_back(new_edge);
-            }
+            new_edges.push_back(new_edge);
+            g.add_edge(new_edge.source, new_edge.destination);
         } else {
             i--;
         }
@@ -431,8 +433,9 @@ std::vector<edge> Edge_addition::get_edges_random(int no_edges) {
             exit(0);
         }
     }
- 
-    save_vector("out_edges_random.txt", new_edges);   
+    temp = new_edges;
+    remove_new_edges(temp);
+    save_vector("out_edges_random.txt", new_edges);
     return new_edges;
 }
 
@@ -565,33 +568,26 @@ std::vector<edge> Edge_addition::get_edges_three(int no_edges, const double C, c
     std::vector<edge> new_edges;
     std::vector<int> s_neighbors;
     edge new_edge;
-    pagerank_v pagerank, red_abs_probs;
-    std::vector<double> obj_val(no_edges * no_edges, 0);
+    pagerank_v rank_vec, obj_vec;
     int row, b_row, b_col;
     double max;
-    bool is_nei;
-
-    // Get quantities.
-    pagerank = algs.get_pagerank(C, eps, max_iter);
-    algs.sort_pagerank_vector(pagerank);
-    pagerank.resize(no_edges);
-    red_abs_probs = algs.get_red_abs_prob(C, eps, max_iter);
-    algs.sort_pagerank_vector(red_abs_probs);
-    red_abs_probs.resize(no_edges);
+    int no_nodes = g.get_num_nodes();
 
     // Calculate criterion.
-    for (int i = 0; i < no_edges; i++) {
-        row = no_edges * i;
-        for (int j = 0; j < no_edges; j++) {
-            s_neighbors = g.get_out_neighbors(pagerank[i].node_id);
-            // If the edge already exist is true.
-            is_nei = (std::find(s_neighbors.begin(), s_neighbors.end(), red_abs_probs[j].node_id) == s_neighbors.end()) ? false : true;
-            if (is_nei) {
-                obj_val[row + j] = -1;
-            } else {
-                obj_val[row + j] = pagerank[i].pagerank + red_abs_probs[j].pagerank;
-            }
+    for (int i = 0; i < no_nodes; i++) {
+        // Get objective values for source node i.
+        rank_vec = get_objective_val(i, C, eps, max_iter);
+        // Remove neighbors.
+        s_neighbors = g.get_out_neighbors(i);
+        for (auto nei = s_neighbors.begin(); nei < s_neighbors.end(); nei++) {
+            rank_vec[*nei].pagerank = 0;
         }
+        // Sort them.
+        algs.sort_pagerank_vector(rank_vec);
+        // Keep no_edges best.
+        rank_vec.resize(no_edges);
+        // Add to objective vector.
+        obj_vec.insert(obj_vec.end(), rank_vec.begin(), rank_vec.end());
     }
 
     // Get edges.
@@ -600,27 +596,27 @@ std::vector<edge> Edge_addition::get_edges_three(int no_edges, const double C, c
         max = 0;
         b_row = 0;
         b_col = 0;
-        for (int i = 0; i < no_edges; i++) {
+        for (int i = 0; i < no_nodes; i++) {
             row = no_edges * i;
             for (int j = 0; j < no_edges; j++) {
-                if (max < obj_val[row + j]) {
-                    max = obj_val[row + j];
+                if (max < obj_vec[row + j].pagerank) {
+                    max = obj_vec[row + j].pagerank;
+                    new_edge.source = i;
                     b_row = row;
                     b_col = j;
-                    new_edge.source = pagerank[i].node_id;
-                    new_edge.destination = red_abs_probs[j].node_id;
+                    new_edge.destination = obj_vec[row + b_col].node_id;
                 }
             }
         }
         // Add it to new edges.
         new_edges.push_back(new_edge);
         // Remove it from next search.
-        obj_val[b_row + b_col] = 0;
+        obj_vec[b_row + b_col].pagerank = 0;
     }
 
     save_vector("out_edges_three.txt", new_edges);
     return new_edges;
-}
+} 
 
 // Remove new edges.
 void Edge_addition::remove_new_edges(std::vector<edge> &new_edges) {

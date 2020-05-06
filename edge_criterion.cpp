@@ -35,12 +35,12 @@ int main () {
      * greedy target selection, all log kind.
     */
     l_kind = log_kind::ALL_EDGES;
-    //s_criterion = source_criterion::CRITERION_ONE;
-    //t_criterion = target_criterion::STEP_PREDICTION;
+    s_criterion = source_criterion::CRITERION_ONE;
+    t_criterion = target_criterion::STEP_PREDICTION;
     link_rec.set_criterion(l_kind);
-    //link_rec.set_criterion(s_criterion);
-    //link_rec.set_criterion(t_criterion);
-    //link_rec.source_heuristic();
+    link_rec.set_criterion(s_criterion);
+    link_rec.set_criterion(t_criterion);
+    link_rec.source_heuristic();
     
     /** Run edge heuristic with criterion for edge selection
      * random, all log kind.
@@ -62,6 +62,12 @@ int main () {
      * , all log kind.
     */
     e_criterion = edge_criterion::SUM;
+    link_rec.set_criterion(e_criterion);
+    link_rec.edge_heuristic();
+    /** Run edge heuristic with criterion two for edge selection
+     * , all log kind.
+    */
+    e_criterion = edge_criterion::FORMULA;
     link_rec.set_criterion(e_criterion);
     link_rec.edge_heuristic();
 

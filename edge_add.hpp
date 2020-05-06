@@ -13,6 +13,10 @@ struct step_log {
 struct edge {
     int source;
     int destination;
+
+    //bool operator == (const edge &other) {
+      //  return (source = other.source && destination == other.destination);
+    //}
 };
 
 /**
