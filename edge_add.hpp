@@ -23,7 +23,7 @@ struct edge {
  * Greedy: Calculates criterion after every edge addition.
  * Approximation one: Calculates criterion one time in the beginning. 
  */
-// enum class algorithm_mode {GREEDY, APPROX_ONE};
+enum class algorithm_mode {GREEDY, APPROX_ONE};
 /**
  * Criterion one: Get 2*n best by pagerank. Keep those with the 
  *  biggest blue absorbing probability.
@@ -61,6 +61,7 @@ class Edge_addition {
         void set_criterion(edge_criterion e_crit);
         void set_criterion(prediction_kind p_crit);
         void set_criterion(log_kind l_crit);
+        void set_criterion(algorithm_mode a_md);
     private:
         // Source heuristics.
         void source_heuristic_per_one(const double C=0.85, const double eps=1e-4, const int max_iter=100);
@@ -69,6 +70,7 @@ class Edge_addition {
         // Edge heuristics.
         void edge_heuristic_per_one(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         void edge_heuristic_all(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        void edge_heuristic_all_greedy(const double C=0.85, const double eps=1e-4, const int max_iter=100);
         // Get source nodes.
         std::vector<int> get_source_nodes(int n = 10, const double C=0.85, const double eps=1e-4, const int max_iter=100);
         std::vector<int> get_source_nodes_random(int n = 10);
@@ -102,6 +104,7 @@ class Edge_addition {
         graph &g;
         pagerank_algorithms &algs;
         int n_source, n_target, n_edges; // Number of source, target nodes, edges.
+        algorithm_mode a_mode;
         source_criterion s_criterion;
         target_criterion t_criterion;
         edge_criterion e_criterion;

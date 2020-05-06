@@ -139,7 +139,11 @@ void Edge_addition::source_heuristic_all_sources(const double C, const double ep
 void Edge_addition::edge_heuristic(const double C, const double eps, const int max_iter) {
     std::cout << "Edge heuristic\n";
     if (l_kind == log_kind::ALL_EDGES) {
-        edge_heuristic_all(C, eps, max_iter);
+        if (a_mode == algorithm_mode::APPROX_ONE) {
+            edge_heuristic_all(C, eps, max_iter);
+        } else if (a_mode == algorithm_mode::GREEDY) {
+            edge_heuristic_all_greedy(C, eps, max_iter);
+        }
     } else if (l_kind == log_kind::PER_SOURCE) {
         edge_heuristic_per_one(C, eps, max_iter);
     }
@@ -233,6 +237,65 @@ void Edge_addition::edge_heuristic_all(const double C, const double eps, const i
         save_vector("out_two_edges_all.txt", log_vec);
     } else if (e_criterion == edge_criterion::FORMULA) {
         save_vector("out_three_edges_all.txt", log_vec);
+    } else {
+        std::cout << "Not supported edge criterion!\n";
+        exit(0);
+    }
+    
+}
+
+void Edge_addition::edge_heuristic_all_greedy(const double C, const double eps, const int max_iter) {
+    // Declare local variables.
+    pagerank_v rank_vector;
+    std::vector<int> s_nodes;
+    std::vector<step_log> log_vec;
+    edge new_edge;
+    std::vector<edge> new_edges;
+    double red_pagerank;
+
+    // Init seed.
+    srand(time(NULL));
+    // Get pagerank.
+    rank_vector = algs.get_pagerank(C, eps, max_iter);
+    // Get Red pagerank.
+    red_pagerank = g.get_pagerank_per_community(rank_vector)[1];
+    // Add log point to log vector.
+    add_log_point(log_vec, red_pagerank);
+    
+    // Add edges.
+    int k = 0;
+    //std::cout << "size-------------: " << new_edges.size();
+    for (int i = 0; i < n_edges; i++) {
+        std::cout << ++k << " edge\n";
+        new_edge = get_edges(1)[0];
+        g.add_edge(new_edge.source, new_edge.destination);
+        new_edges.push_back(new_edge);
+        // Get pagerank.
+        rank_vector = algs.get_pagerank(C, eps, max_iter);
+        // Get Red pagerank.
+        red_pagerank = g.get_pagerank_per_community(rank_vector)[1];
+        // Add log point to log vector.
+        add_log_point(log_vec, red_pagerank);
+    }
+    // Save edges.
+    if (e_criterion == edge_criterion::PRODUCT) {
+        save_vector("out_one_greedy_edges.txt", new_edges);
+    } else if (e_criterion == edge_criterion::SUM) {
+        save_vector("out_two_greedy_edges.txt", new_edges);
+    } else if (e_criterion == edge_criterion::FORMULA) {
+        save_vector("out_three_greedy_edges.txt", new_edges);
+    } else {
+        std::cout << "Not supported edge criterion!\n";
+        exit(0);
+    }
+    // Remove new edges.
+    remove_new_edges(new_edges);
+    if (e_criterion == edge_criterion::PRODUCT) {
+        save_vector("out_one_greedy_edges_all.txt", log_vec);
+    } else if (e_criterion == edge_criterion::SUM) {
+        save_vector("out_two_greedy_edges_all.txt", log_vec);
+    } else if (e_criterion == edge_criterion::FORMULA) {
+        save_vector("out_three_greedy_edges_all.txt", log_vec);
     } else {
         std::cout << "Not supported edge criterion!\n";
         exit(0);
@@ -889,4 +952,8 @@ void Edge_addition::set_criterion(prediction_kind p_crit) {
 
 void Edge_addition::set_criterion(log_kind l_crit) {
     l_kind = l_crit;
+}
+
+void Edge_addition::set_criterion(algorithm_mode a_md) {
+    a_mode = a_md;
 }

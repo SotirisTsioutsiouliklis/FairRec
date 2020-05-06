@@ -21,10 +21,11 @@ int main () {
     source_criterion s_criterion;
     target_criterion t_criterion;
     edge_criterion e_criterion;
+    algorithm_mode a_mode;
     log_kind l_kind;
-    int n_source = 10;
-    int n_target = 30;
-    int n_edges = 300;
+    int n_source = 100;
+    int n_target = 1000;
+    int n_edges = 10000;
 
     // Init graph and algorithms.
     graph g("out_graph.txt", "out_community.txt");
@@ -35,12 +36,12 @@ int main () {
      * greedy target selection, all log kind.
     */
     l_kind = log_kind::ALL_EDGES;
-    s_criterion = source_criterion::CRITERION_ONE;
-    t_criterion = target_criterion::STEP_PREDICTION;
+    //s_criterion = source_criterion::CRITERION_ONE;
+    //t_criterion = target_criterion::STEP_PREDICTION;
     link_rec.set_criterion(l_kind);
-    link_rec.set_criterion(s_criterion);
-    link_rec.set_criterion(t_criterion);
-    link_rec.source_heuristic();
+    //link_rec.set_criterion(s_criterion);
+    //link_rec.set_criterion(t_criterion);
+    //link_rec.source_heuristic();
     
     /** Run edge heuristic with criterion for edge selection
      * random, all log kind.
@@ -48,9 +49,11 @@ int main () {
     s_criterion = source_criterion::RANDOM;
     t_criterion = target_criterion::RANDOM;
     e_criterion = edge_criterion::RANDOM;
+    a_mode = algorithm_mode::APPROX_ONE;
     link_rec.set_criterion(s_criterion);
     link_rec.set_criterion(t_criterion);
     link_rec.set_criterion(e_criterion);
+    link_rec.set_criterion(a_mode);
     link_rec.edge_heuristic();
     /** Run edge heuristic with criterion one for edge selection
      * , all log kind.
@@ -70,5 +73,13 @@ int main () {
     e_criterion = edge_criterion::FORMULA;
     link_rec.set_criterion(e_criterion);
     link_rec.edge_heuristic();
+    /** Run edge heuristic with criterion two for edge selection
+     * , all log kind.
+    */
+    //a_mode = algorithm_mode::GREEDY;
+    //link_rec.set_criterion(a_mode);
+    //e_criterion = edge_criterion::FORMULA;
+    //link_rec.set_criterion(e_criterion);
+    //link_rec.edge_heuristic();
 
 }
