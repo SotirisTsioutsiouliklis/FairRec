@@ -327,6 +327,8 @@ pagerank_v Edge_addition::get_target_nodes_random(int s_node, int no_targets) {
     std::vector<int> neighbors, all_nodes, no_neighbors;
     pagerank_v t_nodes(no_targets);
     int no_nodes = g.get_num_nodes();
+    // Init seed.
+    srand(time(NULL));
 
     // Init all_nodes.
     for (int i = 0; i < no_nodes; i++) {
@@ -417,6 +419,7 @@ std::vector<edge> Edge_addition::get_edges_random(int no_edges) {
         if (no_valide_edges > 0) {
             // Get random target.
             new_edge.destination = get_target_nodes(new_edge.source, 1)[0].node_id;
+            std::cout << "---------------->" << new_edge.source << " | " << new_edge.destination << std::endl;
             new_edges.push_back(new_edge);
         } else {
             i--;
@@ -493,8 +496,6 @@ std::vector<edge> Edge_addition::get_edges_one(int no_edges, const double C, con
     save_vector("out_edges_one.txt", new_edges);
     return new_edges;
 }
-
-
 
 std::vector<edge> Edge_addition::get_edges_two(int no_edges, const double C, const double eps, const int max_iter) {
     std::cout << "Edges two\n";
