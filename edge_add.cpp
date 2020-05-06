@@ -198,6 +198,16 @@ void Edge_addition::edge_heuristic_all(const double C, const double eps, const i
     
     // Get edges.
     new_edges = get_edges(n_edges);
+    if (e_criterion == edge_criterion::RANDOM) {
+        save_vector("out_random_edges.txt", new_edges);
+    } else if (e_criterion == edge_criterion::PRODUCT) {
+        save_vector("out_one_edges.txt", new_edges);
+    } else if (e_criterion == edge_criterion::SUM) {
+        save_vector("out_two_edges.txt", new_edges);
+    } else {
+        std::cout << "Not supported edge criterion!\n";
+        exit(0);
+    }
     // Add edges.
     int k = 0;
     //std::cout << "size-------------: " << new_edges.size();
@@ -215,9 +225,9 @@ void Edge_addition::edge_heuristic_all(const double C, const double eps, const i
     remove_new_edges(new_edges);
     if (e_criterion == edge_criterion::RANDOM) {
         save_vector("out_random_edges_all.txt", log_vec);
-    } else if (e_criterion == edge_criterion::CRITERION_ONE) {
+    } else if (e_criterion == edge_criterion::PRODUCT) {
         save_vector("out_one_edges_all.txt", log_vec);
-    } else if (e_criterion == edge_criterion::CRITERION_TWO) {
+    } else if (e_criterion == edge_criterion::SUM) {
         save_vector("out_two_edges_all.txt", log_vec);
     } else {
         std::cout << "Not supported edge criterion!\n";
@@ -381,10 +391,12 @@ pagerank_v Edge_addition::get_target_nodes_pred(int s_node, int no_targets) {
 std::vector<edge> Edge_addition::get_edges(int no_edges, const double C, const double eps, const int max_iter) {
     if (e_criterion == edge_criterion::RANDOM) {
         return get_edges_random(no_edges);
-    } else if (e_criterion == edge_criterion::CRITERION_ONE) {
+    } else if (e_criterion == edge_criterion::PRODUCT) {
         return get_edges_one(no_edges, C, eps, max_iter);
-    } else if (e_criterion == edge_criterion::CRITERION_TWO) {
+    } else if (e_criterion == edge_criterion::SUM) {
         return get_edges_two(no_edges, C, eps, max_iter);
+    } else if (e_criterion == edge_criterion::FORMULA) {
+        return get_edges_three(no_edges, C, eps, max_iter);
     } else {
         std::cout << "Edge criterion not supported!\n";
         exit(0);
@@ -423,11 +435,13 @@ std::vector<edge> Edge_addition::get_edges_random(int no_edges) {
 std::vector<edge> Edge_addition::get_edges_one(int no_edges, const double C, const double eps, const int max_iter) {
     std::cout << "Edges one\n";
     std::vector<edge> new_edges;
+    std::vector<int> s_neighbors;
     edge new_edge;
     pagerank_v pagerank, red_abs_probs;
     std::vector<double> obj_val(no_edges * no_edges, 0);
     int row, b_row, b_col;
     double max;
+    bool is_nei;
 
     // Get quantities.
     pagerank = algs.get_pagerank(C, eps, max_iter);
@@ -441,9 +455,17 @@ std::vector<edge> Edge_addition::get_edges_one(int no_edges, const double C, con
     for (int i = 0; i < no_edges; i++) {
         row = no_edges * i;
         for (int j = 0; j < no_edges; j++) {
-            obj_val[row + j] = pagerank[i].pagerank * red_abs_probs[j].pagerank;
+            s_neighbors = g.get_out_neighbors(pagerank[i].node_id);
+            // If the edge already exist is true.
+            is_nei = (std::find(s_neighbors.begin(), s_neighbors.end(), red_abs_probs[j].node_id) == s_neighbors.end()) ? false : true;
+            if (is_nei) {
+                obj_val[row + j] = -1;
+            } else {
+                obj_val[row + j] = pagerank[i].pagerank * red_abs_probs[j].pagerank;
+            }
         }
     }
+
     // Get edges.
     for (int e = 0; e < no_edges; e++) {
         // Find best edge.
@@ -465,7 +487,6 @@ std::vector<edge> Edge_addition::get_edges_one(int no_edges, const double C, con
         // Add it to new edges.
         new_edges.push_back(new_edge);
         // Remove it from next search.
-        row = new_edge.source * no_edges;
         obj_val[b_row + b_col] = 0;
     }
 
@@ -473,14 +494,18 @@ std::vector<edge> Edge_addition::get_edges_one(int no_edges, const double C, con
     return new_edges;
 }
 
+
+
 std::vector<edge> Edge_addition::get_edges_two(int no_edges, const double C, const double eps, const int max_iter) {
     std::cout << "Edges two\n";
     std::vector<edge> new_edges;
+    std::vector<int> s_neighbors;
     edge new_edge;
     pagerank_v pagerank, red_abs_probs;
     std::vector<double> obj_val(no_edges * no_edges, 0);
     int row, b_row, b_col;
     double max;
+    bool is_nei;
 
     // Get quantities.
     pagerank = algs.get_pagerank(C, eps, max_iter);
@@ -494,9 +519,17 @@ std::vector<edge> Edge_addition::get_edges_two(int no_edges, const double C, con
     for (int i = 0; i < no_edges; i++) {
         row = no_edges * i;
         for (int j = 0; j < no_edges; j++) {
-            obj_val[row + j] = pagerank[i].pagerank + red_abs_probs[j].pagerank;
+            s_neighbors = g.get_out_neighbors(pagerank[i].node_id);
+            // If the edge already exist is true.
+            is_nei = (std::find(s_neighbors.begin(), s_neighbors.end(), red_abs_probs[j].node_id) == s_neighbors.end()) ? false : true;
+            if (is_nei) {
+                obj_val[row + j] = -1;
+            } else {
+                obj_val[row + j] = pagerank[i].pagerank + red_abs_probs[j].pagerank;
+            }
         }
     }
+
     // Get edges.
     for (int e = 0; e < no_edges; e++) {
         // Find best edge.
@@ -518,11 +551,72 @@ std::vector<edge> Edge_addition::get_edges_two(int no_edges, const double C, con
         // Add it to new edges.
         new_edges.push_back(new_edge);
         // Remove it from next search.
-        row = new_edge.source * no_edges;
         obj_val[b_row + b_col] = 0;
     }
 
     save_vector("out_edges_two.txt", new_edges);
+    return new_edges;
+}
+
+std::vector<edge> Edge_addition::get_edges_three(int no_edges, const double C, const double eps, const int max_iter) {
+    std::cout << "Edges three\n";
+    std::vector<edge> new_edges;
+    std::vector<int> s_neighbors;
+    edge new_edge;
+    pagerank_v pagerank, red_abs_probs;
+    std::vector<double> obj_val(no_edges * no_edges, 0);
+    int row, b_row, b_col;
+    double max;
+    bool is_nei;
+
+    // Get quantities.
+    pagerank = algs.get_pagerank(C, eps, max_iter);
+    algs.sort_pagerank_vector(pagerank);
+    pagerank.resize(no_edges);
+    red_abs_probs = algs.get_red_abs_prob(C, eps, max_iter);
+    algs.sort_pagerank_vector(red_abs_probs);
+    red_abs_probs.resize(no_edges);
+
+    // Calculate criterion.
+    for (int i = 0; i < no_edges; i++) {
+        row = no_edges * i;
+        for (int j = 0; j < no_edges; j++) {
+            s_neighbors = g.get_out_neighbors(pagerank[i].node_id);
+            // If the edge already exist is true.
+            is_nei = (std::find(s_neighbors.begin(), s_neighbors.end(), red_abs_probs[j].node_id) == s_neighbors.end()) ? false : true;
+            if (is_nei) {
+                obj_val[row + j] = -1;
+            } else {
+                obj_val[row + j] = pagerank[i].pagerank + red_abs_probs[j].pagerank;
+            }
+        }
+    }
+
+    // Get edges.
+    for (int e = 0; e < no_edges; e++) {
+        // Find best edge.
+        max = 0;
+        b_row = 0;
+        b_col = 0;
+        for (int i = 0; i < no_edges; i++) {
+            row = no_edges * i;
+            for (int j = 0; j < no_edges; j++) {
+                if (max < obj_val[row + j]) {
+                    max = obj_val[row + j];
+                    b_row = row;
+                    b_col = j;
+                    new_edge.source = pagerank[i].node_id;
+                    new_edge.destination = red_abs_probs[j].node_id;
+                }
+            }
+        }
+        // Add it to new edges.
+        new_edges.push_back(new_edge);
+        // Remove it from next search.
+        obj_val[b_row + b_col] = 0;
+    }
+
+    save_vector("out_edges_three.txt", new_edges);
     return new_edges;
 }
 
