@@ -520,6 +520,8 @@ std::vector<edge> Edge_addition::get_edges_one(int no_edges, const double C, con
     red_abs_probs = algs.get_red_abs_prob(C, eps, max_iter);
     algs.sort_pagerank_vector(red_abs_probs);
     red_abs_probs.resize(no_edges);
+    save_vector("out_top_by_pagerank.txt", pagerank);
+    save_vector("out_top_by_redabsprobs.txt", red_abs_probs);
 
     // Calculate criterion.
     for (int i = 0; i < no_edges; i++) {
