@@ -34,7 +34,7 @@ typedef struct {
 	int attribute_id;
 } attribute_t;
 
-typedef struct pagerank_s {
+typedef struct pagerank_s {	
 	int node_id;
 	double pagerank;
 
