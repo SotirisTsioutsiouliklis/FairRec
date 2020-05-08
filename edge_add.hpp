@@ -13,6 +13,8 @@ struct step_log {
 struct edge {
     int source;
     int destination;
+    int s_outd;
+    double s_score_1, s_score_2, t_score, e_score;
 
     //bool operator == (const edge &other) {
       //  return (source = other.source && destination == other.destination);
@@ -43,7 +45,7 @@ enum class target_criterion {RANDOM, STEP_PREDICTION};
  * Criterion one: Sum of pagerank source with target's red absorbing
  *  probability
  */ 
-enum class edge_criterion {RANDOM, PRODUCT, SUM, FORMULA};
+enum class edge_criterion {RANDOM, PRODUCT, SUM, FORMULA, WEIGHTED_PRODUCT};
 enum class prediction_kind {NONE, STEP, GENERILIZED};
 enum class log_kind {NONE, PER_EDGE, PER_SOURCE, ALL_EDGES};
 
@@ -85,6 +87,7 @@ class Edge_addition {
         std::vector<edge> get_edges_one(int no_edges, const double C=0.85, const double eps=1e-4, const int max_iter=100);
         std::vector<edge> get_edges_two(int no_edges, const double C=0.85, const double eps=1e-4, const int max_iter=100);
         std::vector<edge> get_edges_three(int no_edges, const double C=0.85, const double eps=1e-4, const int max_iter=100);
+        std::vector<edge> get_edges_four(int no_edges, const double C=0.85, const double eps=1e-4, const int max_iter=100);
         // Remove new edges.
         void remove_new_edges(std::vector<edge> &new_edges);
         // Get valide number of edges.

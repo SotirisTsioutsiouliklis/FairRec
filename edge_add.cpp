@@ -139,12 +139,16 @@ void Edge_addition::source_heuristic_all_sources(const double C, const double ep
 void Edge_addition::edge_heuristic(const double C, const double eps, const int max_iter) {
     std::cout << "Edge heuristic\n";
     if (l_kind == log_kind::ALL_EDGES) {
+        std::cout << "All Edges\n";
         if (a_mode == algorithm_mode::APPROX_ONE) {
+            std::cout << "Fast\n";
             edge_heuristic_all(C, eps, max_iter);
         } else if (a_mode == algorithm_mode::GREEDY) {
+            std::cout << "Greedy\n";
             edge_heuristic_all_greedy(C, eps, max_iter);
         }
     } else if (l_kind == log_kind::PER_SOURCE) {
+        std::cout << "Per One\n";
         edge_heuristic_per_one(C, eps, max_iter);
     }
 }
@@ -191,8 +195,6 @@ void Edge_addition::edge_heuristic_all(const double C, const double eps, const i
     std::vector<edge> new_edges;
     double red_pagerank;
 
-    // Init seed.
-    srand(time(NULL));
     // Get pagerank.
     rank_vector = algs.get_pagerank(C, eps, max_iter);
     // Get Red pagerank.
@@ -210,13 +212,14 @@ void Edge_addition::edge_heuristic_all(const double C, const double eps, const i
         save_vector("out_two_edges.txt", new_edges);
     } else if (e_criterion == edge_criterion::FORMULA) {
         save_vector("out_three_edges.txt", new_edges);
+    } else if (e_criterion == edge_criterion::WEIGHTED_PRODUCT) {
+        save_vector("out_four_edges.txt", new_edges);
     } else {
         std::cout << "Not supported edge criterion!\n";
         exit(0);
     }
     // Add edges.
     int k = 0;
-    //std::cout << "size-------------: " << new_edges.size();
     for (auto new_edge = new_edges.begin(); new_edge < new_edges.end(); new_edge++) {
         std::cout << ++k << " edge\n";
         g.add_edge(new_edge -> source, new_edge -> destination);
@@ -229,6 +232,7 @@ void Edge_addition::edge_heuristic_all(const double C, const double eps, const i
     }
     // Remove new edges.
     remove_new_edges(new_edges);
+    // Save logs.
     if (e_criterion == edge_criterion::RANDOM) {
         save_vector("out_random_edges_all.txt", log_vec);
     } else if (e_criterion == edge_criterion::PRODUCT) {
@@ -237,6 +241,8 @@ void Edge_addition::edge_heuristic_all(const double C, const double eps, const i
         save_vector("out_two_edges_all.txt", log_vec);
     } else if (e_criterion == edge_criterion::FORMULA) {
         save_vector("out_three_edges_all.txt", log_vec);
+    } else if (e_criterion == edge_criterion::WEIGHTED_PRODUCT) {
+        save_vector("out_four_edges_all.txt", log_vec);
     } else {
         std::cout << "Not supported edge criterion!\n";
         exit(0);
@@ -253,8 +259,6 @@ void Edge_addition::edge_heuristic_all_greedy(const double C, const double eps, 
     std::vector<edge> new_edges;
     double red_pagerank;
 
-    // Init seed.
-    srand(time(NULL));
     // Get pagerank.
     rank_vector = algs.get_pagerank(C, eps, max_iter);
     // Get Red pagerank.
@@ -264,7 +268,6 @@ void Edge_addition::edge_heuristic_all_greedy(const double C, const double eps, 
     
     // Add edges.
     int k = 0;
-    //std::cout << "size-------------: " << new_edges.size();
     for (int i = 0; i < n_edges; i++) {
         std::cout << ++k << " edge\n";
         new_edge = get_edges(1)[0];
@@ -290,6 +293,7 @@ void Edge_addition::edge_heuristic_all_greedy(const double C, const double eps, 
     }
     // Remove new edges.
     remove_new_edges(new_edges);
+    // Save logs.
     if (e_criterion == edge_criterion::PRODUCT) {
         save_vector("out_one_greedy_edges_all.txt", log_vec);
     } else if (e_criterion == edge_criterion::SUM) {
@@ -463,6 +467,8 @@ std::vector<edge> Edge_addition::get_edges(int no_edges, const double C, const d
         return get_edges_two(no_edges, C, eps, max_iter);
     } else if (e_criterion == edge_criterion::FORMULA) {
         return get_edges_three(no_edges, C, eps, max_iter);
+    } else if (e_criterion == edge_criterion::WEIGHTED_PRODUCT) {
+        return get_edges_four(no_edges, C, eps, max_iter);
     } else {
         std::cout << "Edge criterion not supported!\n";
         exit(0);
@@ -511,17 +517,20 @@ std::vector<edge> Edge_addition::get_edges_one(int no_edges, const double C, con
     std::vector<double> obj_val(no_edges * no_edges, 0);
     int row, b_row, b_col;
     double max;
-    bool is_nei;
+    bool is_nei, gets_imrove;
 
     // Get quantities.
     pagerank = algs.get_pagerank(C, eps, max_iter);
     algs.sort_pagerank_vector(pagerank);
-    pagerank.resize(no_edges);
+    //pagerank.resize(no_edges);
     red_abs_probs = algs.get_red_abs_prob(C, eps, max_iter);
+
     algs.sort_pagerank_vector(red_abs_probs);
-    red_abs_probs.resize(no_edges);
+    //red_abs_probs.resize(no_edges);
     save_vector("out_top_by_pagerank.txt", pagerank);
     save_vector("out_top_by_redabsprobs.txt", red_abs_probs);
+
+    // Calcu
 
     // Calculate criterion.
     for (int i = 0; i < no_edges; i++) {
@@ -553,6 +562,11 @@ std::vector<edge> Edge_addition::get_edges_one(int no_edges, const double C, con
                     b_col = j;
                     new_edge.source = pagerank[i].node_id;
                     new_edge.destination = red_abs_probs[j].node_id;
+                    new_edge.s_outd = g.get_out_degree(new_edge.source);
+                    new_edge.s_score_1 = pagerank[i].pagerank;
+                    new_edge.s_score_2 = s_red_p[new_edge.source].pagerank;
+                    new_edge.t_score = red_abs_probs[j].pagerank;
+                    new_edge.e_score = max;
                 }
             }
         }
@@ -582,8 +596,14 @@ std::vector<edge> Edge_addition::get_edges_two(int no_edges, const double C, con
     algs.sort_pagerank_vector(pagerank);
     pagerank.resize(no_edges);
     red_abs_probs = algs.get_red_abs_prob(C, eps, max_iter);
+
+    // Need only for logs. Remove sometime.
+    pagerank_v s_red_p = red_abs_probs;
+
     algs.sort_pagerank_vector(red_abs_probs);
     red_abs_probs.resize(no_edges);
+    save_vector("out_top_by_pagerank.txt", pagerank);
+    save_vector("out_top_by_redabsprobs.txt", red_abs_probs);
 
     // Calculate criterion.
     for (int i = 0; i < no_edges; i++) {
@@ -615,6 +635,11 @@ std::vector<edge> Edge_addition::get_edges_two(int no_edges, const double C, con
                     b_col = j;
                     new_edge.source = pagerank[i].node_id;
                     new_edge.destination = red_abs_probs[j].node_id;
+                    new_edge.s_outd = g.get_out_degree(new_edge.source);
+                    new_edge.s_score_1 = pagerank[i].pagerank;
+                    new_edge.s_score_2 = s_red_p[new_edge.source].pagerank;
+                    new_edge.t_score = red_abs_probs[j].pagerank;
+                    new_edge.e_score = max;
                 }
             }
         }
@@ -638,6 +663,10 @@ std::vector<edge> Edge_addition::get_edges_three(int no_edges, const double C, c
     double max;
     int no_nodes = g.get_num_nodes();
 
+    // Needed only for logs. Remove sometime.
+    pagerank_v pagerank = algs.get_pagerank();
+    pagerank_v red_abs_probs = algs.get_red_abs_prob();
+
     // Calculate criterion.
     for (int i = 0; i < no_nodes; i++) {
         // Get objective values for source node i.
@@ -647,6 +676,8 @@ std::vector<edge> Edge_addition::get_edges_three(int no_edges, const double C, c
         for (auto nei = s_neighbors.begin(); nei < s_neighbors.end(); nei++) {
             rank_vec[*nei].pagerank = 0;
         }
+        // Remove Self.
+        rank_vec[i].pagerank = 0;
         // Sort them.
         algs.sort_pagerank_vector(rank_vec);
         // Keep no_edges best.
@@ -670,9 +701,15 @@ std::vector<edge> Edge_addition::get_edges_three(int no_edges, const double C, c
                     b_row = row;
                     b_col = j;
                     new_edge.destination = obj_vec[row + b_col].node_id;
+                    new_edge.s_score_1 = pagerank[i].pagerank / g.get_out_degree(i);
+                    new_edge.s_score_2 = red_abs_probs[i].pagerank;
+                    new_edge.t_score = red_abs_probs[new_edge.destination].pagerank;
+                    new_edge.s_outd = g.get_out_degree(new_edge.source);
+                    new_edge.e_score = max;
                 }
             }
         }
+        
         // Add it to new edges.
         new_edges.push_back(new_edge);
         // Remove it from next search.
@@ -682,6 +719,85 @@ std::vector<edge> Edge_addition::get_edges_three(int no_edges, const double C, c
     save_vector("out_edges_three.txt", new_edges);
     return new_edges;
 } 
+
+std::vector<edge> Edge_addition::get_edges_four(int no_edges, const double C, const double eps, const int max_iter) {
+    std::cout << "Edges four\n";
+    std::vector<edge> new_edges;
+    std::vector<int> s_neighbors, s_out_degree;
+    edge new_edge;
+    pagerank_v pagerank, red_abs_probs;
+    int row, b_row, b_col;
+    double max;
+    bool is_nei;
+    int no_nodes = g.get_num_nodes();
+    std::vector<double> obj_val(no_nodes * no_edges, 0);
+
+    // Get quantities.
+    pagerank = algs.get_pagerank(C, eps, max_iter);
+    red_abs_probs = algs.get_red_abs_prob(C, eps, max_iter);
+    s_out_degree.resize(no_nodes);
+    for (int i = 0; i < no_nodes; i++) {
+        s_out_degree[i] = g.get_out_degree(i);
+    }
+
+    // Need only for logs. Remove sometime.
+    pagerank_v s_red_p = red_abs_probs;
+
+    algs.sort_pagerank_vector(red_abs_probs);
+    red_abs_probs.resize(no_edges);
+
+    // Calculate criterion.
+    for (int i = 0; i < no_nodes; i++) {
+        row = no_edges * i;
+        for (int j = 0; j < no_edges; j++) {
+            s_neighbors = g.get_out_neighbors(pagerank[i].node_id);
+            // If the edge already exist is true.
+            is_nei = (std::find(s_neighbors.begin(), s_neighbors.end(), red_abs_probs[j].node_id) == s_neighbors.end()) ? false : true;
+            if (is_nei) {
+                obj_val[row + j] = -1;
+            } else {
+                obj_val[row + j] = (pagerank[i].pagerank / (float)(s_out_degree[i] + 1)) * red_abs_probs[j].pagerank;
+            }
+        }
+    }
+
+    // Get edges.
+    for (int e = 0; e < no_edges; e++) {
+        // Find best edge.
+        max = 0;
+        b_row = 0;
+        b_col = 0;
+        for (int i = 0; i < no_nodes; i++) {
+            row = no_edges * i;
+            for (int j = 0; j < no_edges; j++) {
+                if (max < obj_val[row + j]) {
+                    max = obj_val[row + j];
+                    b_row = row;
+                    b_col = j;
+                    new_edge.source = pagerank[i].node_id;
+                    new_edge.destination = red_abs_probs[j].node_id;
+                    new_edge.s_outd = g.get_out_degree(new_edge.source);
+                    new_edge.s_score_1 = pagerank[i].pagerank;
+                    new_edge.s_score_2 = s_red_p[new_edge.source].pagerank;
+                    new_edge.t_score = red_abs_probs[j].pagerank;
+                    new_edge.e_score = max;
+                }
+            }
+        }
+        // Add it to new edges.
+        new_edges.push_back(new_edge);
+        // Remove it from next search.
+        obj_val[b_row + b_col] = 0;
+        // Renew criterion.
+        s_out_degree[new_edge.source]++;
+        for (int j = 0; j < no_edges; j++) {
+            obj_val[b_row +j] *= (pagerank[new_edge.source].pagerank / (float)(s_out_degree[new_edge.source] + 1)) * red_abs_probs[j].pagerank;
+        }
+    }
+
+    save_vector("out_edges_four.txt", new_edges);
+    return new_edges;
+}
 
 // Remove new edges.
 void Edge_addition::remove_new_edges(std::vector<edge> &new_edges) {
@@ -903,9 +1019,11 @@ void Edge_addition::save_vector(std::string file_name, std::vector<double> &s_ve
 
 void Edge_addition::save_vector(std::string file_name, std::vector<edge> &s_vector) {
     std::ofstream edge_file(file_name);
+    edge_file << "Source\tTarget\tSource_score_1\tSource_score_2\tTarget_score\tEdge_Score\tSource_out_d\n";
     int n = s_vector.size();
     for (int i = 0; i < n; i++) {
-        edge_file << s_vector[i].source << "\t" << s_vector[i].destination << "\n";
+        edge_file << s_vector[i].source << "\t" << s_vector[i].destination << "\t" << s_vector[i].s_score_1 << "\t" << s_vector[i].s_score_2 << "\t" << s_vector[i].t_score << "\t" <<
+         s_vector[i].e_score << "\t" << s_vector[i].s_outd << "\n";
     }
     edge_file.close();
 }
@@ -927,6 +1045,7 @@ void Edge_addition::save_vector(std::string file_name, std::vector<step_log> &s_
     log_file.close();
 }
 
+// Add log point.
 void Edge_addition::add_log_point(std::vector<step_log> &log_vec, double red_pagerank, double prediction, double gen_prediction) {
     step_log log_point;
     log_point.red_pagerank = red_pagerank;
