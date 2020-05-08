@@ -32,6 +32,8 @@ error:
 		"-apx -s <number of source nodes> -t <number of target nodes>\t\t\t  Approximation\n"
 		"-fapx -s <number of source nodes> -t <number of target nodes>\t\t\t Fast Approximation\n"
 		"-rsrc -s <number of source nodes> -t <number of target nodes>\t\t\t Random Source nodes\n"
+		"-srcst -s <number of source nodes> -t <number of target nodes>\t\t\t Sources Statistics\n"
+		"-tarst -s <number of source nodes> -t <number of target nodes>\t\t\t Target Statistics\n"
 		"-ota \t\t\t One to All" << std::endl;
 	return false;
 }
