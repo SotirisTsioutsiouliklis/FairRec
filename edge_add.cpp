@@ -46,6 +46,7 @@ void Edge_addition::source_heuristic_per_source(const double C, const double eps
     s_nodes = get_source_nodes(n_source, C, eps, max_iter);
     // Save source nodes.
 <<<<<<< HEAD
+<<<<<<< HEAD
     for (int i = 0; i < n_source; i++) {
         int_src.push_back(source_nodes[i].node_id);
     }
@@ -54,6 +55,8 @@ void Edge_addition::source_heuristic_per_source(const double C, const double eps
     save_vector("out_sources_one.txt", s_nodes);
 
 >>>>>>> refactoring
+=======
+>>>>>>> parent of 10b851b... fix branches conflicts
     // For each Source nodes.
     for (auto s_node = s_nodes.begin(); s_node < s_nodes.end(); s_node++) {// Clear log_vector
         log_vec.clear();
@@ -95,18 +98,22 @@ void Edge_addition::source_heuristic_per_source(const double C, const double eps
     
 }
 
-void Edge_addition::greedy_all(const double C, const double eps, const int max_iter) {
+void Edge_addition::greedy(const double C, const double eps, const int max_iter) {
     // Declare local variables.
-    pagerank_v objective_val, rank_vector, source_nodes;
-    std::vector<int> neighbors, int_src;
+    pagerank_v objective_val, rank_vector;
+    std::vector<int> s_nodes;
     std::vector<step_log> log_vec;
-    pagerank_s target_node;
+    int target_node;
     step_log log_point;
     double red_pagerank;
     int s_out_degree, src_node, max_edges;
+<<<<<<< HEAD
     int wanted_target = n_target;
 =======
 }
+=======
+    int no_edges;
+>>>>>>> parent of 10b851b... fix branches conflicts
 
 void Edge_addition::source_heuristic_all_sources(const double C, const double eps, const int max_iter) {
     // Declare local variables.
@@ -122,6 +129,7 @@ void Edge_addition::source_heuristic_all_sources(const double C, const double ep
 
     // Get source nodes.
 <<<<<<< HEAD
+<<<<<<< HEAD
     source_nodes = get_best_source_nodes(n_source, C, eps, max_iter);
     // Save source nodes.
     for (int i = 0; i < n_source; i++) {
@@ -133,6 +141,11 @@ void Edge_addition::source_heuristic_all_sources(const double C, const double ep
     // Save source nodes.
     save_vector("out_sources_all.txt", s_nodes);
 >>>>>>> refactoring
+=======
+    s_nodes = get_best_source_nodes(n_source, C, eps, max_iter);
+    // Save source nodes.
+    save_vector("out_greedy_sources.txt", s_nodes);
+>>>>>>> parent of 10b851b... fix branches conflicts
     // Get pagerank.
     rank_vector = algs.get_pagerank(C, eps, max_iter);
     // Get Red pagerank.
@@ -140,57 +153,68 @@ void Edge_addition::source_heuristic_all_sources(const double C, const double ep
 <<<<<<< HEAD
     // Renew log point.
     log_point.red_pagerank = red_pagerank;
-    std::cout << "Red pagerank: " << red_pagerank << std::endl;
     log_point.red_pagerank_prediction = red_pagerank;
     // Store to log vector.
     log_vec.push_back(log_point);
 
     // For each Source nodes.
-    for (int s_node = 0; s_node < n_source; s_node++) {
-        // Get source node id.
-        src_node = source_nodes[s_node].node_id;
+    for (auto s_node = s_nodes.begin(); s_node < s_nodes.end(); s_node++) {
         // Print Source node.
         std::cout << "---------------------------------------\n";
-        std::cout << "Source node: " << src_node << std::endl;
+        std::cout << "Source node: " << (*s_node) << std::endl;
         // Find valide number of new edges.
-        max_edges = (g.get_num_nodes() - 1) - g.get_out_degree(src_node);
-        n_target = wanted_target;
-        if (n_target > max_edges) {
-            std::cout << "too many nodes. I'll do my best" << std::endl;
-            n_target = max_edges;
-        }
-        std::cout << "ntarget: " << n_target << "\n";
+        no_edges = get_valide_no_edges(src_node);
+        
         // Find n_target nodes to connect.
         for (int t_node = 0; t_node < n_target; t_node++) {
-            // Get objective values for all nodes.
-            objective_val = get_objective_val(src_node, C, eps, max_iter);
-            // Get out degree for source node.
-            s_out_degree = g.get_out_degree(src_node);
-            // Remove neighbors of source node from "finding the
-            // best" procedure. Do that by setting their objective value to -2.
-            neighbors = g.get_out_neighbors(src_node);
-            for (int nei = 0; nei < s_out_degree; nei++) { 
-                objective_val[neighbors[nei]].pagerank = -2;
-            }
-            // Remove self from "finding the best procedure".
-            // Do that by setting its objective value to -2.
-            objective_val[src_node].pagerank = -2;
-            // Find best edge to add.
-            target_node.node_id = -2;
-            target_node.pagerank = -2;
-            // Search all nodes.
-            for (int cand = 0; cand < nnodes; cand++) {
-                // If there is better, Renew node information.
-                if (objective_val[cand].pagerank > target_node.pagerank) {
-                    target_node.node_id = cand;
-                    target_node.pagerank = objective_val[cand].pagerank;
-                }
-            }
+            // Get best node.
+            target_node = get_best_target_nodes(src_node, 1)[0];
             // Add best node to source node.
+<<<<<<< HEAD
             g.add_edge(src_node, target_node.node_id);
 =======
     // Add log point to log vector.
     add_log_point(log_vec, red_pagerank, red_pagerank);
+=======
+            g.add_edge(src_node, target_node);
+            // Get pagerank.
+            rank_vector = algs.get_pagerank(C, eps, max_iter);
+            // Get Red pagerank.
+            red_pagerank = g.get_pagerank_per_community(rank_vector)[1];
+            // Renew log point.
+            log_point.red_pagerank = red_pagerank;
+            // Store to log vector.
+            log_vec.push_back(log_point);
+        }
+    }
+    // Save log vector.
+    save_logs("greedy_all", log_vec);
+}
+
+void Edge_addition::fast_greedy_per_one(const double C, const double eps, const int max_iter) {
+    // Declare local variables.
+    pagerank_v objective_val, rank_vector, source_nodes;
+    std::vector<int> neighbors, int_src;
+    std::vector<edge> new_edges;
+    std::vector<step_log> log_vec;
+    pagerank_s target_node;
+    edge new_edge;
+    step_log log_point;
+    double red_pagerank;
+    int s_out_degree, src_node, max_edges;
+    int wanted_target = n_target;
+
+    // Get number of nodes.
+    const int nnodes = g.get_num_nodes();
+
+    // Get source nodes.
+    source_nodes = get_best_source_nodes(n_source, C, eps, max_iter);
+    // Save source nodes.
+    for (int i = 0; i < n_source; i++) {
+        int_src.push_back(source_nodes[i].node_id);
+    }
+    save_source_nodes("fast_greedy_per_one",int_src);
+>>>>>>> parent of 10b851b... fix branches conflicts
 
     // For each Source nodes.
     int k = 0;
@@ -758,9 +782,10 @@ std::vector<edge> Edge_addition::get_edges_two(int no_edges, const double C, con
 
 
 // Help Functions.
-pagerank_v Edge_addition::get_best_source_nodes(int n, const double C, const double eps, const int max_iter) {
+std::vector<int> Edge_addition::get_best_source_nodes(int n, const double C, const double eps, const int max_iter) {
     // Declare local variables.
-    pagerank_v rank_vector, top_source_nodes;
+    pagerank_v rank_vector, temp_s_nodes;
+    std::vector<int> s_nodes;
     int src_node;
 
     // Get Pagerank.
@@ -768,24 +793,29 @@ pagerank_v Edge_addition::get_best_source_nodes(int n, const double C, const dou
     // Sort pagerank in descentding order.
     algs.sort_pagerank_vector(rank_vector);
     // Resize top_source_vector to 2*n. Keep top 2*n.
-    top_source_nodes.resize(2*n);
+    temp_s_nodes.resize(2*n);
     for (int i = 0; i < 2*n; i++) {
-        top_source_nodes[i] = rank_vector[i];
+        temp_s_nodes[i] = rank_vector[i];
     }
     // Get Blue personilized pagerank.
     rank_vector = algs.get_blue_abs_prob(C, eps, max_iter);
     // Change top source pagerank to Blue personilized.
     for (int i = 0; i < 2*n; i++) {
-        src_node = top_source_nodes[i].node_id;
-        top_source_nodes[i].pagerank = rank_vector[src_node].pagerank;
+        src_node = temp_s_nodes[i].node_id;
+        temp_s_nodes[i].pagerank = rank_vector[src_node].pagerank;
     }
     // Sort top nodes by Blue pagerank.
-    algs.sort_pagerank_vector(top_source_nodes);
+    algs.sort_pagerank_vector(temp_s_nodes);
     // Keep n top source nodes by this ranking.
-    top_source_nodes.resize(n);
+    temp_s_nodes.resize(n);
+    // Convert to return.
+    for (int i = 0; i < n; i++) {
+        s_nodes[i] = temp_s_nodes[i].node_id;
+    }
     // Print best nodes in order.
     std::cout << "----------Best source nodes---------" << std::endl;
     for (int i = 0; i < n; i++) {
+<<<<<<< HEAD
         std::cout << top_source_nodes[i].node_id << ", ";
 =======
 
@@ -963,8 +993,12 @@ std::vector<edge> Edge_addition::get_edges_four(int no_edges, const double C, co
             obj_val[b_row +j] *= (pagerank[new_edge.source].pagerank / (float)(s_out_degree[new_edge.source] + 1)) * red_abs_probs[j].pagerank;
         }
 >>>>>>> refactoring
+=======
+        std::cout << s_nodes[i] << ", ";
+>>>>>>> parent of 10b851b... fix branches conflicts
     }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
     return top_source_nodes;
 =======
@@ -979,6 +1013,9 @@ void Edge_addition::remove_new_edges(std::vector<edge> &new_edges) {
     }
     new_edges.clear();
 >>>>>>> refactoring
+=======
+    return s_nodes;
+>>>>>>> parent of 10b851b... fix branches conflicts
 }
 
 // Get Predictions.
@@ -1140,74 +1177,119 @@ double Edge_addition::get_gen_objective_val(int s_node, std::vector<edge> new_ed
     return objective_val;
 }
 
-void Edge_addition::save_logs(std::string algo_name, std::vector<step_log> log_vec) {
-    // Declare local variables.
-    int records = log_vec.size();
+// Get valide edges.
+int Edge_addition::get_valide_no_edges(int s_node) {
+    int max_edges = (g.get_num_nodes() - 1) - g.get_out_degree(s_node);
 
-    // Open log file.
-    std::ofstream log_file("out_" + algo_name + "_log.txt");
+    return std::min(n_target, max_edges);
+}
 
+<<<<<<< HEAD
 <<<<<<< HEAD
     // Write logs to file.
     log_file << "Edge\tPagerank\tPrediction\n";
     for (int i = 0; i < records; i++) {
         log_file << i << "\t" << log_vec[i].red_pagerank << "\t" << log_vec[i].red_pagerank_prediction << std::endl;
+=======
+// Get target nodes.
+std::vector<int> Edge_addition::get_best_target_nodes(int s_node, int no_targets) {
+    std::vector<int> s_neighbors, best_s_nodes;
+    pagerank_t cand;
+    // Get objective value for all nodes.
+    pagerank_v obj_values = get_objective_val(s_node);
+    // Remove from comparison neighbors and source by setting
+    // their value to -1.
+    obj_values[s_node].pagerank = -1;
+    s_neighbors = g.get_out_neighbors(s_node);
+    for (auto it = s_neighbors.begin(); it < s_neighbors.end(); it++) {
+        obj_values[*it].pagerank = -1;
+>>>>>>> parent of 10b851b... fix branches conflicts
     }
-
-    // Close file.
-    log_file.close();
+    // Get no_target bests.
+    for (int i = 0; i < no_targets; i++) {
+        cand.node_id = -1;
+        cand.pagerank = -1;
+        // Search for the best.
+        for (auto it = obj_values.begin(); it < obj_values.end(); it++) {
+            if (it -> pagerank > cand.pagerank) {
+                cand.node_id = it -> node_id;
+                cand.pagerank = it -> pagerank;
+            }
+        }
+        // Add best to best_s_nodes.
+        best_s_nodes.push_back(cand.node_id);
+        // Remove best from competition.
+        obj_values[cand.node_id].pagerank = -1;
+    }
+    
+    return best_s_nodes;
 }
 
+<<<<<<< HEAD
 void Edge_addition::save_logs_per_node(std::string algo_name, int src_node, std::vector<step_log> log_vec) {
 =======
 // Save vectors.
 void Edge_addition::save_vector(std::string file_name, pagerank_v &s_vector) {
 >>>>>>> refactoring
+=======
+// Save vectors.
+void Edge_addition::save_vector(std::string file_name, pagerank_v s_vector) {
+>>>>>>> parent of 10b851b... fix branches conflicts
     // Declare local variables.
-    int records = log_vec.size();
+    int n = s_vector.size();
 
     // Open log file.
-    std::ofstream log_file("out_" + algo_name + "_" + std::to_string(src_node) + "_log.txt");
+    std::ofstream log_file(file_name);
 
     // Write logs to file.
-    log_file << "Edge\tPagerank\tPrediction\tSum_Prediction\n";
-    for (int i = 0; i < records; i++) {
-        log_file << i << "\t" << log_vec[i].red_pagerank << "\t" << log_vec[i].red_pagerank_prediction << "\t" << log_vec[i].red_pagerank_generalized_prediction << std::endl;
+    log_file << "Edge\tValue\n";
+    for (int i = 0; i < n; i++) {
+        log_file << s_vector[i].node_id << "\t" << s_vector[i].pagerank << std::endl;
     }
 
     // Close file.
     log_file.close();
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 // Save Source Nodes.
 void Edge_addition::save_source_nodes(std::string algo_name, std::vector<int> sources) {
 =======
 void Edge_addition::save_vector(std::string file_name, std::vector<int> &s_vector) {
 >>>>>>> refactoring
+=======
+void Edge_addition::save_vector(std::string file_name, std::vector<int> s_vector) {
+>>>>>>> parent of 10b851b... fix branches conflicts
     // Declare Variables
-    int n_src = sources.size();
-    std::ofstream log_file(algo_name + "_source_nodes.txt");
+    int n = s_vector.size();  
+
+    std::ofstream log_file(file_name);
     // Write nodes.
-    for (int i = 0; i < n_src; i++) {
-        log_file << sources[i] << "\n";
+    for (int i = 0; i < n; i++) {
+        log_file << s_vector[i] << "\n";
     }
     // Close file.
     log_file.close();
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 // Save Source Nodes.
 void Edge_addition::save_target_nodes(std::string algo_name, std::vector<int> sources) {
 =======
 void Edge_addition::save_vector(std::string file_name, std::vector<double> &s_vector) {
 >>>>>>> refactoring
+=======
+void Edge_addition::save_vector(std::string file_name, std::vector<double> s_vector) {
+>>>>>>> parent of 10b851b... fix branches conflicts
     // Declare Variables
-    int n_src = sources.size();
-    std::ofstream log_file(algo_name + "_target_nodes.txt");
+    int n = s_vector.size();  
+
+    std::ofstream log_file(file_name);
     // Write nodes.
-    for (int i = 0; i < n_src; i++) {
-        log_file << sources[i] << "\n";
+    for (int i = 0; i < n; i++) {
+        log_file << s_vector[i] << "\n";
     }
     // Close file.
     log_file.close();
@@ -1216,6 +1298,9 @@ void Edge_addition::save_vector(std::string file_name, std::vector<double> &s_ve
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> parent of 10b851b... fix branches conflicts
 void Edge_addition::save_vector(std::string file_name, std::vector<edge> s_vector) {
 =======
 void Edge_addition::save_vector(std::string file_name, std::vector<edge> &s_vector) {
@@ -1226,6 +1311,7 @@ void Edge_addition::save_vector(std::string file_name, std::vector<edge> &s_vect
     for (int i = 0; i < n; i++) {
 <<<<<<< HEAD
         edge_file << s_vector[i].source << "\t" << s_vector[i].destination << "\n";
+<<<<<<< HEAD
 =======
 // Save impact.
 void Edge_addition::save_impact(std::string name, std::vector<double> impact_v) {
@@ -1240,11 +1326,13 @@ void Edge_addition::save_impact(std::string name, std::vector<double> impact_v) 
         edge_file << s_vector[i].source << "\t" << s_vector[i].destination << "\t" << s_vector[i].s_score_1 << "\t" << s_vector[i].s_score_2 << "\t" << s_vector[i].t_score << "\t" <<
          s_vector[i].e_score << "\t" << s_vector[i].s_outd << "\n";
 >>>>>>> refactoring
+=======
+>>>>>>> parent of 10b851b... fix branches conflicts
     }
-    // Close file.
-    my_file.close();
+    edge_file.close();
 }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 // Save edges.
 void Edge_addition::save_edge_list(std::vector<edge> edges) {
@@ -1254,6 +1342,9 @@ void Edge_addition::save_edge_list(std::vector<edge> edges) {
         edge_file << edges[i].source << "\t" << edges[i].destination << "\n";
 =======
 void Edge_addition::save_vector(std::string file_name, std::vector<step_log> &s_vector) {
+=======
+void Edge_addition::save_vector(std::string file_name, std::vector<step_log> s_vector) {
+>>>>>>> parent of 10b851b... fix branches conflicts
     // Declare local variables.
     int n = s_vector.size();
 
@@ -1264,9 +1355,11 @@ void Edge_addition::save_vector(std::string file_name, std::vector<step_log> &s_
     log_file << "Edge\tPagerank\tPrediction\tSum_Prediction\n";
     for (int i = 0; i < n; i++) {
         log_file << i << "\t" << s_vector[i].red_pagerank << "\t" << s_vector[i].red_pagerank_prediction << "\t" << s_vector[i].red_pagerank_generalized_prediction << std::endl;
->>>>>>> refactoring
-    }
 <<<<<<< HEAD
+>>>>>>> refactoring
+=======
+>>>>>>> parent of 10b851b... fix branches conflicts
+    }
 
     // Close file.
     log_file.close();
@@ -1285,6 +1378,7 @@ void Edge_addition::save_impact(std::vector<double> impact_v) {
     // Close file.
     my_file.close();
 >>>>>>> parent of 90cc69f... sources and targets in progress
+<<<<<<< HEAD
 =======
     edge_file.close();
 >>>>>>> parent of 63fcefe... refactoring in progress. greedy stage
@@ -1324,4 +1418,6 @@ void Edge_addition::set_criterion(log_kind l_crit) {
 void Edge_addition::set_criterion(algorithm_mode a_md) {
     a_mode = a_md;
 >>>>>>> refactoring
+=======
+>>>>>>> parent of 10b851b... fix branches conflicts
 }
