@@ -524,6 +524,7 @@ std::vector<edge> Edge_addition::get_edges_one(int no_edges, const double C, con
     algs.sort_pagerank_vector(pagerank);
     //pagerank.resize(no_edges);
     red_abs_probs = algs.get_red_abs_prob(C, eps, max_iter);
+    pagerank_v s_red_p = red_abs_probs;
 
     algs.sort_pagerank_vector(red_abs_probs);
     //red_abs_probs.resize(no_edges);
