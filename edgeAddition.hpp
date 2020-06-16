@@ -32,6 +32,8 @@ class EdgeAddition {
         std::vector<int> getRandomSourceNodes(int n);
         // Returns the best node to connect at the moment.
         int getBestTargetNode(int sourceNode);
+        // Returns the best k nodes to connect at the moment.
+        std::vector<int> getBestTargetNodes(int sourceNode, int k);
 
         // Save various vectors.
         static void saveVector(std::string fileName, pagerank_v &logVector);

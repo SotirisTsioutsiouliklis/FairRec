@@ -65,6 +65,30 @@ int EdgeAddition::getBestTargetNode(int sourceNode) {
     return candidate.node_id;
 }
 
+std::vector<int> EdgeAddition::getBestTargetNodes(int sourceNode, int k) {
+    std::vector<int> sourceNeighbors;
+    std::vector<int> targetNodes(k);
+    // Get objective value for all nodes.
+    pagerank_v objectiveValues = getObjectiveValues(sourceNode);
+    // Remove from comparison neighbors and source by setting
+    // their value to -1.
+    objectiveValues[sourceNode].pagerank = -1;
+    sourceNeighbors = g.get_out_neighbors(sourceNode);
+    for (auto it = sourceNeighbors.begin(); it < sourceNeighbors.end(); it++) {
+        objectiveValues[*it].pagerank = -1;
+    }
+    // Sort and keep first k. Implement better.
+    algs.sort_pagerank_vector(objectiveValues);
+    objectiveValues.resize(k);
+    // Conert to node ids (ints).
+    for (int i = 0; i < k; i++) {
+        targetNodes[i] = objectiveValues[i].node_id;
+    }
+    
+    
+    return targetNodes;
+}
+
 // Save vectors.
 void EdgeAddition::saveVector(std::string fileName, pagerank_v &logVector) {
     // Declare local variables.

@@ -33,7 +33,8 @@ error:
 int main(int argc, char const **argv)
 {
     // Define number of threads to use.
-    omp_set_num_threads(20);
+    omp_set_num_threads(20);auto start =std::chrono::high_resolution_clock::now();
+    srand(time(NULL));
 
     int numberOfEdges;
     if(!getOptions(argc, argv, numberOfEdges)) return 1;
@@ -68,8 +69,12 @@ int main(int argc, char const **argv)
         redPagerankLogs.push_back(redPagerank);
     }
 
-    addEdges.saveVector(std::to_string(sourceNode) + "RedPagerankGreedy.txt", redPagerankLogs);
-    addEdges.saveVector("edgesGreedy.txt", newEdges);
+    EdgeAddition::saveVector(std::to_string(sourceNode) + "RedPagerankGreedy.txt", redPagerankLogs);
+    EdgeAddition::saveVector("edgesGreedy.txt", newEdges);
+
+    auto stop =std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    std::cout << "Total time: " << duration.count() << " microseconds\n";
 
     return 0;
 }
