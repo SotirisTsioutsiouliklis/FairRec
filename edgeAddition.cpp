@@ -114,8 +114,9 @@ void EdgeAddition::saveVector(std::string fileName, std::vector<edge> &logVector
     edge_file << "Source\tTarget\tSource_score_1\tSource_score_2\tTarget_score\tEdge_Score\tSource_out_d\n";
     int n = logVector.size();
     for (int i = 0; i < n; i++) {
-        edge_file << logVector[i].source << "\t" << logVector[i].destination << "\t" << logVector[i].s_score_1 << "\t" << logVector[i].s_score_2 << "\t" << logVector[i].t_score << "\t" <<
-         logVector[i].e_score << "\t" << logVector[i].s_outd << "\n";
+        edge_file << logVector[i].source << "\t" << logVector[i].target << "\t" << logVector[i].s_score_1
+        << "\t" << logVector[i].s_score_2 << "\t" << logVector[i].t_score << "\t" 
+        << logVector[i].e_score << "\t" << logVector[i].s_outd << "\n";
     }
     edge_file.close();
 }
