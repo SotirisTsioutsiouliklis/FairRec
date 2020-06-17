@@ -61,7 +61,6 @@ int EdgeAddition::getBestTargetNode(int sourceNode) {
             candidate.pagerank = it -> pagerank;
         }
     }
-    
     return candidate.node_id;
 }
 

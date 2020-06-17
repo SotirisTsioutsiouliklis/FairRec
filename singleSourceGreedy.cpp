@@ -17,27 +17,29 @@
 #include <chrono>
 #include <omp.h> 
 
-static bool getOptions(const int argc, char const ** argv, int &numberOfEdges) {
-    if(argc != 3) goto error;
-    if(!std::strcmp(argv[1], "-n")) {
-        numberOfEdges = std::atoi(argv[2]);
+static bool getOptions(const int argc, char const ** argv, int &numberOfEdges, int &sourceNode) {
+    if(argc != 5) goto error;
+    if(!std::strcmp(argv[1], "-s") && !std::strcmp(argv[3], "-n")) {
+        sourceNode = std::atoi(argv[2]);
+        numberOfEdges = std::atoi(argv[4]);
     } else {
         goto error;
     }
     return true;
 error:
-    std::cout << "Proper use: ./singleSourceGreedy.out -n <numberOfEdges>\n"; 
+    std::cout << "Proper use: ./singleSourceGreedy.out -s <source node id> -n <numberOfEdges>\n"; 
     return false;
 }
 
 int main(int argc, char const **argv)
 {
     // Define number of threads to use.
-    omp_set_num_threads(20);auto start =std::chrono::high_resolution_clock::now();
-    srand(time(NULL));
+    omp_set_num_threads(20);
+    auto start =std::chrono::high_resolution_clock::now();
+    //srand(time(NULL));
 
-    int numberOfEdges;
-    if(!getOptions(argc, argv, numberOfEdges)) return 1;
+    int numberOfEdges, sourceNode;
+    if(!getOptions(argc, argv, numberOfEdges, sourceNode)) return 1;
 
     // Init graph and algorithms.
     graph g("out_graph.txt", "out_community.txt");
@@ -53,7 +55,7 @@ int main(int argc, char const **argv)
     redPagerankLogs.push_back(redPagerank);
 
     // Get random source node.
-    int sourceNode = addEdges.getRandomSourceNodes(1)[0];
+    //int sourceNode = addEdges.getRandomSourceNodes(1)[0];
 
     // Add the edges.
     edge newEdge;
@@ -70,7 +72,7 @@ int main(int argc, char const **argv)
     }
 
     EdgeAddition::saveVector(std::to_string(sourceNode) + "RedPagerankGreedy.txt", redPagerankLogs);
-    EdgeAddition::saveVector("edgesGreedy.txt", newEdges);
+    EdgeAddition::saveVector(std::to_string(sourceNode) + "edgesGreedy.txt", newEdges);
 
     auto stop =std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);

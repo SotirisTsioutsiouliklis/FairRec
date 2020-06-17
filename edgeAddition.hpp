@@ -30,6 +30,7 @@ class EdgeAddition {
         EdgeAddition(graph &g, pagerank_algorithms &algs);
         // Returns n random sources.
         std::vector<int> getRandomSourceNodes(int n);
+        
         // Returns the best node to connect at the moment.
         int getBestTargetNode(int sourceNode);
         // Returns the best k nodes to connect at the moment.

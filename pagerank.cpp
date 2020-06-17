@@ -109,7 +109,7 @@ pagerank_v pagerank_algorithms::get_red_abs_prob(const double C, const double ep
 	}
 
 	if (iter == max_iter)
-		std::cerr << "[WARN]: Pagerank algorithm reached " << max_iter << " iterations." << std::endl;
+		std::cerr << "[WARN]: Red absorbing probabilities algorithm reached " << max_iter << " iterations." << std::endl;
 	
 	return pagerankv;
 }
@@ -157,7 +157,7 @@ pagerank_v pagerank_algorithms::get_blue_abs_prob(const double C, const double e
 	}
 
 	if (iter == max_iter)
-		std::cerr << "[WARN]: Pagerank algorithm reached " << max_iter << " iterations." << std::endl;
+		std::cerr << "[WARN]: Blue absorbing probabilities algorithm reached " << max_iter << " iterations." << std::endl;
 	
 	return pagerankv;
 }
@@ -205,7 +205,7 @@ pagerank_v pagerank_algorithms::get_node_abs_prob(int abs_node, const double C, 
 	}
 
 	if (iter == max_iter)
-		std::cerr << "[WARN]: Pagerank algorithm reached " << max_iter << " iterations." << std::endl;
+		std::cerr << "[WARN]: Single node absorbing probabilities algorithm reached " << max_iter << " iterations." << std::endl;
 	
 	return pagerankv;
 }
