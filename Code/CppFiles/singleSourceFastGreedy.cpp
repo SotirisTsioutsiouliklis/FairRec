@@ -1,7 +1,8 @@
 /**
- * This file contains a greedy algorithm to add edges to a graph in
- * order to maximize red pagerank ratio. It adds k edges to a single
- * source of the graph based on formula of the FairRec paper.
+ * This file contains the "fast greedy" algorithm to add edges to a
+ * graph in order to maximize red pagerank ratio. It adds k edges to
+ * a single source of the graph based on formula of the FairRec paper.
+ * I 
 */
 #include <iostream>
 #include <iomanip>
@@ -41,6 +42,5 @@ int main(int argc, char const **argv)
     if(!getOptions(argc, argv, numberOfEdges, sourceNode)) return 1;
     EdgeAddition::getFastGreedySingleSource(sourceNode, numberOfEdges);
     
-
     return 0;
 }
