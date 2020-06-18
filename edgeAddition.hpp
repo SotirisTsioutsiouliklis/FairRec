@@ -28,6 +28,21 @@ struct edge {
 class EdgeAddition {
     public:
         EdgeAddition(graph &g, pagerank_algorithms &algs);
+
+        // Greedy Single Source.
+        static void getGreedySingleSource(int sourceNode, int numberOfEdges);
+        // Fast Greedy Single Source.
+        static void getFastGreedySingleSource(int sourceNode, int numberOfEdges);
+        
+
+        // Save various vectors.
+        static void saveVector(std::string fileName, pagerank_v &logVector);
+        static void saveVector(std::string fileName, std::vector<int> &logVector);
+        static void saveVector(std::string fileName, std::vector<double> &logVector);
+        static void saveVector(std::string fileName, std::vector<edge> &logVector);
+        static void saveVector(std::string fileName, std::vector<step_log> &logVector);
+    private:
+        // Methods
         // Returns n random sources.
         std::vector<int> getRandomSourceNodes(int n);
         
@@ -36,15 +51,8 @@ class EdgeAddition {
         // Returns the best k nodes to connect at the moment.
         std::vector<int> getBestTargetNodes(int sourceNode, int k);
 
-        // Save various vectors.
-        static void saveVector(std::string fileName, pagerank_v &logVector);
-        static void saveVector(std::string fileName, std::vector<int> &logVector);
-        static void saveVector(std::string fileName, std::vector<double> &logVector);
-        static void saveVector(std::string fileName, std::vector<edge> &logVector);
-        static void saveVector(std::string fileName, std::vector<step_log> &logVector);
+    
 
-    private:
-        // Methods
         // Return values of Objective function.
         pagerank_v getObjectiveValues(int sourceNodes);
 

@@ -7,6 +7,7 @@
 #include "edgeAddition.hpp"
 #include <ctime>
 #include <cstdlib>
+#include <chrono>
 
 // Class constructor.
 EdgeAddition::EdgeAddition(graph &g, pagerank_algorithms &algs) : g(g), algs(algs) { 
@@ -14,6 +15,94 @@ EdgeAddition::EdgeAddition(graph &g, pagerank_algorithms &algs) : g(g), algs(alg
 }
 
 // Public.
+void EdgeAddition::getGreedySingleSource(int sourceNode, int numberOfEdges) {
+    auto start =std::chrono::high_resolution_clock::now();
+    //srand(time(NULL));
+
+    // Init graph and algorithms.
+    graph g("out_graph.txt", "out_community.txt");
+    pagerank_algorithms algs(g);
+    EdgeAddition addEdges(g, algs);
+    pagerank_v pagerank;
+    double redPagerank;
+    std::vector<double> redPagerankLogs;
+
+    // Get initial red pagerank.
+    pagerank = algs.get_pagerank();
+    redPagerank = g.get_pagerank_per_community(pagerank)[1];
+    redPagerankLogs.push_back(redPagerank);
+
+    // Get random source node.
+    //int sourceNode = addEdges.getRandomSourceNodes(1)[0];
+
+    // Add the edges.
+    edge newEdge;
+    std::vector<edge> newEdges;
+    newEdge.source = sourceNode;
+    for (int i = 0; i < numberOfEdges; i++) {
+        std::cout << "SourceNode: " << sourceNode << "Edge: " << i << std::endl;
+        newEdge.target = addEdges.getBestTargetNode(sourceNode);
+        g.add_edge(newEdge.source, newEdge.target);
+        pagerank = algs.get_pagerank();
+        redPagerank = g.get_pagerank_per_community(pagerank)[1];
+        newEdges.push_back(newEdge);
+        redPagerankLogs.push_back(redPagerank);
+    }
+
+    EdgeAddition::saveVector(std::to_string(sourceNode) + "RedPagerankGreedy.txt", redPagerankLogs);
+    EdgeAddition::saveVector(std::to_string(sourceNode) + "edgesGreedy.txt", newEdges);
+
+    auto stop =std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    std::cout << "Total time: " << duration.count() << " microseconds\n";
+}
+
+void EdgeAddition::getFastGreedySingleSource(int sourceNode, int numberOfEdges) {
+    auto start =std::chrono::high_resolution_clock::now();
+    //srand(time(NULL));
+
+    // Init graph and algorithms.
+    graph g("out_graph.txt", "out_community.txt");
+    pagerank_algorithms algs(g);
+    EdgeAddition addEdges(g, algs);
+    pagerank_v pagerank;
+    double redPagerank;
+    std::vector<double> redPagerankLogs;
+
+    // Get initial red pagerank.
+    pagerank = algs.get_pagerank();
+    redPagerank = g.get_pagerank_per_community(pagerank)[1];
+    redPagerankLogs.push_back(redPagerank);
+
+    // Get random source node.
+    //int sourceNode = addEdges.getRandomSourceNodes(1)[0];
+
+    //Get best k targets.
+    std::vector<int> targetNodes = addEdges.getBestTargetNodes(sourceNode, numberOfEdges);
+
+    // Add the edges.
+    edge newEdge;
+    std::vector<edge> newEdges;
+    newEdge.source = sourceNode;
+    for (int i = 0; i < numberOfEdges; i++) {
+        std::cout << "SourceNode: " << sourceNode << "Edge: " << i << std::endl;
+        newEdge.target = targetNodes[i];
+        g.add_edge(newEdge.source, newEdge.target);
+        pagerank = algs.get_pagerank();
+        redPagerank = g.get_pagerank_per_community(pagerank)[1];
+        newEdges.push_back(newEdge);
+        redPagerankLogs.push_back(redPagerank);
+    }
+
+    EdgeAddition::saveVector(std::to_string(sourceNode) + "RedPagerankFastGreedy.txt", redPagerankLogs);
+    EdgeAddition::saveVector(std::to_string(sourceNode) + "edgesFastGreedy.txt", newEdges);
+
+    auto stop =std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    std::cout << "Total time: " << duration.count() << " microseconds\n"; 
+}
+
+// Private.
 std::vector<int> EdgeAddition::getRandomSourceNodes(int n) {
     std::vector<int> sourceNodes;
     int sourceNode;
@@ -161,7 +250,7 @@ void EdgeAddition::saveVector(std::string fileName, std::vector<step_log> &logVe
     logFile.close();
 }
 
-//Private.
+
 pagerank_v EdgeAddition::getObjectiveValues(int sourceNode) {
     // Declare local variables.
     pagerank_v objectiveValues, rankVector, redAbsorbingProbs, sourceAbsorbingProbs;
