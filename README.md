@@ -13,6 +13,15 @@ This repository has been created to extend FairLar repository in order to make t
 
 All the experiments were made in linux Ubuntu. To compile cpp we used gcc compiler.
 
+### Repository Structure:<br/>
+- FairLar
+    - Code
+        - Cpp_files
+        - Python_files
+    - experiments
+
+### How to run the algorithms:<br/> 
+
 1. Greedy single source (independent executable):
     
     - Compile:
