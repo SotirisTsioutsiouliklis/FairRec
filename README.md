@@ -16,20 +16,20 @@ All the experiments were made in linux Ubuntu. To compile cpp we used gcc compil
 1. Greedy single source (independent executable):
     
     - Compile:
-        > g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o singleSourceGreedy.out graph.cpp pagerank.cpp edgeAddition.cpp singleSourceGreedy.cpp
+        >` g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o singleSourceGreedy.out graph.cpp pagerank.cpp edgeAddition.cpp singleSourceGreedy.cpp`
 
     - Execute: 
-        > ./singleSourceGreedy.out -s <source node id\> -n <numberOfEdges\>
+        >` ./singleSourceGreedy.out -s <source node id\> -n <numberOfEdges\>`
 
     **Note:** You will also find the algorithm as a static method in EdgeAddition class.
 
 2. Fast greedy single source (independent executable):
     
     - Compile:
-        > g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o singleSourceFastGreedy.out graph.cpp pagerank.cpp edgeAddition.cpp singleSourceFastGreedy.cpp
+        >` g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o singleSourceFastGreedy.out graph.cpp pagerank.cpp edgeAddition.cpp singleSourceFastGreedy.cpp`
 
     - Execute: 
-        > ./singleSourceFastGreedy.out -s <source node id\> -n <numberOfEdges\>
+        >` ./singleSourceFastGreedy.out -s <source node id\> -n <numberOfEdges\>`
 
     **Note:** You will also find the algorithm as a static method in EdgeAddition class
 
