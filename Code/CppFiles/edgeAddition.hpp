@@ -34,6 +34,8 @@ class EdgeAddition {
         // Fast Greedy Single Source.
         static void getFastGreedySingleSource(int sourceNode, int numberOfEdges);
         
+        // Return values of Objective function.
+        pagerank_v getObjectiveValues(int sourceNodes);
 
         // Save various vectors.
         static void saveVector(std::string fileName, pagerank_v &logVector);
@@ -42,6 +44,10 @@ class EdgeAddition {
         static void saveVector(std::string fileName, std::vector<edge> &logVector);
         static void saveVector(std::string fileName, std::vector<step_log> &logVector);
     private:
+        // Attributes
+        graph &g;
+        pagerank_algorithms &algs;
+
         // Methods
         // Returns n random sources.
         std::vector<int> getRandomSourceNodes(int n);
@@ -51,14 +57,8 @@ class EdgeAddition {
         // Returns the best k nodes to connect at the moment.
         std::vector<int> getBestTargetNodes(int sourceNode, int k);
 
-    
 
-        // Return values of Objective function.
-        pagerank_v getObjectiveValues(int sourceNodes);
-
-        // Attributes
-        graph &g;
-        pagerank_algorithms &algs;
+        
 };
 
 #endif /* _EDGEADDITION_HPP */

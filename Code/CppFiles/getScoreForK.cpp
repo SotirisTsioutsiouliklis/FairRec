@@ -15,7 +15,7 @@
 #include <iostream>
 #include "graph.hpp"
 #include "pagerank.hpp"
-#include "edge_add.hpp"
+#include "edgeAddition.hpp"
 #include <vector>
 #include <algorithm>
 #include <fstream>
@@ -71,8 +71,9 @@ static std::vector<int> getRandomNodesK(const graph &g, int &k) {
  * Creates file for the node <node> with the edge scores for the edges
  * that have source the <node> and they don't already exist in the 
  * graph.
- *  
-*/
+ * 
+ * TODO: Delete or fix.
+
 static void computeEdgeScores(const graph &g, const int &node) {
     int numberOfNodes = g.get_num_nodes();
     pagerank_v edgesScore(numberOfNodes);
@@ -83,6 +84,7 @@ static void computeEdgeScores(const graph &g, const int &node) {
         edgesScore[i].pagerank = 0;
     }
 }
+*/
 
 /**
  * @param nodes (std::vector<int>): Vector of nodes' ids.
@@ -118,7 +120,7 @@ int main(int argc, char **argv)
     graph g("out_graph.txt", "out_community.txt");
     int numberOFNodes = g.get_num_nodes();
     pagerank_algorithms algs(g);
-    Edge_addition edgeAddMethod(g, algs);
+    EdgeAddition edgeAddMethod(g, algs);
     pagerank_v edgesScore(numberOFNodes);
 
     // Get k Random Source nodes.
@@ -127,9 +129,9 @@ int main(int argc, char **argv)
     // For each node.
     for (int &node : sourceNodes) {
         // Compute the edges' scores.
-        edgesScore = edgeAddMethod.get_objective_val(node);
+        edgesScore = edgeAddMethod.getObjectiveValues(node);
         // Save the edges' scores.
-        edgeAddMethod.save_vector("out_" + std::to_string(node) + "EdgesScores.txt", edgesScore);
+        edgeAddMethod.saveVector("out_" + std::to_string(node) + "EdgesScores.txt", edgesScore);
     }
 
     // Save random nodes.

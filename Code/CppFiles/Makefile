@@ -9,6 +9,6 @@ all:
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o redAbsorbingProbs.out graph.cpp pagerank.cpp edgeAddition.cpp redAbsorbingProbs.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o node_info.out graph.cpp pagerank.cpp edge_add.cpp node_info.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o graph_info.out graph.cpp pagerank.cpp edge_add.cpp graph_info.cpp
-	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o getScoreForK.out graph.cpp pagerank.cpp edge_add.cpp getScoreForK.cpp
+	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o getScoreForK.out graph.cpp pagerank.cpp edgeAddition.cpp getScoreForK.cpp
 clean:
 	#rm -f jump_optimization
