@@ -100,10 +100,11 @@ void EdgeAddition::getGreedyMultySource(std::vector<int> sourceNodes, int number
     int sourceNode;
     edge newEdge;
     std::vector<edge> newEdges;
-    for (int i = 0; i < numberOfSources; i++) {
-        sourceNode = sourceNodes[i];
+    for (int s = 0; s < numberOfSources; s++) {
+        sourceNode = sourceNodes[s];
+        newEdge.source = sourceNode;
         for (int i = 0; i < numberOfEdges; i++) {
-            std::cout << "SourceNode: " << sourceNode << "Edge: " << i << std::endl;
+            std::cout << "SourceNode: " << s << ", Edge: " << i << std::endl;
             newEdge.target = addEdges.getBestTargetNode(sourceNode);
             g.add_edge(newEdge.source, newEdge.target);
             pagerank = algs.get_pagerank();
@@ -136,12 +137,16 @@ void EdgeAddition::getFastGreedyMultySource(std::vector<int> sourceNodes, int nu
     int sourceNode;
     edge newEdge;
     std::vector<edge> newEdges;
-    for (int i = 0; i < numberOfSources; i++) {
-        sourceNode = sourceNodes[i];
+    for (int s = 0; s < numberOfSources; s++) {
+        sourceNode = sourceNodes[s];
+        std::cout << sourceNode << std::endl;
+        newEdge.source = sourceNode;
+        std::cout << sourceNode << std::endl;
+        std::cout << newEdge.source << std::endl;
         //Get best k targets.
         targetNodes = addEdges.getBestTargetNodes(sourceNode, numberOfEdges);
         for (int i = 0; i < numberOfEdges; i++) {
-            std::cout << "SourceNode: " << sourceNode << "Edge: " << i << std::endl;
+            std::cout << "SourceNode: " << s << "Edge: " << i << std::endl;
             newEdge.target = targetNodes[i];
             g.add_edge(newEdge.source, newEdge.target);
             pagerank = algs.get_pagerank();
@@ -163,23 +168,30 @@ pagerank_v EdgeAddition::getObjectiveValues(int sourceNode) {
     int sourceOutDegree, neighbor;
     const int numberOfNodes = g.get_num_nodes();
     objectiveValues.resize(numberOfNodes);
-
     // Get source out degree.
     sourceOutDegree = g.get_out_degree(sourceNode);
+
     // Run pagerank.
     rankVector = algs.get_pagerank();
     // Get red pagerank.
     redPagerank = g.get_pagerank_per_community(rankVector)[1];
+
     // Run absoring to Red.
     redAbsorbingProbs = algs.get_red_abs_prob();
     // Run absorbing to source.
     sourceAbsorbingProbs = algs.get_node_abs_prob(sourceNode);
     // Get source neighbors.
     neighbors = g.get_out_neighbors(sourceNode);
+    std::cout << "out neighbors: " << sourceOutDegree << std::end;
+    for (int jk : neighbors) {
+        std::cout << jk << std::endl;
+    }
     // Get average Red pagerank of neighbors for nominator.
     nominatorConst = 0;
+
     if (sourceOutDegree > 0) {
         for (int nei = 0; nei < sourceOutDegree; nei++) {
+            std::cout << nei << std::endl;
             neighbor = neighbors[nei];
             nominatorConst += redAbsorbingProbs[neighbor].pagerank;
         }
@@ -355,6 +367,7 @@ std::vector<int> EdgeAddition::getBestTargetNodes(int sourceNode, int k) {
     std::vector<int> targetNodes(k);
     // Get objective value for all nodes.
     pagerank_v objectiveValues = getObjectiveValues(sourceNode);
+
     // Remove from comparison neighbors and source by setting
     // their value to -1.
     objectiveValues[sourceNode].pagerank = -1;
