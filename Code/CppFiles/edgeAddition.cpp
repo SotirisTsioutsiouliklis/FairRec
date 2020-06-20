@@ -19,6 +19,7 @@ EdgeAddition::EdgeAddition(graph &g, pagerank_algorithms &algs) : g(g), algs(alg
  * A greedy algorithm to add edges to a graph in
  * order to maximize red pagerank ratio. It adds k edges to a single
  * source of the graph based on formula of the FairRec paper.
+ * 
  * Creates two files:
  *      1. "<sourceNode>RedPagerankGreedy.txt": Red ratio of pagerank
  *          per edge added.
@@ -60,9 +61,11 @@ void EdgeAddition::getGreedySingleSource(int sourceNode, int numberOfEdges) {
 }
 
 /**
- * The "fast greedy" algorithm to add edges to a graph in order to
- * maximize red pagerank ratio. It adds k edges to a single
- * source of the graph based on formula of the FairRec paper.
+ * The "fast greedy" algorithm described in fairRec paper to add edges
+ * to a graph in order to maximize red pagerank ratio. It adds k edges
+ * to a single source of the graph based on formula of the FairRec
+ * paper.
+ *
  * Creates two files:
  *      1. "<sourceNode>RedPagerankGreedy.txt": Red ratio of pagerank per edge
  *          added.
