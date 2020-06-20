@@ -122,8 +122,7 @@ double graph::get_community_percentage(const int community) const
 	return comm_percentage[community];
 }
 
-void graph::add_edge(const int src_node, const int dest_node)
-{
+void graph::add_edge(const int src_node, const int dest_node) {
 	nodes[src_node].out_neighbors.push_back(dest_node);
 	nodes[dest_node].in_neighbors.push_back(src_node);
 	++nodes[src_node].out_neighbors_per_community[nodes[dest_node].community];
