@@ -1,12 +1,12 @@
 /**
- * Computes edge scores for k source nodes.
+ * Computes edge fairness scores for k source nodes.
  * 
  * @file getScoreForK.cpp
  * @author Sotiris Tsioutsiouliklis.
  * @version 0.0.1 09/06/2020.
  * 
  * It selects k nodes randomly and creates an edge score file for each
- * node. Edges in file i are all edges with source the node i that 
+ * node. Edges in file i are all edges with source node i that 
  * don't already exist in the network.
  * 
  * @param k (int): Number of nodes.
