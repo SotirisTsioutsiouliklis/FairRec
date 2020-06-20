@@ -15,6 +15,18 @@ EdgeAddition::EdgeAddition(graph &g, pagerank_algorithms &algs) : g(g), algs(alg
 }
 
 // Public.
+/**
+ * A greedy algorithm to add edges to a graph in
+ * order to maximize red pagerank ratio. It adds k edges to a single
+ * source of the graph based on formula of the FairRec paper.
+ * Creates two files:
+ *      1. "<sourceNode>RedPagerankGreedy.txt": Red ratio of pagerank
+ *          per edge added.
+ *      2. "<sourceNode>edgesGreedy.txt": Edges that added to graph.
+ * 
+ * @param sourceNode (int): The source node for the edges.
+ * @param numberOfEdges (int): The number of edges to add.
+*/
 void EdgeAddition::getGreedySingleSource(int sourceNode, int numberOfEdges) {
     // Init graph and algorithms.
     graph g("out_graph.txt", "out_community.txt");
@@ -43,10 +55,22 @@ void EdgeAddition::getGreedySingleSource(int sourceNode, int numberOfEdges) {
         redPagerankLogs.push_back(redPagerank);
     }
 
-    EdgeAddition::saveVector(std::to_string(sourceNode) + "RedPagerankGreedy.txt", redPagerankLogs);
+    EdgeAddition::saveVector(std::to_string(sourceNode) + "redPagerankGreedy.txt", redPagerankLogs);
     EdgeAddition::saveVector(std::to_string(sourceNode) + "edgesGreedy.txt", newEdges);
 }
 
+/**
+ * The "fast greedy" algorithm to add edges to a graph in order to
+ * maximize red pagerank ratio. It adds k edges to a single
+ * source of the graph based on formula of the FairRec paper.
+ * Creates two files:
+ *      1. "<sourceNode>RedPagerankGreedy.txt": Red ratio of pagerank per edge
+ *          added.
+ *      2. "<sourceNode>edgesGreedy.txt": Edges that added to graph.
+ * 
+ * @param sourceNode (int): The source node for the edges.
+ * @param numberOfEdges (int): The number of edges to add.
+*/
 void EdgeAddition::getFastGreedySingleSource(int sourceNode, int numberOfEdges) {
     // Init graph and algorithms.
     graph g("out_graph.txt", "out_community.txt");
@@ -78,7 +102,7 @@ void EdgeAddition::getFastGreedySingleSource(int sourceNode, int numberOfEdges) 
         redPagerankLogs.push_back(redPagerank);
     }
 
-    EdgeAddition::saveVector(std::to_string(sourceNode) + "RedPagerankFastGreedy.txt", redPagerankLogs);
+    EdgeAddition::saveVector(std::to_string(sourceNode) + "redPagerankFastGreedy.txt", redPagerankLogs);
     EdgeAddition::saveVector(std::to_string(sourceNode) + "edgesFastGreedy.txt", newEdges);
 }
 
@@ -148,11 +172,10 @@ std::vector<int> EdgeAddition::getBestTargetNodes(int sourceNode, int k) {
     // Sort and keep first k. Implement better.
     algs.sort_pagerank_vector(objectiveValues);
     objectiveValues.resize(k);
-    // Conert to node ids (ints).
+    // Convert to node ids (ints).
     for (int i = 0; i < k; i++) {
         targetNodes[i] = objectiveValues[i].node_id;
     }
-    
     
     return targetNodes;
 }
