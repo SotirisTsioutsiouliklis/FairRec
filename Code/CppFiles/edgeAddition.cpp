@@ -16,9 +16,6 @@ EdgeAddition::EdgeAddition(graph &g, pagerank_algorithms &algs) : g(g), algs(alg
 
 // Public.
 void EdgeAddition::getGreedySingleSource(int sourceNode, int numberOfEdges) {
-    auto start =std::chrono::high_resolution_clock::now();
-    //srand(time(NULL));
-
     // Init graph and algorithms.
     graph g("out_graph.txt", "out_community.txt");
     pagerank_algorithms algs(g);
@@ -27,13 +24,10 @@ void EdgeAddition::getGreedySingleSource(int sourceNode, int numberOfEdges) {
     double redPagerank;
     std::vector<double> redPagerankLogs;
 
-    // Get initial red pagerank.
+    // Get initial red pagerank and store it.
     pagerank = algs.get_pagerank();
     redPagerank = g.get_pagerank_per_community(pagerank)[1];
     redPagerankLogs.push_back(redPagerank);
-
-    // Get random source node.
-    //int sourceNode = addEdges.getRandomSourceNodes(1)[0];
 
     // Add the edges.
     edge newEdge;
@@ -51,16 +45,9 @@ void EdgeAddition::getGreedySingleSource(int sourceNode, int numberOfEdges) {
 
     EdgeAddition::saveVector(std::to_string(sourceNode) + "RedPagerankGreedy.txt", redPagerankLogs);
     EdgeAddition::saveVector(std::to_string(sourceNode) + "edgesGreedy.txt", newEdges);
-
-    auto stop =std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    std::cout << "Total time: " << duration.count() << " microseconds\n";
 }
 
 void EdgeAddition::getFastGreedySingleSource(int sourceNode, int numberOfEdges) {
-    auto start =std::chrono::high_resolution_clock::now();
-    //srand(time(NULL));
-
     // Init graph and algorithms.
     graph g("out_graph.txt", "out_community.txt");
     pagerank_algorithms algs(g);
@@ -73,9 +60,6 @@ void EdgeAddition::getFastGreedySingleSource(int sourceNode, int numberOfEdges) 
     pagerank = algs.get_pagerank();
     redPagerank = g.get_pagerank_per_community(pagerank)[1];
     redPagerankLogs.push_back(redPagerank);
-
-    // Get random source node.
-    //int sourceNode = addEdges.getRandomSourceNodes(1)[0];
 
     //Get best k targets.
     std::vector<int> targetNodes = addEdges.getBestTargetNodes(sourceNode, numberOfEdges);
@@ -96,10 +80,6 @@ void EdgeAddition::getFastGreedySingleSource(int sourceNode, int numberOfEdges) 
 
     EdgeAddition::saveVector(std::to_string(sourceNode) + "RedPagerankFastGreedy.txt", redPagerankLogs);
     EdgeAddition::saveVector(std::to_string(sourceNode) + "edgesFastGreedy.txt", newEdges);
-
-    auto stop =std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-    std::cout << "Total time: " << duration.count() << " microseconds\n"; 
 }
 
 // Private.
