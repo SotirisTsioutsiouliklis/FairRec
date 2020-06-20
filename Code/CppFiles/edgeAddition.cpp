@@ -15,19 +15,6 @@ EdgeAddition::EdgeAddition(graph &g, pagerank_algorithms &algs) : g(g), algs(alg
 }
 
 // Public.
-/**
- * A greedy algorithm to add edges to a graph in
- * order to maximize red pagerank ratio. It adds k edges to a single
- * source of the graph based on formula of the FairRec paper.
- * 
- * Creates two files:
- *      1. "<sourceNode>RedPagerankGreedy.txt": Red ratio of pagerank
- *          per edge added.
- *      2. "<sourceNode>edgesGreedy.txt": Edges that added to graph.
- * 
- * @param sourceNode (int): The source node for the edges.
- * @param numberOfEdges (int): The number of edges to add.
-*/
 void EdgeAddition::getGreedySingleSource(int sourceNode, int numberOfEdges) {
     // Init graph and algorithms.
     graph g("out_graph.txt", "out_community.txt");
@@ -60,20 +47,6 @@ void EdgeAddition::getGreedySingleSource(int sourceNode, int numberOfEdges) {
     EdgeAddition::saveVector(std::to_string(sourceNode) + "edgesGreedy.txt", newEdges);
 }
 
-/**
- * The "fast greedy" algorithm described in fairRec paper to add edges
- * to a graph in order to maximize red pagerank ratio. It adds k edges
- * to a single source of the graph based on formula of the FairRec
- * paper.
- *
- * Creates two files:
- *      1. "<sourceNode>RedPagerankGreedy.txt": Red ratio of pagerank per edge
- *          added.
- *      2. "<sourceNode>edgesGreedy.txt": Edges that added to graph.
- * 
- * @param sourceNode (int): The source node for the edges.
- * @param numberOfEdges (int): The number of edges to add.
-*/
 void EdgeAddition::getFastGreedySingleSource(int sourceNode, int numberOfEdges) {
     // Init graph and algorithms.
     graph g("out_graph.txt", "out_community.txt");
@@ -109,78 +82,148 @@ void EdgeAddition::getFastGreedySingleSource(int sourceNode, int numberOfEdges) 
     EdgeAddition::saveVector(std::to_string(sourceNode) + "edgesFastGreedy.txt", newEdges);
 }
 
-// Private.
-std::vector<int> EdgeAddition::getRandomSourceNodes(int n) {
-    std::vector<int> sourceNodes;
+void EdgeAddition::getGreedyMultySource(std::vector<int> sourceNodes, int numberOfEdges) {
+    // Init graph and algorithms.
+    graph g("out_graph.txt", "out_community.txt");
+    pagerank_algorithms algs(g);
+    EdgeAddition addEdges(g, algs);
+    pagerank_v pagerank;
+    double redPagerank;
+    std::vector<double> redPagerankLogs;
+
+    // Get initial red pagerank and store it.
+    pagerank = algs.get_pagerank();
+    redPagerank = g.get_pagerank_per_community(pagerank)[1];
+    redPagerankLogs.push_back(redPagerank);
+
+    const int numberOfSources = sourceNodes.size();
     int sourceNode;
-    bool isSource;
-    int numberOfNodes = g.get_num_nodes();
-
-    // Get random source nodes.
-    for (int i = 0; i < n; i++) {
-        do {
-            // Get random int from 0 to numberOfNodes - 1.
-            sourceNode = (rand() % numberOfNodes);
-            // Check if already exists.
-            if (std::find(sourceNodes.begin(), sourceNodes.end(), sourceNode) != sourceNodes.end()) {
-                isSource = true;
-            } else {
-                isSource = false;
-            }
-        } while (isSource);
-        // Add node to sources.
-        sourceNodes.push_back(sourceNode);
-    }
-
-    return sourceNodes;
-}
-
-int EdgeAddition::getBestTargetNode(int sourceNode) {
-    std::vector<int> sourceNeighbors;
-    pagerank_t candidate;
-    // Get objective value for all nodes.
-    pagerank_v objectiveValues = getObjectiveValues(sourceNode);
-    // Remove from comparison neighbors and source by setting
-    // their value to -1.
-    objectiveValues[sourceNode].pagerank = -1;
-    sourceNeighbors = g.get_out_neighbors(sourceNode);
-    for (auto it = sourceNeighbors.begin(); it < sourceNeighbors.end(); it++) {
-        objectiveValues[*it].pagerank = -1;
-    }
-    // Get best target node.
-    candidate.node_id = -1;
-    candidate.pagerank = -1;
-    // Search for the best.
-    for (auto it = objectiveValues.begin(); it < objectiveValues.end(); it++) {
-        if (it -> pagerank > candidate.pagerank) {
-            candidate.node_id = it -> node_id;
-            candidate.pagerank = it -> pagerank;
+    edge newEdge;
+    std::vector<edge> newEdges;
+    for (int i = 0; i < numberOfSources; i++) {
+        sourceNode = sourceNodes[i];
+        for (int i = 0; i < numberOfEdges; i++) {
+            std::cout << "SourceNode: " << sourceNode << "Edge: " << i << std::endl;
+            newEdge.target = addEdges.getBestTargetNode(sourceNode);
+            g.add_edge(newEdge.source, newEdge.target);
+            pagerank = algs.get_pagerank();
+            redPagerank = g.get_pagerank_per_community(pagerank)[1];
+            newEdges.push_back(newEdge);
+            redPagerankLogs.push_back(redPagerank);
         }
     }
-    return candidate.node_id;
+
+    EdgeAddition::saveVector("redPagerankGreedy.txt", redPagerankLogs);
+    EdgeAddition::saveVector("edgesGreedy.txt", newEdges);
 }
 
-std::vector<int> EdgeAddition::getBestTargetNodes(int sourceNode, int k) {
-    std::vector<int> sourceNeighbors;
-    std::vector<int> targetNodes(k);
-    // Get objective value for all nodes.
-    pagerank_v objectiveValues = getObjectiveValues(sourceNode);
-    // Remove from comparison neighbors and source by setting
-    // their value to -1.
-    objectiveValues[sourceNode].pagerank = -1;
-    sourceNeighbors = g.get_out_neighbors(sourceNode);
-    for (auto it = sourceNeighbors.begin(); it < sourceNeighbors.end(); it++) {
-        objectiveValues[*it].pagerank = -1;
+void EdgeAddition::getFastGreedyMultySource(std::vector<int> sourceNodes, int numberOfEdges) {
+    // Init graph and algorithms.
+    graph g("out_graph.txt", "out_community.txt");
+    pagerank_algorithms algs(g);
+    EdgeAddition addEdges(g, algs);
+    pagerank_v pagerank;
+    double redPagerank;
+    std::vector<double> redPagerankLogs;
+    std::vector<int> targetNodes;
+
+    // Get initial red pagerank and store it.
+    pagerank = algs.get_pagerank();
+    redPagerank = g.get_pagerank_per_community(pagerank)[1];
+    redPagerankLogs.push_back(redPagerank);
+
+    const int numberOfSources = sourceNodes.size();
+    int sourceNode;
+    edge newEdge;
+    std::vector<edge> newEdges;
+    for (int i = 0; i < numberOfSources; i++) {
+        sourceNode = sourceNodes[i];
+        //Get best k targets.
+        targetNodes = addEdges.getBestTargetNodes(sourceNode, numberOfEdges);
+        for (int i = 0; i < numberOfEdges; i++) {
+            std::cout << "SourceNode: " << sourceNode << "Edge: " << i << std::endl;
+            newEdge.target = targetNodes[i];
+            g.add_edge(newEdge.source, newEdge.target);
+            pagerank = algs.get_pagerank();
+            redPagerank = g.get_pagerank_per_community(pagerank)[1];
+            newEdges.push_back(newEdge);
+            redPagerankLogs.push_back(redPagerank);
+        }
     }
-    // Sort and keep first k. Implement better.
-    algs.sort_pagerank_vector(objectiveValues);
-    objectiveValues.resize(k);
-    // Convert to node ids (ints).
-    for (int i = 0; i < k; i++) {
-        targetNodes[i] = objectiveValues[i].node_id;
+    EdgeAddition::saveVector("redPagerankFastGreedy.txt", redPagerankLogs);
+    EdgeAddition::saveVector("edgesFastGreedy.txt", newEdges);
+}
+
+pagerank_v EdgeAddition::getObjectiveValues(int sourceNode) {
+    // Declare local variables.
+    pagerank_v objectiveValues, rankVector, redAbsorbingProbs, sourceAbsorbingProbs;
+    std::vector<int> neighbors;
+    double redPagerank, nominatorConst, denominatorConst, objectiveNominator, objectiveDenominator;
+    const double jumpProb = 0.15;
+    int sourceOutDegree, neighbor;
+    const int numberOfNodes = g.get_num_nodes();
+    objectiveValues.resize(numberOfNodes);
+
+    // Get source out degree.
+    sourceOutDegree = g.get_out_degree(sourceNode);
+    // Run pagerank.
+    rankVector = algs.get_pagerank();
+    // Get red pagerank.
+    redPagerank = g.get_pagerank_per_community(rankVector)[1];
+    // Run absoring to Red.
+    redAbsorbingProbs = algs.get_red_abs_prob();
+    // Run absorbing to source.
+    sourceAbsorbingProbs = algs.get_node_abs_prob(sourceNode);
+    // Get source neighbors.
+    neighbors = g.get_out_neighbors(sourceNode);
+    // Get average Red pagerank of neighbors for nominator.
+    nominatorConst = 0;
+    if (sourceOutDegree > 0) {
+        for (int nei = 0; nei < sourceOutDegree; nei++) {
+            neighbor = neighbors[nei];
+            nominatorConst += redAbsorbingProbs[neighbor].pagerank;
+        }
+        nominatorConst *= (1 / (float)sourceOutDegree);
+    } else {
+        for (int nei = 0; nei < numberOfNodes; nei++) {
+            neighbor = nei;
+            nominatorConst += redAbsorbingProbs[neighbor].pagerank;
+        }
+        nominatorConst *= (1 / (float)numberOfNodes);
     }
-    
-    return targetNodes;
+    // Get average Source pagerank of neighbors for denominator.
+    denominatorConst = 0;
+    if (sourceOutDegree > 0) {
+        for (int nei = 0; nei < sourceOutDegree; nei++) {
+            neighbor = neighbors[nei];
+            denominatorConst += sourceAbsorbingProbs[neighbor].pagerank;
+        }
+        denominatorConst *= (1 / (float)sourceOutDegree);
+    } else {
+        for (int nei = 0; nei < numberOfNodes; nei++) {
+            neighbor = nei;
+            denominatorConst += sourceAbsorbingProbs[neighbor].pagerank;
+        }
+        denominatorConst *= (1 / (float)numberOfNodes);
+    }
+    // Calculate the Quantity. Not just the important part but
+    // all so as to have a sanity check.
+    // For all nodes.
+    for (int targetNode = 0; targetNode < numberOfNodes; targetNode++) {
+        // Calculate nominator.
+        objectiveNominator = redAbsorbingProbs[targetNode].pagerank - nominatorConst;
+        objectiveNominator *= ((1 - jumpProb) / jumpProb);
+        // Calculate denominator.
+        objectiveDenominator = sourceAbsorbingProbs[targetNode].pagerank - denominatorConst;
+        objectiveDenominator *= ((1 - jumpProb) / jumpProb);
+        objectiveDenominator = sourceOutDegree + 1 - objectiveDenominator;
+        objectiveValues[targetNode].node_id = targetNode;
+        objectiveValues[targetNode].pagerank = redPagerank + rankVector[sourceNode].pagerank * (objectiveNominator / objectiveDenominator);
+        // Theory check print.
+        if (objectiveDenominator < 0) std::cout << "!!!NEGATIVE DENOMINATOR!!!\n";
+    }
+
+    return objectiveValues;
 }
 
 // Save vectors.
@@ -256,78 +299,76 @@ void EdgeAddition::saveVector(std::string fileName, std::vector<step_log> &logVe
     logFile.close();
 }
 
+std::vector<int> EdgeAddition::getRandomSourceNodes(int numberOfSourceNodes, int numberOfGraphNodes) {
+    std::vector<int> sourceNodes;
+    int sourceNode;
+    bool isSource;
 
-pagerank_v EdgeAddition::getObjectiveValues(int sourceNode) {
-    // Declare local variables.
-    pagerank_v objectiveValues, rankVector, redAbsorbingProbs, sourceAbsorbingProbs;
-    std::vector<int> neighbors;
-    double redPagerank, nominatorConst, denominatorConst, objectiveNominator, objectiveDenominator;
-    const double jumpProb = 0.15;
-    int sourceOutDegree, neighbor;
-    const int numberOfNodes = g.get_num_nodes();
-    objectiveValues.resize(numberOfNodes);
-
-    // Get source out degree.
-    sourceOutDegree = g.get_out_degree(sourceNode);
-    // Run pagerank.
-    rankVector = algs.get_pagerank();
-    // Get red pagerank.
-    redPagerank = g.get_pagerank_per_community(rankVector)[1];
-    // Run absoring to Red.
-    redAbsorbingProbs = algs.get_red_abs_prob();
-    // Run absorbing to source.
-    sourceAbsorbingProbs = algs.get_node_abs_prob(sourceNode);
-    // Get source neighbors.
-    neighbors = g.get_out_neighbors(sourceNode);
-    // Get average Red pagerank of neighbors for nominator.
-    nominatorConst = 0;
-    if (sourceOutDegree > 0) {
-        for (int nei = 0; nei < sourceOutDegree; nei++) {
-            neighbor = neighbors[nei];
-            nominatorConst += redAbsorbingProbs[neighbor].pagerank;
-        }
-        nominatorConst *= (1 / (float)sourceOutDegree);
-    } else {
-        for (int nei = 0; nei < numberOfNodes; nei++) {
-            neighbor = nei;
-            nominatorConst += redAbsorbingProbs[neighbor].pagerank;
-        }
-        nominatorConst *= (1 / (float)numberOfNodes);
-    }
-    // Get average Source pagerank of neighbors for denominator.
-    denominatorConst = 0;
-    if (sourceOutDegree > 0) {
-        for (int nei = 0; nei < sourceOutDegree; nei++) {
-            neighbor = neighbors[nei];
-            denominatorConst += sourceAbsorbingProbs[neighbor].pagerank;
-        }
-        denominatorConst *= (1 / (float)sourceOutDegree);
-    } else {
-        for (int nei = 0; nei < numberOfNodes; nei++) {
-            neighbor = nei;
-            denominatorConst += sourceAbsorbingProbs[neighbor].pagerank;
-        }
-        denominatorConst *= (1 / (float)numberOfNodes);
-    }
-    // Calculate the Quantity. Not just the important part but
-    // all so as to have a sanity check.
-    // For all nodes.
-    for (int targetNode = 0; targetNode < numberOfNodes; targetNode++) {
-        // Calculate nominator.
-        objectiveNominator = redAbsorbingProbs[targetNode].pagerank - nominatorConst;
-        objectiveNominator *= ((1 - jumpProb) / jumpProb);
-        // Calculate denominator.
-        objectiveDenominator = sourceAbsorbingProbs[targetNode].pagerank - denominatorConst;
-        objectiveDenominator *= ((1 - jumpProb) / jumpProb);
-        objectiveDenominator = sourceOutDegree + 1 - objectiveDenominator;
-        objectiveValues[targetNode].node_id = targetNode;
-        objectiveValues[targetNode].pagerank = redPagerank + rankVector[sourceNode].pagerank * (objectiveNominator / objectiveDenominator);
-        // Theory check print.
-        if (objectiveDenominator < 0) std::cout << "!!!NEGATIVE DENOMINATOR!!!\n";
+    // Get random source nodes.
+    for (int i = 0; i < numberOfSourceNodes; i++) {
+        do {
+            // Get random int from 0 to numberOfGraphNodes - 1.
+            sourceNode = (rand() % numberOfGraphNodes);
+            // Check if already exists.
+            if (std::find(sourceNodes.begin(), sourceNodes.end(), sourceNode) != sourceNodes.end()) {
+                isSource = true;
+            } else {
+                isSource = false;
+            }
+        } while (isSource);
+        // Add node to sources.
+        sourceNodes.push_back(sourceNode);
     }
 
-    return objectiveValues;
+    return sourceNodes;
 }
 
+// Private.
 
+int EdgeAddition::getBestTargetNode(int sourceNode) {
+    std::vector<int> sourceNeighbors;
+    pagerank_t candidate;
+    // Get objective value for all nodes.
+    pagerank_v objectiveValues = getObjectiveValues(sourceNode);
+    // Remove from comparison neighbors and source by setting
+    // their value to -1.
+    objectiveValues[sourceNode].pagerank = -1;
+    sourceNeighbors = g.get_out_neighbors(sourceNode);
+    for (auto it = sourceNeighbors.begin(); it < sourceNeighbors.end(); it++) {
+        objectiveValues[*it].pagerank = -1;
+    }
+    // Get best target node.
+    candidate.node_id = -1;
+    candidate.pagerank = -1;
+    // Search for the best.
+    for (auto it = objectiveValues.begin(); it < objectiveValues.end(); it++) {
+        if (it -> pagerank > candidate.pagerank) {
+            candidate.node_id = it -> node_id;
+            candidate.pagerank = it -> pagerank;
+        }
+    }
+    return candidate.node_id;
+}
 
+std::vector<int> EdgeAddition::getBestTargetNodes(int sourceNode, int k) {
+    std::vector<int> sourceNeighbors;
+    std::vector<int> targetNodes(k);
+    // Get objective value for all nodes.
+    pagerank_v objectiveValues = getObjectiveValues(sourceNode);
+    // Remove from comparison neighbors and source by setting
+    // their value to -1.
+    objectiveValues[sourceNode].pagerank = -1;
+    sourceNeighbors = g.get_out_neighbors(sourceNode);
+    for (auto it = sourceNeighbors.begin(); it < sourceNeighbors.end(); it++) {
+        objectiveValues[*it].pagerank = -1;
+    }
+    // Sort and keep first k. Implement better.
+    algs.sort_pagerank_vector(objectiveValues);
+    objectiveValues.resize(k);
+    // Convert to node ids (ints).
+    for (int i = 0; i < k; i++) {
+        targetNodes[i] = objectiveValues[i].node_id;
+    }
+    
+    return targetNodes;
+}

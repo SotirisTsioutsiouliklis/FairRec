@@ -29,14 +29,47 @@ class EdgeAddition {
     public:
         EdgeAddition(graph &g, pagerank_algorithms &algs);
 
-        // Greedy Single Source.
+        /**
+         * A greedy algorithm to add edges to a graph in
+         * order to maximize red pagerank ratio. It adds k edges to a single
+         * source of the graph based on formula of the FairRec paper.
+         * 
+         * Creates two files:
+         *      1. "<sourceNode>RedPagerankGreedy.txt": Red ratio of pagerank
+         *          per edge added.
+         *      2. "<sourceNode>edgesGreedy.txt": Edges that added to graph.
+         * 
+         * @param sourceNode (int): The source node for the edges.
+         * @param numberOfEdges (int): The number of edges to add.
+        */
         static void getGreedySingleSource(int sourceNode, int numberOfEdges);
-        // Fast Greedy Single Source.
+        /**
+         * The "fast greedy" algorithm described in fairRec paper to add edges
+         * to a graph in order to maximize red pagerank ratio. It adds k edges
+         * to a single source of the graph based on formula of the FairRec
+         * paper.
+         *
+         * Creates two files:
+         *      1. "<sourceNode>RedPagerankGreedy.txt": Red ratio of pagerank per edge
+         *          added.
+         *      2. "<sourceNode>edgesGreedy.txt": Edges that added to graph.
+         * 
+         * @param sourceNode (int): The source node for the edges.
+         * @param numberOfEdges (int): The number of edges to add.
+        */
         static void getFastGreedySingleSource(int sourceNode, int numberOfEdges);
-        
-        // Return values of Objective function.
-        pagerank_v getObjectiveValues(int sourceNodes);
+        static void getGreedyMultySource(std::vector<int> sourceNodes, int numberOfEdges);
+        static void getFastGreedyMultySource(std::vector<int> sourceNodes, int numberOfEdges);
 
+        /**
+         * By objective value we mean the prediction for the Red pagerank ratio
+         * in case we add an edge in the graph. The prediction is based on the
+         * formula of the FairRec paper and it is accurate.
+        */
+        pagerank_v getObjectiveValues(int sourceNode);
+
+        // Returns n random sources.
+        static std::vector<int> getRandomSourceNodes(int numberOfSourceNodes, int numberOfGraphNodes);
         // Save various vectors.
         static void saveVector(std::string fileName, pagerank_v &logVector);
         static void saveVector(std::string fileName, std::vector<int> &logVector);
@@ -49,8 +82,7 @@ class EdgeAddition {
         pagerank_algorithms &algs;
 
         // Methods
-        // Returns n random sources.
-        std::vector<int> getRandomSourceNodes(int n);
+        
         
         // Returns the best node to connect at the moment.
         int getBestTargetNode(int sourceNode);
