@@ -21,22 +21,19 @@ int main()
 {
     // Define number of threads to use.
     omp_set_num_threads(20);
-    int numberOfSourceNodes = 10;
-    int numberOfEdges = 50;
-    int numberOfGraphNodes;
+    int numberOfSourceNodes = 30;
+    int numberOfEdges = 100;
 
     std::ifstream inFile("out_graph.txt");
     std::string str;
     inFile >> str;
     inFile.close();
 
-    numberOfGraphNodes = std::stoi(str);
     std::cout << "Number of nodes: " << str << std::endl;
 
-    std::vector<int> sourceNodes = EdgeAddition::getRandomSourceNodes(numberOfSourceNodes, numberOfGraphNodes);
-    EdgeAddition::saveVector("sourceNodes.txt", sourceNodes);
+    //std::vector<int> sourceNodes = EdgeAddition::getRandomSourceNodes(numberOfSourceNodes, numberOfGraphNodes);
 
-    EdgeAddition::getGreedyMultySource(sourceNodes, numberOfEdges);
+    EdgeAddition::getGreedyMultySource(numberOfSourceNodes, numberOfEdges);
 
     return 0;
 }

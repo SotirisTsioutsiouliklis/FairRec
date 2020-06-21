@@ -58,8 +58,38 @@ class EdgeAddition {
          * @param numberOfEdges (int): The number of edges to add.
         */
         static void getFastGreedySingleSource(int sourceNode, int numberOfEdges);
-        static void getGreedyMultySource(std::vector<int> sourceNodes, int numberOfEdges);
-        static void getFastGreedyMultySource(std::vector<int> sourceNodes, int numberOfEdges);
+        /**
+         * A greedy algorithm to add edges to a graph in
+         * order to maximize red pagerank ratio. It adds <numberOfEdges>
+         * edges to <numberOfSources> nodes. Source nodes are selected
+         * best by pagerank. Edges are selected based on formula of the
+         * FairRec paper.
+         * 
+         * Creates two files:
+         *      1. "RedPagerankGreedy.txt": Red ratio of pagerank
+         *          per edge added.
+         *      2. "edgesGreedy.txt": Edges that added to graph.
+         * 
+         * @param sourceNode (int): The source node for the edges.
+         * @param numberOfEdges (int): The number of edges to add.
+        */
+        static void getGreedyMultySource(int numberOfSources, int numberOfEdges);
+        /**
+         * the "fast greedy" algorithm described in fairRec paper to
+         * add edges to a graph in order to maximize red pagerank
+         * ratio. It adds <numberOfEdges> edges to <numberOfSources>
+         * nodes. Source nodes are selected best by pagerank. Edges are
+         * selected based on formula of the FairRec paper.
+         * 
+         * Creates two files:
+         *      1. "RedPagerankGreedy.txt": Red ratio of pagerank
+         *          per edge added.
+         *      2. "edgesGreedy.txt": Edges that added to graph.
+         * 
+         * @param sourceNode (int): The source node for the edges.
+         * @param numberOfEdges (int): The number of edges to add.
+        */
+        static void getFastGreedyMultySource(int numberOfSources, int numberOfEdges);
 
         /**
          * By objective value we mean the prediction for the Red pagerank ratio

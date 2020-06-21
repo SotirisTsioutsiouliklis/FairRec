@@ -35,7 +35,6 @@ void EdgeAddition::getGreedySingleSource(int sourceNode, int numberOfEdges) {
     newEdge.source = sourceNode;
     for (int i = 0; i < numberOfEdges; i++) {
         std::cout << "SourceNode: " << sourceNode << "Edge: " << i << std::endl;
-        std::cout << "Number of Nodes: " << g.get_num_edges() << std::endl;
         newEdge.target = addEdges.getBestTargetNode(sourceNode);
         g.add_edge(newEdge.source, newEdge.target);
         pagerank = algs.get_pagerank();
@@ -83,7 +82,7 @@ void EdgeAddition::getFastGreedySingleSource(int sourceNode, int numberOfEdges) 
     EdgeAddition::saveVector(std::to_string(sourceNode) + "edgesFastGreedy.txt", newEdges);
 }
 
-void EdgeAddition::getGreedyMultySource(std::vector<int> sourceNodes, int numberOfEdges) {
+void EdgeAddition::getGreedyMultySource(int numberOfSources, int numberOfEdges) {
     // Init graph and algorithms.
     graph g("out_graph.txt", "out_community.txt");
     pagerank_algorithms algs(g);
@@ -91,13 +90,20 @@ void EdgeAddition::getGreedyMultySource(std::vector<int> sourceNodes, int number
     pagerank_v pagerank;
     double redPagerank;
     std::vector<double> redPagerankLogs;
+    std::vector<int> sourceNodes;
 
     // Get initial red pagerank and store it.
     pagerank = algs.get_pagerank();
     redPagerank = g.get_pagerank_per_community(pagerank)[1];
     redPagerankLogs.push_back(redPagerank);
 
-    const int numberOfSources = sourceNodes.size();
+    // Get best by pagerank sources.
+    algs.sort_pagerank_vector(pagerank);
+    pagerank.resize(numberOfSources);
+    for (int i = 0; i < numberOfSources; i++) {
+        sourceNodes.push_back(pagerank[i].node_id);
+    }
+
     int sourceNode;
     edge newEdge;
     std::vector<edge> newEdges;
@@ -119,7 +125,7 @@ void EdgeAddition::getGreedyMultySource(std::vector<int> sourceNodes, int number
     EdgeAddition::saveVector("edgesGreedy.txt", newEdges);
 }
 
-void EdgeAddition::getFastGreedyMultySource(std::vector<int> sourceNodes, int numberOfEdges) {
+void EdgeAddition::getFastGreedyMultySource(int numberOfSources, int numberOfEdges) {
     // Init graph and algorithms.
     graph g("out_graph.txt", "out_community.txt");
     pagerank_algorithms algs(g);
@@ -128,13 +134,20 @@ void EdgeAddition::getFastGreedyMultySource(std::vector<int> sourceNodes, int nu
     double redPagerank;
     std::vector<double> redPagerankLogs;
     std::vector<int> targetNodes;
+    std::vector<int> sourceNodes;
 
     // Get initial red pagerank and store it.
     pagerank = algs.get_pagerank();
     redPagerank = g.get_pagerank_per_community(pagerank)[1];
     redPagerankLogs.push_back(redPagerank);
 
-    const int numberOfSources = sourceNodes.size();
+    // Get best by pagerank sources.
+    algs.sort_pagerank_vector(pagerank);
+    pagerank.resize(numberOfSources);
+    for (int i = 0; i < numberOfSources; i++) {
+        sourceNodes.push_back(pagerank[i].node_id);
+    }
+
     int sourceNode;
     edge newEdge;
     std::vector<edge> newEdges;
@@ -229,6 +242,7 @@ pagerank_v EdgeAddition::getObjectiveValues(int sourceNode) {
     }
     
     EdgeAddition::saveVector("objectiveValues.txt", objectiveValues);
+
     return objectiveValues;
 }
 
@@ -370,11 +384,28 @@ std::vector<int> EdgeAddition::getBestTargetNodes(int sourceNode, int k) {
         objectiveValues[*it].pagerank = -1;
     }
     // Sort and keep first k. Implement better.
-    algs.sort_pagerank_vector(objectiveValues);
-    objectiveValues.resize(k);
+    //algs.sort_pagerank_vector(objectiveValues);
+    //objectiveValues.resize(k);
     // Convert to node ids (ints).
+    //for (int i = 0; i < k; i++) {
+      //  targetNodes[i] = objectiveValues[i].node_id;
+    //}
+    // Get k best edges.
+    pagerank_t candidateNode;
     for (int i = 0; i < k; i++) {
-        targetNodes[i] = objectiveValues[i].node_id;
+        candidateNode.node_id = -1;
+        candidateNode.pagerank = -1;
+        // Search for the best.
+        for (auto it = objectiveValues.begin(); it < objectiveValues.end(); it++) {
+            if (it -> pagerank > candidateNode.pagerank) {
+                candidateNode.node_id = it -> node_id;
+                candidateNode.pagerank = it -> pagerank;
+            }
+        }
+        // Add best to target nodes.
+        targetNodes[i] = candidateNode.node_id;
+        // Remove best from competition.
+        objectiveValues[candidateNode.node_id].pagerank = -1;
     }
     
     return targetNodes;

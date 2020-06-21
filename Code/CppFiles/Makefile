@@ -4,8 +4,8 @@ all:
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o personilized.out graph.cpp pagerank.cpp absoribing_probs.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o link_recommendation.out graph.cpp pagerank.cpp edge_add.cpp link_recommendation.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o edge_criterion.out graph.cpp pagerank.cpp edge_add.cpp edge_criterion.cpp
-	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o singleSourceGreedy.out graph.cpp pagerank.cpp edgeAddition.cpp singleSourceGreedy.cpp
-	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o singleSourceFastGreedy.out graph.cpp pagerank.cpp edgeAddition.cpp singleSourceFastGreedy.cpp
+	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o singleSourceGreedy.out graph.cpp pagerank.cpp edgeAddition.cpp singleSourceGreedy.cpp
+	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o singleSourceFastGreedy.out graph.cpp pagerank.cpp edgeAddition.cpp singleSourceFastGreedy.cpp
 	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o multySourceGreedy.out graph.cpp pagerank.cpp edgeAddition.cpp multySourceGreedy.cpp	
 	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o multySourceFastGreedy.out graph.cpp pagerank.cpp edgeAddition.cpp multySourceFastGreedy.cpp	
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o redAbsorbingProbs.out graph.cpp pagerank.cpp edgeAddition.cpp redAbsorbingProbs.cpp
