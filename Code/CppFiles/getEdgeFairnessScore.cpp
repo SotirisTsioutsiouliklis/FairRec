@@ -44,7 +44,7 @@ static std::vector<int> readSourceNodes() {
         sourceNodes.insert(node);
     }
     for (int n : sourceNodes) {
-        vecSourceNodes.append(n);
+        vecSourceNodes.push_back(n);
     }
 
     randomNodes.close();
@@ -80,6 +80,7 @@ static void computeEdgeScores(const graph &g, const int &node) {
  * 
  * Create text file with the ids of the nodes  in the vector.
 */
+/**
 static void saveVector(std::string fileName, std::vector<int> vec) {
     // Declare local variables.
     int numberOfNodes = vec.size();
@@ -96,7 +97,7 @@ static void saveVector(std::string fileName, std::vector<int> vec) {
     // Close file.
     log_file.close();
 }
-
+*/
 int main()
 {
     std::cout << "Gets fairness scores...\n";
