@@ -20,48 +20,37 @@
 #include <algorithm>
 #include <fstream>
 #include <string>
+#include <set>
 
-// Handles command line arguments.
-static bool getArguments(const int argc, char ** const argv, int &k) {
-    if (argc != 2) goto error;
-    k = std::atoi(argv[1]);
+// Reads random and best by pagerank nodes.
+static std::vector<int> readSourceNodes() {
+    std::set<int> sourceNodes;
+    std::vector<int> vecSourceNodes;
+    std::string str;
+    int node;
 
-    return true;
-
-error:
-    std::cerr << "Usage:\n"
-	"./getScoreForK <k (int)>";
-
-    return false;
-}
-
-/**
- * Returns k random nodes of graph.
- * 
- * @param g (graph): Graph to choose nodes.
- * @param k (int): Number of nodes to choose.
- * @return randomNodes (std::vector<int>): The randomly chosen nodes.
- * 
- * TODO: Improve process when k is small enough compared to
- * numberOfNodes and so we expect to have good guesses. No need for
- * initializing the whole vector in this case, just check if the guess
- * node exists in the vector.   
-*/
-static std::vector<int> getRandomNodesK(const graph &g, int &k) {
-    int numberOfNodes = g.get_num_nodes();
-    std::vector<int> randomNodes = std::vector<int> (numberOfNodes, 0);
+    std::ifstream randomNodes("randomSourceNodes.txt");
+    std::ifstream pagerankNodes("pagerankBestSourceNodes.txt");
     
-    // Initialize vector with nodes' ids.
-    for (int i = 0; i < numberOfNodes; i++) {
-        randomNodes[i] = i;
+    getline (randomNodes, str);
+    while (getline (randomNodes, str)) {
+        node = std::stoi(str);
+        sourceNodes.insert(node);
     }
 
-    // Suffle nodes.
-    std::random_shuffle(randomNodes.begin(), randomNodes.end() );
-    // Keep k first nodes.
-    randomNodes.resize(k);
+    getline (pagerankNodes, str);
+    while (getline (pagerankNodes, str)) {
+        node = std::stoi(str);
+        sourceNodes.insert(node);
+    }
+    for (int n : sourceNodes) {
+        vecSourceNodes.append(n);
+    }
 
-    return randomNodes;
+    randomNodes.close();
+    pagerankNodes.close();
+
+    return vecSourceNodes;
 }
 
 /**
@@ -108,14 +97,10 @@ static void saveVector(std::string fileName, std::vector<int> vec) {
     log_file.close();
 }
 
-int main(int argc, char **argv)
+int main()
 {
-    // Command line arguments.
-    int k = 0;
-
-    // Get arguments.
-    if (!getArguments(argc, argv, k)) return 1;
-
+    std::cout << "Gets fairness scores...\n";
+    std::cout << "Initialize objects...\n";
     // Declare/Initialize variables.
     graph g("out_graph.txt", "out_community.txt");
     int numberOFNodes = g.get_num_nodes();
@@ -123,19 +108,16 @@ int main(int argc, char **argv)
     EdgeAddition edgeAddMethod(g, algs);
     pagerank_v edgesScore(numberOFNodes);
 
-    // Get k Random Source nodes.
-    std::vector<int> sourceNodes = getRandomNodesK(g, k);
+    std::vector<int> sourceNodes = readSourceNodes();
 
     // For each node.
+    std::cout << "Computes fairness scores...\n";
     for (int &node : sourceNodes) {
         // Compute the edges' scores.
         edgesScore = edgeAddMethod.getObjectiveValues(node);
         // Save the edges' scores.
-        edgeAddMethod.saveVector("out_" + std::to_string(node) + "EdgesScores.txt", edgesScore);
+        edgeAddMethod.saveVector("out_" + std::to_string(node) + "edgeFairnessScores.txt", edgesScore);
     }
-
-    // Save random nodes.
-    saveVector("sourceNodes.txt", sourceNodes);
 
     return 0;
 }
