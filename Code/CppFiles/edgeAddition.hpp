@@ -17,8 +17,8 @@ struct step_log {
 struct edge {
     int source;
     int target;
-    int s_outd;
-    double s_score_1, s_score_2, t_score, e_score;
+    int sourceOutDegree;
+    double recScore, fairScore;
 
     bool operator == (const edge &other) {
         return (source == other.source && target == other.target);
