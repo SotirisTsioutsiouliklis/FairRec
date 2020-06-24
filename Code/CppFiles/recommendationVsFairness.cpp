@@ -161,7 +161,7 @@ int main() {
     int numberOfNodes = g.get_num_nodes();
     int numberOfEdges = (numberOfNodes / 20 < 100) ? numberOfNodes / 20 : 100;
 
-    sourceNodes.resize(2);
+    sourceNodes.resize(4);
     for (int node : sourceNodes) {
         std::cout << "Load best by rec edges for node" << node << "...\n";
         getBestRecEdges(node, newEdges, numberOfEdges);
