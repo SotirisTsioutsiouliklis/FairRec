@@ -11,7 +11,7 @@ typedef struct {
 } node_info_t; // for step fair pagerank algorithms
 
 enum class personalization_t {NO_PERSONALIZATION, ATTRIBUTE_PERSONALIZATION, NODE_PERSONALIZATION, JUMP_OPT_PERSONALIZATION};
-enum class absorb_mode {RED, BLUE, NODE};
+enum class absorb_mode {RED, BLUE, NODE, NONE};
 
 class pagerank_algorithms
 {

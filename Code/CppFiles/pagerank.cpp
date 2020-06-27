@@ -82,6 +82,7 @@ pagerank_v pagerank_algorithms::get_red_abs_prob(const double C, const double ep
 	std::vector<double> tmp_pagerank(nnodes);
 	int iter = 0;
 	for (; iter < max_iter; ++iter) {
+		#pragma omp parallel for firstprivate(nnodes)
 		for (node = 0; node < nnodes; ++node) {
 			tmp_pagerank[node] = 0.0;
 			int n_out_degree = g.get_out_degree(node);
@@ -100,6 +101,7 @@ pagerank_v pagerank_algorithms::get_red_abs_prob(const double C, const double ep
 		
 		// Check convergence.
 		double diff = 0.0;
+		#pragma omp parallel for firstprivate(nnodes, tmp_pagerank) reduction(+:diff)
 		for (node = 0; node < nnodes; ++node) {
 			diff += std::fabs(tmp_pagerank[node] - pagerankv[node].pagerank);
 			pagerankv[node].pagerank = tmp_pagerank[node];
@@ -130,6 +132,7 @@ pagerank_v pagerank_algorithms::get_blue_abs_prob(const double C, const double e
 	std::vector<double> tmp_pagerank(nnodes);
 	int iter = 0;
 	for (; iter < max_iter; ++iter) {
+		#pragma omp parallel for firstprivate(nnodes)
 		for (node = 0; node < nnodes; ++node) {
 			tmp_pagerank[node] = 0.0;
 			int n_out_degree = g.get_out_degree(node);
@@ -148,6 +151,7 @@ pagerank_v pagerank_algorithms::get_blue_abs_prob(const double C, const double e
 		
 		// Check convergence.
 		double diff = 0.0;
+		#pragma omp parallel for firstprivate(nnodes, tmp_pagerank) reduction(+:diff)
 		for (node = 0; node < nnodes; ++node) {
 			diff += std::fabs(tmp_pagerank[node] - pagerankv[node].pagerank);
 			pagerankv[node].pagerank = tmp_pagerank[node];
@@ -178,6 +182,7 @@ pagerank_v pagerank_algorithms::get_node_abs_prob(int abs_node, const double C, 
 	std::vector<double> tmp_pagerank(nnodes);
 	int iter = 0;
 	for (; iter < max_iter; ++iter) {
+		#pragma omp parallel for firstprivate(nnodes)
 		for (node = 0; node < nnodes; ++node) {
 			tmp_pagerank[node] = 0.0;
 			int n_out_degree = g.get_out_degree(node);
@@ -196,6 +201,7 @@ pagerank_v pagerank_algorithms::get_node_abs_prob(int abs_node, const double C, 
 		
 		// Check convergence.
 		double diff = 0.0;
+		#pragma omp parallel for firstprivate(nnodes, tmp_pagerank) reduction(+:diff)
 		for (node = 0; node < nnodes; ++node) {
 			diff += std::fabs(tmp_pagerank[node] - pagerankv[node].pagerank);
 			pagerankv[node].pagerank = tmp_pagerank[node];

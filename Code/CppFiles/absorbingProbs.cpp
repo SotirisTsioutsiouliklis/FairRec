@@ -14,7 +14,7 @@
 
 
 static bool get_options(const int argc, char ** const argv, absorb_mode &algo_mode, int &abs_node) {
-    if (argc != 2 && argc != 3) goto error;
+    if (argc != 2 && argc != 3) goto alt;
     if (!std::strcmp(argv[1], "-r") && argc == 2) {
         algo_mode = absorb_mode::RED;
 
@@ -26,11 +26,11 @@ static bool get_options(const int argc, char ** const argv, absorb_mode &algo_mo
 		abs_node = std::atoi(argv[2]);
 
     } else {
-        goto default;
+        goto alt;
     }
     return true;
 
-default:
+alt:
 	std::cout << "Usage: " << argv[0] << " [options]\n"
 		"Options:\n"
 		"-r \t\t\t Probabilities to be absorbed to Red nodes.\n"
@@ -61,7 +61,7 @@ int main(int argc, char **argv)
 {
 	// Declare arguments arguments.
 	pagerank_v pagerankv;
-    absorb_mode algo_mode;
+    absorb_mode algo_mode = absorb_mode::NONE;
 	int abs_node;
 
 	if (!get_options(argc, argv, algo_mode, abs_node)) return 1;
@@ -85,13 +85,12 @@ int main(int argc, char **argv)
 		save_pagerank("personilized_node_" + std::to_string(abs_node), pagerankv);
 		break;
 	default:
-        std::cout << "Running default - All above.\n";
+        std::cout << "Running Red Absorbing.\n";
 		pagerankv = algs.get_red_abs_prob();
 		save_pagerank("personilized_red", pagerankv);
+        std::cout << "Running Blue Absorbing.\n";
 		pagerankv = algs.get_blue_abs_prob();
 		save_pagerank("personilized_blue", pagerankv);
-		pagerankv = algs.get_node_abs_prob(abs_node);
-		save_pagerank("personilized_node_" + std::to_string(abs_node), pagerankv);
 		break;
-	}	
+	}
 }
