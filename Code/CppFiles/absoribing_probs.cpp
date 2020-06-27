@@ -1,3 +1,7 @@
+/**
+ * Gets absorbing probabilities of nodes. Red personalized, Blue
+ * personilized or node personilized. 
+*/
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -22,17 +26,18 @@ static bool get_options(const int argc, char ** const argv, absorb_mode &algo_mo
 		abs_node = std::atoi(argv[2]);
 
     } else {
-        goto error;
+        goto default;
     }
     return true;
 
-error:
-	std::cerr << "Usage: " << argv[0] << " [options]\n"
+default:
+	std::cout << "Usage: " << argv[0] << " [options]\n"
 		"Options:\n"
 		"-r \t\t\t Probabilities to be absorbed to Red nodes.\n"
 		"-b \t\t\t Probabilities to be absorbed to blue nodes.\n"
 		"-n <nod_id>\t\t\t Probabilities to be absorbed to <node_id> node.\n" << std::endl;
-	return false;
+ 
+    return true;
 }
 
 static void save_pagerank(std::string filename_prefix, pagerank_v &pagerankv)
@@ -80,7 +85,13 @@ int main(int argc, char **argv)
 		save_pagerank("personilized_node_" + std::to_string(abs_node), pagerankv);
 		break;
 	default:
-        std::cout << "Not supported yet\n";
+        std::cout << "Running default - All above.\n";
+		pagerankv = algs.get_red_abs_prob();
+		save_pagerank("personilized_red", pagerankv);
+		pagerankv = algs.get_blue_abs_prob();
+		save_pagerank("personilized_blue", pagerankv);
+		pagerankv = algs.get_node_abs_prob(abs_node);
+		save_pagerank("personilized_node_" + std::to_string(abs_node), pagerankv);
 		break;
 	}	
 }
