@@ -1,6 +1,7 @@
 /** 
  * It adds best 5% edges by Fairness or by recommendation and computes
- * fairness and average recommendation.
+ * fairness and average recommendation. Also the best by prediction
+ * score.
 */
 #include <iostream>
 #include <iomanip>
@@ -157,16 +158,19 @@ int main() {
     std::cout << "Get best by pagerank source nodes...\n";
     std::vector<int> sourceNodes = getBestByPagerankNodes();
 
-    // Keep or 5% or 100 nodes. The smallest.
+    // Keep 5% or 100 nodes. The smallest.
     int numberOfNodes = g.get_num_nodes();
     int numberOfEdges = (numberOfNodes / 20 < 100) ? numberOfNodes / 20 : 100;
 
-    sourceNodes.resize(4);
+    sourceNodes.resize(5);
     for (int node : sourceNodes) {
         std::cout << "Load best by rec edges for node" << node << "...\n";
         getBestRecEdges(node, newEdges, numberOfEdges);
         logEdgesEffect(g, algs, newEdges, std::to_string(node) + "bestRecEdges.txt");
         std::cout << "Load best by fair edges...\n";
+        getBestFairEdges(node, newEdges, numberOfEdges);
+        logEdgesEffect(g, algs, newEdges, std::to_string(node) + "bestFairEdges.txt");
+        std::cout << "Load best by expected edges...\n";
         getBestFairEdges(node, newEdges, numberOfEdges);
         logEdgesEffect(g, algs, newEdges, std::to_string(node) + "bestFairEdges.txt");
     }
