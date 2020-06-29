@@ -18,7 +18,7 @@ struct edge {
     int source;
     int target;
     int sourceOutDegree;
-    double recScore, fairScore;
+    double recScore, fairScore, expectedFair;
 
     bool operator == (const edge &other) {
         return (source == other.source && target == other.target);

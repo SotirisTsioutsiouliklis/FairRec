@@ -1,6 +1,8 @@
 /**
  * This script compares expected fairness with recommendation score
- * and fairness score. 
+ * and fairness score. We choose for the 100 best by pagerank nodes
+ * the best edge based on recommendation score or on the expected
+ * increase score and we see which brings the best results.
 */
 #include <iostream>
 #include <iomanip>
@@ -114,8 +116,57 @@ static double getBestByExpectedFairness(std::vector<edge> edges) {
     return candidateEdge.fairScore;
 }
 
-static void saveVector(std::vector<scores> logs) {
-    std::ofstream logFile("expectedVsRecomendation.txt");
+static double getBestByRecExp(std::vector<edge> edges) {
+    edge candidateEdge;
+
+    // Control initialization.
+    candidateEdge.recScore = 0;
+
+    // Find best
+    for (edge e : edges) {
+        if (e.recScore > candidateEdge.recScore) {
+            candidateEdge = e;
+        }
+    }
+
+    return candidateEdge.fairScore * candidateEdge.recScore;
+}
+
+static double getBestByFairnessExp(std::vector<edge> edges) {
+    edge candidateEdge;
+
+    candidateEdge.fairScore = 0;
+
+    // Find best
+    for (edge e : edges) {
+        if (e.fairScore > candidateEdge.fairScore) {
+            candidateEdge = e;
+        }
+    }
+
+    return candidateEdge.fairScore * candidateEdge.recScore;
+}
+
+static double getBestByExpectedExp(std::vector<edge> edges) {
+    edge candidateEdge;
+    double expectedFairness = 0;
+    double tempExpectedFairness;
+
+    // Find best
+    for (edge e : edges) {
+        tempExpectedFairness = e.fairScore * e.recScore;
+        if (tempExpectedFairness > expectedFairness) {
+            candidateEdge = e;
+            expectedFairness = tempExpectedFairness;
+        }
+    }
+
+    return candidateEdge.fairScore * candidateEdge.recScore;
+}
+
+
+static void saveVector(std::string fileName, std::vector<scores> logs) {
+    std::ofstream logFile(fileName);
     logFile << "BestByRec\tBestByFair\tBestByExpected\n";
     int n = logs.size();
     for (int i = 0; i < n; i++) {
@@ -125,7 +176,7 @@ static void saveVector(std::vector<scores> logs) {
 }
 
 int main() {
-    std::cout << "Initailize objects...\n";
+    std::cout << "Initialize objects...\n";
     graph g("out_graph.txt", "out_community.txt");
     pagerank_algorithms algs(g);
     std::vector<edge> edges;
@@ -149,7 +200,24 @@ int main() {
         logs.push_back(newScores);
     }
     
-    saveVector(logs);
+    saveVector("expectedVsRecommendationFairness.txt", logs);
+    logs.clear();
+
+    for (int node : sourceNodes) {
+        edges = getEdgeScores(algs, g, node);
+        std::cout << "Get best by recommendation score...\n";
+        newScores.recommendationScore = getBestByRecExp(edges);
+
+        std::cout << "Get best by fairness score...\n";
+        newScores.fairnessScore = getBestByFairnessExp(edges);
+
+        std::cout << "Get best by expected fairness score...\n";
+        newScores.expectedScore = getBestByExpectedExp(edges);
+    
+        logs.push_back(newScores);
+    }
+
+    saveVector("expectedVsRecommendationExpectedFairness.txt", logs);
 
     return 0;
 }

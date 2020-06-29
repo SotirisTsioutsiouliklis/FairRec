@@ -1,6 +1,6 @@
 /** 
- * It adds best 5% edges by Fairness or by recommendation and computes
- * fairness and average recommendation. Also the best by prediction
+ * It adds best 5% edges by Fairness, recommendation or expected fairness
+ * and computes fairness and average recommendation. Also the best by prediction
  * score.
 */
 #include <iostream>
@@ -101,7 +101,48 @@ static void getBestFairEdges(int node, std::vector<edge> &newEdges, int numberOf
         newEdges.push_back(newEdge);
         candidateEdges[bestEdgeIndex].fairScore = 0;
     }
+}
 
+// Get best by expected increase score.
+static void getBestExpectEdges(pagerank_algorithms & algs, graph &g, int node, std::vector<edge> &newEdges, int numberOfEdges) {
+    // Get pagerank.
+    pagerank_v pagerank = algs.get_pagerank();
+    double redPagerank = g.get_pagerank_per_community(pagerank)[1];
+    // Clear edge vector.
+    std::vector<edge> candidateEdges;
+    newEdges.clear();
+
+    double expectedFairness;
+    double tempExpectedFairness;
+    edge newEdge;
+    std::string str;
+
+    // Open file.
+    std::ifstream recEdges(std::to_string(node) + "edgeScores.txt");
+    std::getline(recEdges, str);
+
+    // Read lines.
+    while (recEdges >> newEdge.source >> newEdge.target >> newEdge.recScore >> newEdge.fairScore) {
+        newEdge.fairScore -= redPagerank;
+        candidateEdges.push_back(newEdge);
+    }
+
+    int bestEdgeIndex = 0;
+    for (int i = 0; i < numberOfEdges; i++) {
+        expectedFairness = 0;
+        for (unsigned int j = 0; j < candidateEdges.size(); j++) {
+            tempExpectedFairness = candidateEdges[j].recScore * candidateEdges[j].fairScore;
+            if (expectedFairness > tempExpectedFairness) {
+                expectedFairness = tempExpectedFairness;
+                bestEdgeIndex = j;
+                newEdge.target = candidateEdges[j].target;
+                newEdge.recScore = candidateEdges[j].recScore;
+                newEdge.fairScore = candidateEdges[j].fairScore;
+            }
+        }
+        newEdges.push_back(newEdge);
+        candidateEdges[bestEdgeIndex].fairScore = 0;
+    }
 }
 
 // Adds edges and logs fairness and recommendation scores.
@@ -171,8 +212,8 @@ int main() {
         getBestFairEdges(node, newEdges, numberOfEdges);
         logEdgesEffect(g, algs, newEdges, std::to_string(node) + "bestFairEdges.txt");
         std::cout << "Load best by expected edges...\n";
-        getBestFairEdges(node, newEdges, numberOfEdges);
-        logEdgesEffect(g, algs, newEdges, std::to_string(node) + "bestFairEdges.txt");
+        getBestExpectEdges(algs, g, node, newEdges, numberOfEdges);
+        logEdgesEffect(g, algs, newEdges, std::to_string(node) + "bestExpectEdges.txt");
     }
 
     return 0;
