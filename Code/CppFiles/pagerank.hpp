@@ -22,8 +22,8 @@ public:
 	pagerank_v get_pagerank(const double C=0.85, const double eps=1e-4, const int max_iter=100);
 	// Personilized pagerank to Red for all nodes.
 	pagerank_v get_red_abs_prob(const double C=0.85, const double eps=1e-4, const int max_iter=200);
-	pagerank_v get_blue_abs_prob(const double C=0.85, const double eps=1e-4, const int max_iter=100);
-	pagerank_v get_node_abs_prob(int abs_node, const double C=0.85, const double eps=1e-4, const int max_iter=100);
+	pagerank_v get_blue_abs_prob(const double C=0.85, const double eps=1e-4, const int max_iter=200);
+	pagerank_v get_node_abs_prob(int abs_node, const double C=0.85, const double eps=1e-4, const int max_iter=200);
 
 	void sort_pagerank_vector(pagerank_v &pagerank);
 
