@@ -10,8 +10,8 @@ all:
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o node_info.out graph.cpp pagerank.cpp edge_add.cpp node_info.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o graph_info.out graph.cpp pagerank.cpp edge_add.cpp graph_info.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o getEdgeFairnessScore.out graph.cpp pagerank.cpp edgeAddition.cpp getEdgeFairnessScore.cpp
-	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentOne.out graph.cpp pagerank.cpp edgeAddition.cpp experimentOne.cpp
-	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentTwo.out graph.cpp pagerank.cpp edgeAddition.cpp experimentTwo.cpp
+	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentOne.out graph.cpp pagerank.cpp edgeAddition.cpp experimentOne.cpp
+	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentTwo.out graph.cpp pagerank.cpp edgeAddition.cpp experimentTwo.cpp
 	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentThree.out graph.cpp pagerank.cpp edgeAddition.cpp experimentThree.cpp
 clean:
 	#rm -f jump_optimization

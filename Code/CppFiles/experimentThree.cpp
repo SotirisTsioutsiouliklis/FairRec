@@ -180,6 +180,8 @@ int main() {
     std::cout << "Get best by pagerank source nodes...\n";
     std::vector<int> sourceNodes = getBestByPagerankNodes();
 
+    std::cout << "Get best edge for each source node...\n";
+    
     // Get Edges by recommendation score.
     newEdges.clear();
 

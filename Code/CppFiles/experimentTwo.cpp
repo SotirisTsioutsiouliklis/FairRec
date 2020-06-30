@@ -218,14 +218,14 @@ int main() {
     int numberOfEdges = (numberOfNodes / 20 < 100) ? numberOfNodes / 20 : 100;
 
     sourceNodes.resize(5);
+
+    std::cout << "Get recommendation score and Fairness...\n";
+    
     for (int node : sourceNodes) {
-        std::cout << "Load best by rec edges for node" << node << "...\n";
         getBestRecEdges(node, newEdges, numberOfEdges);
         logEdgesEffect(g, algs, newEdges, std::to_string(node) + "bestRecEdges.txt");
-        std::cout << "Load best by fair edges...\n";
         getBestFairEdges(node, newEdges, numberOfEdges);
         logEdgesEffect(g, algs, newEdges, std::to_string(node) + "bestFairEdges.txt");
-        std::cout << "Load best by expected edges...\n";
         getBestExpectEdges(algs, g, node, newEdges, numberOfEdges);
         logEdgesEffect(g, algs, newEdges, std::to_string(node) + "bestExpectEdges.txt");
     }

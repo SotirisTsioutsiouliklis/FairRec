@@ -199,15 +199,14 @@ int main() {
     std::cout << "Get best by pagerank source node...\n";
     std::vector<int> sourceNodes = getBestByPagerankNodes();
 
+    
+    std::cout << "Get best by recommendation/fair/expected scores VOL 1...\n";
     for (int node : sourceNodes) {
         edges = getEdgeScores(algs, g, node);
-        std::cout << "Get best by recommendation score...\n";
         newScores.recommendationScore = getBestByRecFairness(edges);
 
-        std::cout << "Get best by fairness score...\n";
         newScores.fairnessScore = getBestByFairnessFairness(edges);
 
-        std::cout << "Get best by expected fairness score...\n";
         newScores.expectedScore = getBestByExpectedFairness(edges);
     
         logs.push_back(newScores);
@@ -216,15 +215,13 @@ int main() {
     saveVector("expectedVsRecommendationFairness.txt", logs);
     logs.clear();
 
+    std::cout << "Get best by recommendation/fair/expected scores VOL 2...\n";
     for (int node : sourceNodes) {
         edges = getEdgeScores(algs, g, node);
-        std::cout << "Get best by recommendation score...\n";
         newScores.recommendationScore = getBestByRecExp(edges);
 
-        std::cout << "Get best by fairness score...\n";
         newScores.fairnessScore = getBestByFairnessExp(edges);
 
-        std::cout << "Get best by expected fairness score...\n";
         newScores.expectedScore = getBestByExpectedExp(edges);
     
         logs.push_back(newScores);
