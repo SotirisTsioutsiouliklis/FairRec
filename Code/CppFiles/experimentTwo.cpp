@@ -4,6 +4,15 @@
  * recommendation for each category for every edge is being added.
  * Above quantities are calculated in additive way, that is when we add
  * an edge in the graph we keep it.
+ * 
+ * For every source node it creates three files:
+ * 
+ *  1. "<nodeid>bestRecEdges.txt": Recommendation score and fairness
+ *  for best edges by recommendation score.
+ *  2. "<nodeid>bestFairEdges.txt": Recommendation score and fairness
+ *  for best edges by fairness score.
+ *  3. "<nodeid>bestExpectEdges.txt": Recommendation score and fairness
+ *  for best edges by expected gain score.
 */
 #include <iostream>
 #include <iomanip>

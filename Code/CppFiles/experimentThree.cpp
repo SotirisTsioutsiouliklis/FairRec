@@ -3,6 +3,12 @@
  * source nodes. For each node we add the best edge by recommendation,
  * by fairness and by expected gain. We then compute the networks
  * pagerank for each one of the forthmentioned situations.
+ * 
+ * Creates three files:
+ * 
+ *  1. "out_byRecPagerank_pagerank.txt":
+ *  2. "out_byFairPagerank_pagerank.txt":
+ *  3. "out_byExpectedgainPagerank_pagerank.txt":
 */
 #include <iostream>
 #include <iomanip>
