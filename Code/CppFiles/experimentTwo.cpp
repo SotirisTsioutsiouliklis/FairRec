@@ -1,7 +1,9 @@
 /** 
- * It adds best 5% edges by Fairness, recommendation or expected fairness
- * and computes fairness and average recommendation. Also the best by prediction
- * score.
+ * It adds best min(5% of nodes, 100) edges by Fairness, recommendation
+ * or expected fairness and computes fairness and average
+ * recommendation for each category for every edge is being added.
+ * Above quantities are calculated in additive way, that is when we add
+ * an edge in the graph we keep it.
 */
 #include <iostream>
 #include <iomanip>
@@ -19,6 +21,18 @@
 #include <omp.h>
 #include <string>
 #include <sstream>
+
+static void save_pagerank(std::string filename_prefix, pagerank_v &pagerankv)
+{
+	std::ofstream outfile_pagerank;
+	outfile_pagerank.open("out_" + filename_prefix + "_pagerank.txt");
+	
+    for (const auto &node : pagerankv) {
+		outfile_pagerank << node.pagerank << std::endl;
+	}
+
+	outfile_pagerank.close();
+}
 
 // Reads best by pagerank nodes.
 static std::vector<int> getBestByPagerankNodes() {
@@ -170,7 +184,7 @@ static void logEdgesEffect(graph &g, pagerank_algorithms &algs, std::vector<edge
     }
 
     // Store pagerank after added those newEdges.
-    
+    //save_pagerank("_pagerank_" + logFileName, pagerank);
 
     // Remove new edges.
     for (int i = 0; i < numberOfEdges; i++) {
