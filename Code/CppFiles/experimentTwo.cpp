@@ -22,18 +22,6 @@
 #include <string>
 #include <sstream>
 
-static void save_pagerank(std::string filename_prefix, pagerank_v &pagerankv)
-{
-	std::ofstream outfile_pagerank;
-	outfile_pagerank.open("out_" + filename_prefix + "_pagerank.txt");
-	
-    for (const auto &node : pagerankv) {
-		outfile_pagerank << node.pagerank << std::endl;
-	}
-
-	outfile_pagerank.close();
-}
-
 // Reads best by pagerank nodes.
 static std::vector<int> getBestByPagerankNodes() {
     std::vector<int> sourceNodes;

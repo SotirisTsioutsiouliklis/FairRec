@@ -80,7 +80,7 @@ static edge getBestRecEdge(int node) {
 }
 
 // Get best edges by fairness Score.
-static void getBestFairEdge(int node) {
+static edge getBestFairEdge(int node) {
     // Clear edge vector.
     std::vector<edge> candidateEdges;
 
@@ -107,7 +107,7 @@ static void getBestFairEdge(int node) {
 }
 
 // Get best by expected increase score.
-static void getBestExpectEdge(pagerank_algorithms & algs, graph &g, int node) {
+static edge getBestExpectEdge(pagerank_algorithms & algs, graph &g, int node) {
     // Get pagerank.
     pagerank_v pagerank = algs.get_pagerank();
     double redPagerank = g.get_pagerank_per_community(pagerank)[1];
@@ -143,7 +143,7 @@ static void getBestExpectEdge(pagerank_algorithms & algs, graph &g, int node) {
 }
 
 // Add a set of edges to the graph.
-static void addEdges(graph &g, std::vector<edges> newEdges) {
+static void addEdges(graph &g, std::vector<edge> &newEdges) {
     int sourceNode, targetNode;
 
     for (edge e : newEdges) {
@@ -154,7 +154,7 @@ static void addEdges(graph &g, std::vector<edges> newEdges) {
 }
 
 // Remove a set of edges from the graph.
-static void removeEdges(graph &g, std::vector<edges> newEdges) {
+static void removeEdges(graph &g, std::vector<edge> &newEdges) {
     int sourceNode, targetNode;
 
     for (edge e : newEdges) {
@@ -202,7 +202,7 @@ int main() {
     newEdges.clear();
 
     for (int node : sourceNodes) {
-        newEdges.push_back(getBestExpectEdge(node) );
+        newEdges.push_back(getBestExpectEdge(algs, g, node) );
     }
 
     addEdges(g, newEdges);

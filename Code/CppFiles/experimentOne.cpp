@@ -178,7 +178,6 @@ static double getBestByExpectedExp(std::vector<edge> edges) {
     return candidateEdge.fairScore * candidateEdge.recScore;
 }
 
-
 static void saveVector(std::string fileName, std::vector<scores> logs) {
     std::ofstream logFile(fileName);
     logFile << "BestByRec\tBestByFair\tBestByExpected\n";
