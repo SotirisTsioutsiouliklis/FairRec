@@ -169,6 +169,9 @@ static void logEdgesEffect(graph &g, pagerank_algorithms &algs, std::vector<edge
         recScore.push_back(newEdges[i].recScore);
     }
 
+    // Store pagerank after added those newEdges.
+    
+
     // Remove new edges.
     for (int i = 0; i < numberOfEdges; i++) {
         g.remove_edge(newEdges[i].source, newEdges[i].target);

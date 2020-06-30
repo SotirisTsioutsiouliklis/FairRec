@@ -11,6 +11,6 @@ all:
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o graph_info.out graph.cpp pagerank.cpp edge_add.cpp graph_info.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o getEdgeFairnessScore.out graph.cpp pagerank.cpp edgeAddition.cpp getEdgeFairnessScore.cpp
 	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o recommendationVsFairness.out graph.cpp pagerank.cpp edgeAddition.cpp recommendationVsFairness.cpp
-	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o expectedVsRecommendation.out graph.cpp pagerank.cpp edgeAddition.cpp expectedVsRecommendation.cpp
+	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentOne.out graph.cpp pagerank.cpp edgeAddition.cpp experimentOne.cpp
 clean:
 	#rm -f jump_optimization
