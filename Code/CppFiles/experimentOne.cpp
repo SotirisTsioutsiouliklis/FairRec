@@ -5,7 +5,7 @@
  * @TODO: Maybe replace best by pagerank with random ones.
  * 
  *  1. We choose the best edge based on recommendation score or on the
- *  expected increase score and we test which brings the best results.
+ *  expected increase score and we test which brings the greatest gain.
  * 
  *  2. We also choose the best edge based on recommendation score or
  *  fairness and we test which has the highest expected gain.

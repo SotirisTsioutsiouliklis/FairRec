@@ -137,7 +137,7 @@ static edge getBestExpectEdge(pagerank_algorithms & algs, graph &g, int node) {
     expectedGain = 0;
     for (unsigned int j = 0; j < candidateEdges.size(); j++) {
         tempexpectedGain = candidateEdges[j].recScore * candidateEdges[j].fairScore;
-        if (expectedGain > tempexpectedGain) {
+        if (expectedGain < tempexpectedGain) {
             expectedGain = tempexpectedGain;
             newEdge.target = candidateEdges[j].target;
             newEdge.recScore = candidateEdges[j].recScore;

@@ -143,7 +143,7 @@ static void getBestExpectEdges(pagerank_algorithms & algs, graph &g, int node, s
         expectedFairness = 0;
         for (unsigned int j = 0; j < candidateEdges.size(); j++) {
             tempExpectedFairness = candidateEdges[j].recScore * candidateEdges[j].fairScore;
-            if (expectedFairness > tempExpectedFairness) {
+            if (expectedFairness < tempExpectedFairness) {
                 expectedFairness = tempExpectedFairness;
                 bestEdgeIndex = j;
                 newEdge.target = candidateEdges[j].target;
