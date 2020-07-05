@@ -14,7 +14,7 @@ all:
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentTwo.out graph.cpp pagerank.cpp edgeAddition.cpp experimentTwo.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentThree.out graph.cpp pagerank.cpp edgeAddition.cpp experimentThree.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentFour.out graph.cpp pagerank.cpp edgeAddition.cpp experimentFour.cpp
-	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentFive.out graph.cpp pagerank.cpp edgeAddition.cpp experimentFive.cpp
+	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentFive.out graph.cpp pagerank.cpp edgeAddition.cpp experimentFive.cpp
 	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentSix.out graph.cpp pagerank.cpp edgeAddition.cpp experimentSix.cpp
 clean:
 	#rm -f jump_optimization

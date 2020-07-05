@@ -21,6 +21,25 @@
 #include <string>
 #include <sstream>
 
+// Reads best by pagerank nodes.
+static std::vector<int> getBestByPagerankNodes() {
+    std::vector<int> sourceNodes;
+    std::string str;
+    int node;
+
+    std::ifstream pagerankNodes("pagerankBestSourceNodes.txt");
+
+    getline (pagerankNodes, str);
+    while (getline (pagerankNodes, str)) {
+        node = std::stoi(str);
+        sourceNodes.push_back(node);
+    }
+    pagerankNodes.close();
+
+    return sourceNodes;
+}
+
+
 static std::vector<edge> getEdgeScores(pagerank_algorithms &algs, graph &g, int node) {
     // Get pagerank.
     pagerank_v pagerank = algs.get_pagerank();
@@ -95,7 +114,7 @@ static edge getBestByExpectedGainEdge(graph &g, pagerank_algorithms &algs, EdgeA
             expectedFairness = tempExpectedFairness;
         }
     }
-
+    //std::cout << candidateEdge.fairScore + redPagerank << "\n";
     return candidateEdge;
 }
 
@@ -110,7 +129,8 @@ int main() {
     double redPagerank;
     EdgeAddition helpFunc(g, algs);
 
-    std::vector<int> sourceNodes = getRandomSourceNodes();
+    //std::vector<int> sourceNodes = getRandomSourceNodes();
+    std::vector<int> sourceNodes = getBestByPagerankNodes();
     
     // Log initial pagerank.
     pagerank = algs.get_pagerank();
@@ -120,7 +140,7 @@ int main() {
     // Add best edge for each node and log results.
     int i = 0;
     for (int node : sourceNodes) {
-        std::cout << "Getting Edge For Node: " << ++i << std::endl;
+        std::cout << "Getting Edge For Node: " << ++i << ", " << node  << std::endl;
         edges.clear();
         edges = getEdgeScores(algs, g, node);
         newEdge = getBestByExpectedGainEdge(g, algs, helpFunc, edges, node);
@@ -128,6 +148,7 @@ int main() {
         pagerank = algs.get_pagerank();
         redPagerank = g.get_pagerank_per_community(pagerank)[1];
         redPagerankLogs.push_back(redPagerank);     
+        //std::cout << redPagerank << "\n";
     }
 
     EdgeAddition::saveVector("fairnessByExpectedGain.txt", redPagerankLogs);
