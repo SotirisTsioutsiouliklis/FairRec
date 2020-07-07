@@ -31,13 +31,14 @@ pagerank_v pagerank_algorithms::get_pagerank(const double C, const double eps, c
 	std::vector<double> tmp_pagerank(nnodes);
 	std::vector<double> tmp_pagerank_jump(nnodes); // for personalization
 	int iter = 0;
+	int neigh_degree;
 	for (; iter < max_iter; ++iter) {
 		double sum = 0.0;
 		#pragma omp parallel for firstprivate(nnodes) reduction(+:sum)
 		for (node = 0; node < nnodes; ++node) {
 			tmp_pagerank[node] = 0.0;
 			for (const int &neighbor : g.get_in_neighbors(node)) {
-				int neigh_degree = g.get_out_degree(neighbor);
+				neigh_degree = g.get_out_degree(neighbor);
 				if (neigh_degree > 0)
 					tmp_pagerank[node] += pagerankv[neighbor].pagerank / neigh_degree;
 			}
@@ -61,8 +62,8 @@ pagerank_v pagerank_algorithms::get_pagerank(const double C, const double eps, c
 
 	if (iter == max_iter)
 		std::cerr << "[WARN]: Pagerank algorithm reached " << max_iter << " iterations." << std::endl;
-	cached_pagerank = pagerankv;
-	is_cache_valid = true;
+	//cached_pagerank = pagerankv;
+	//is_cache_valid = true;
 	return pagerankv;
 }
 
@@ -307,6 +308,111 @@ void pagerank_algorithms::sort_pagerank_vector(pagerank_v &pagerank)
 	std::sort(pagerank.begin(), pagerank.end());
 }
 
+void pagerank_algorithms::getGreedySingleSource(int sourceNode, int numberOfEdges) {
+	int numberOfNodes = g.get_num_nodes();
+    std::vector<double> redPagerankLogs;
+	pagerank_v objectiveValues;
+	std::vector<int> outNeighbors = g.get_out_neighbors(sourceNode);
+
+    // Log initial state.
+    pagerank_v pagerank = get_pagerank();
+    double redPagerank = g.get_pagerank_per_community(pagerank)[1];
+    redPagerankLogs.push_back(redPagerank);
+
+    // Add the edges.
+    edge newEdge;
+    std::vector<edge> newEdges;
+    newEdge.source = sourceNode;
+    for (int i = 0; i < numberOfEdges; i++) {
+		// Get objective values.
+		objectiveValues.clear();
+		objectiveValues = getObjectiveValues(sourceNode);
+		objectiveValues[sourceNode].pagerank = -1;
+		for (int nei : outNeighbors) {
+			objectiveValues[nei].pagerank = -1;
+		}
+		// Find best edge.
+		newEdge.fairScore = -1;
+		for (int j = 0; j < numberOfNodes; j++) {
+			if (objectiveValues[j].pagerank > newEdge.fairScore) {
+				newEdge.fairScore = objectiveValues[j].pagerank;
+				newEdge.target = j;
+			}
+		}
+		// Add edge.
+        g.add_edge(newEdge.source, newEdge.target);
+		outNeighbors.push_back(newEdge.target);
+		objectiveValues[newEdge.target].pagerank = -1;
+		newEdges.push_back(newEdge);
+
+		// Log current state.
+        pagerank = get_pagerank();
+        redPagerank = g.get_pagerank_per_community(pagerank)[1];
+        redPagerankLogs.push_back(redPagerank);
+    }
+
+	// Store logs.
+    pagerank_algorithms::saveVector(std::to_string(sourceNode) + "_redPagerankGreedy.txt", redPagerankLogs);
+	// Remove edges from graph.
+	for (edge e : newEdges) {
+		g.remove_edge(e.source, e.target);
+	}
+}
+
+void pagerank_algorithms::getFastGreedySingleSource(int sourceNode, int numberOfEdges) {
+	int numberOfNodes = g.get_num_nodes();
+    std::vector<double> redPagerankLogs;
+	pagerank_v objectiveValues;
+	std::vector<int> outNeighbors = g.get_out_neighbors(sourceNode);
+
+    // Log initial state.
+    pagerank_v pagerank = get_pagerank();
+    double redPagerank = g.get_pagerank_per_community(pagerank)[1];
+    redPagerankLogs.push_back(redPagerank);
+
+    // Add the edges.
+    edge newEdge;
+    std::vector<edge> newEdges;
+    newEdge.source = sourceNode;
+
+	// Get objective values.
+	objectiveValues = getObjectiveValues(sourceNode);
+	objectiveValues[sourceNode].pagerank = -1;
+	for (int nei : outNeighbors) {
+		objectiveValues[nei].pagerank = -1;
+	}
+
+    for (int i = 0; i < numberOfEdges; i++) {
+		// Find best edge.
+		newEdge.fairScore = -1;
+		for (int j = 0; j < numberOfNodes; j++) {
+			if (objectiveValues[j].pagerank > newEdge.fairScore) {
+				newEdge.fairScore = objectiveValues[j].pagerank;
+				newEdge.target = j;
+			}
+		}
+
+		// Add edge.
+        g.add_edge(newEdge.source, newEdge.target);
+		outNeighbors.push_back(newEdge.target);
+		objectiveValues[newEdge.target].pagerank = -1;
+		newEdges.push_back(newEdge);
+
+		// Log current state.
+        pagerank = get_pagerank();
+        redPagerank = g.get_pagerank_per_community(pagerank)[1];
+        redPagerankLogs.push_back(redPagerank);
+    }
+
+	// Store logs.
+    pagerank_algorithms::saveVector(std::to_string(sourceNode) + "_redPagerankFastGreedy.txt", redPagerankLogs);
+	// Remove edges from graph.
+	for (edge e : newEdges) {
+		g.remove_edge(e.source, e.target);
+
+	}
+}
+
 // Save vectors.
 void pagerank_algorithms::saveVector(std::string fileName, pagerank_v &logVector) {
     // Declare local variables.
@@ -379,4 +485,20 @@ void pagerank_algorithms::saveVector(std::string fileName, std::vector<step_log>
     logFile.close();
 }
 
+// Reads random source nodes.
+std::vector<int> pagerank_algorithms::getRandomSourceNodes() {
+    std::vector<int> sourceNodes;
+    std::string str;
+    int node;
 
+    std::ifstream pagerankNodes("randomSourceNodes.txt");
+
+    getline (pagerankNodes, str);
+    while (getline (pagerankNodes, str)) {
+        node = std::stoi(str);
+        sourceNodes.push_back(node);
+    }
+    pagerankNodes.close();
+
+    return sourceNodes;
+}

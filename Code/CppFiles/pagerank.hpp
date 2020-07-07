@@ -25,7 +25,7 @@ public:
 	pagerank_algorithms(graph &g);
 
 	// Famous PageRank.
-	pagerank_v get_pagerank(const double C=0.85, const double eps=1e-4, const int max_iter=100);
+	pagerank_v get_pagerank(const double C=0.85, const double eps=1e-4, const int max_iter=200);
 	// Personilized pagerank to Red for all nodes.
 	pagerank_v get_red_abs_prob(const double C=0.85, const double eps=1e-4, const int max_iter=200);
 	pagerank_v get_blue_abs_prob(const double C=0.85, const double eps=1e-4, const int max_iter=200);
@@ -40,12 +40,44 @@ public:
 
 	void sort_pagerank_vector(pagerank_v &pagerank);
 
+	/**
+     * A greedy algorithm to add edges to a graph in
+     * order to maximize red pagerank ratio. It adds k edges to a single
+     * source of the graph based on formula of the FairRec paper.
+     * 
+     * Creates two files:
+     *      1. "<sourceNode>RedPagerankGreedy.txt": Red ratio of pagerank
+     *          per edge added.
+     *      2. "<sourceNode>edgesGreedy.txt": Edges that added to graph.
+     * 
+     * @param sourceNode (int): The source node for the edges.
+     * @param numberOfEdges (int): The number of edges to add.
+    */
+    void getGreedySingleSource(int sourceNode, int numberOfEdges);
+	/**
+     * The "fast greedy" algorithm described in fairRec paper to add edges
+     * to a graph in order to maximize red pagerank ratio. It adds k edges
+     * to a single source of the graph based on formula of the FairRec
+     * paper.
+     *
+     * Creates two files:
+     *      1. "<sourceNode>RedPagerankGreedy.txt": Red ratio of pagerank per edge
+     *          added.
+     *      2. "<sourceNode>edgesGreedy.txt": Edges that added to graph.
+     * 
+     * @param sourceNode (int): The source node for the edges.
+     * @param numberOfEdges (int): The number of edges to add.
+    */
+    void getFastGreedySingleSource(int sourceNode, int numberOfEdges);
 	// Save various vectors.
     static void saveVector(std::string fileName, pagerank_v &logVector);
     static void saveVector(std::string fileName, std::vector<int> &logVector);
     static void saveVector(std::string fileName, std::vector<double> &logVector);
     static void saveVector(std::string fileName, std::vector<edge> &logVector);
     static void saveVector(std::string fileName, std::vector<step_log> &logVector);
+	// Reads random source nodes.
+	static std::vector<int> getRandomSourceNodes();
+
 private:
 	void compute_pagerank_no_personalization_vector(std::vector<double> &pagerankv, double total_pagerank);
 
