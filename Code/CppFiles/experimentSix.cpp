@@ -15,7 +15,6 @@
 #include <cmath>
 #include "graph.hpp"
 #include "pagerank.hpp"
-#include "edgeAddition.hpp"
 #include <chrono>
 #include <omp.h>
 #include <string>
@@ -80,9 +79,9 @@ static std::vector<int> getRandomSourceNodes() {
     return sourceNodes;
 }
 
-static edge getBestByExpectedGainEdge(graph &g, pagerank_algorithms &algs, EdgeAddition &helpFunc, std::vector<edge> &edges, int node) {
+static edge getBestByExpectedGainEdge(graph &g, pagerank_algorithms &algs, std::vector<edge> &edges, int node) {
     edge candidateEdge;
-    pagerank_v objectiveValues = helpFunc.getObjectiveValues(node);
+    pagerank_v objectiveValues = algs.getObjectiveValues(node);
     std::vector<int> outNeighbors = g.get_out_neighbors(node);
     pagerank_v pagerank = algs.get_pagerank();
     double redPagerank = g.get_pagerank_per_community(pagerank)[1];
@@ -127,10 +126,9 @@ int main() {
     edge newEdge;
     std::vector<double> redPagerankLogs;
     double redPagerank;
-    EdgeAddition helpFunc(g, algs);
 
-    //std::vector<int> sourceNodes = getRandomSourceNodes();
-    std::vector<int> sourceNodes = getBestByPagerankNodes();
+    std::vector<int> sourceNodes = getRandomSourceNodes();
+    //std::vector<int> sourceNodes = getBestByPagerankNodes();
     
     // Log initial pagerank.
     pagerank = algs.get_pagerank();
@@ -143,7 +141,7 @@ int main() {
         std::cout << "Getting Edge For Node: " << ++i << ", " << node  << std::endl;
         edges.clear();
         edges = getEdgeScores(algs, g, node);
-        newEdge = getBestByExpectedGainEdge(g, algs, helpFunc, edges, node);
+        newEdge = getBestByExpectedGainEdge(g, algs, edges, node);
         g.add_edge(newEdge.source, newEdge.target);
         pagerank = algs.get_pagerank();
         redPagerank = g.get_pagerank_per_community(pagerank)[1];
@@ -151,5 +149,5 @@ int main() {
         //std::cout << redPagerank << "\n";
     }
 
-    EdgeAddition::saveVector("fairnessByExpectedGain.txt", redPagerankLogs);
+    pagerank_algorithms::saveVector("fairnessByExpectedGain.txt", redPagerankLogs);
 }

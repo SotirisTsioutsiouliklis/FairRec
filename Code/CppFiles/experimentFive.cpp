@@ -15,7 +15,6 @@
 #include <cmath>
 #include "graph.hpp"
 #include "pagerank.hpp"
-#include "edgeAddition.hpp"
 #include <chrono>
 #include <omp.h>
 #include <string>
@@ -58,10 +57,10 @@ static std::vector<int> getRandomSourceNodes() {
     return sourceNodes;
 }
 
-static edge getBestByFairEdge(graph &g, EdgeAddition &helpFunc, int node) {
+static edge getBestByFairEdge(graph &g, pagerank_algorithms &algs, int node) {
     edge candidateEdge;
     int numberOfNodes = g.get_num_nodes();
-    pagerank_v objectiveValues = helpFunc.getObjectiveValues(node);
+    pagerank_v objectiveValues = algs.getObjectiveValues(node);
     std::vector<int> outNeighbors = g.get_out_neighbors(node);
     candidateEdge.source = node;
 
@@ -89,10 +88,9 @@ int main() {
     edge newEdge;
     std::vector<double> redPagerankLogs;
     double redPagerank;
-    EdgeAddition helpFunc(g, algs);
 
-    //std::vector<int> sourceNodes = getRandomSourceNodes();
-    std::vector<int> sourceNodes = getBestByPagerankNodes();
+    std::vector<int> sourceNodes = getRandomSourceNodes();
+    //std::vector<int> sourceNodes = getBestByPagerankNodes();
     
     // Log initial pagerank.
     pagerank = algs.get_pagerank();
@@ -103,7 +101,7 @@ int main() {
     int i = 0;
     for (int node : sourceNodes) {
         std::cout << "Getting Edge For Node: " << ++i << ", " << node << std::endl;
-        newEdge = getBestByFairEdge(g, helpFunc, node);
+        newEdge = getBestByFairEdge(g, algs, node);
         g.add_edge(newEdge.source, newEdge.target);
         pagerank = algs.get_pagerank();
         redPagerank = g.get_pagerank_per_community(pagerank)[1];
@@ -111,5 +109,5 @@ int main() {
         //std::cout << redPagerank << "\n";
     }
 
-    EdgeAddition::saveVector("fairnessByFairness.txt", redPagerankLogs);
+    pagerank_algorithms::saveVector("fairnessByFairness.txt", redPagerankLogs);
 }

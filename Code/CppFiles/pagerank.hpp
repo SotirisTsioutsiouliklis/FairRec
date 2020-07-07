@@ -4,6 +4,12 @@
 #include <vector>
 #include "graph.hpp"
 
+struct step_log {
+    double red_pagerank;
+    double red_pagerank_prediction;
+    double red_pagerank_generalized_prediction;
+};
+
 typedef struct {
 	double node_percentage; // percentage of pagerank this node will GIVE to each of its neighbors
 	std::vector<double> community_percentage; // percentage of pagerank this node wil GIVE to each community
@@ -25,8 +31,21 @@ public:
 	pagerank_v get_blue_abs_prob(const double C=0.85, const double eps=1e-4, const int max_iter=200);
 	pagerank_v get_node_abs_prob(int abs_node, const double C=0.85, const double eps=1e-4, const int max_iter=200);
 
+	/**
+     * By objective value we mean the prediction for the Red pagerank ratio
+     * in case we add an edge in the graph. The prediction is based on the
+     * formula of the FairRec paper and it is accurate.
+    */
+    pagerank_v getObjectiveValues(int sourceNode);
+
 	void sort_pagerank_vector(pagerank_v &pagerank);
 
+	// Save various vectors.
+    static void saveVector(std::string fileName, pagerank_v &logVector);
+    static void saveVector(std::string fileName, std::vector<int> &logVector);
+    static void saveVector(std::string fileName, std::vector<double> &logVector);
+    static void saveVector(std::string fileName, std::vector<edge> &logVector);
+    static void saveVector(std::string fileName, std::vector<step_log> &logVector);
 private:
 	void compute_pagerank_no_personalization_vector(std::vector<double> &pagerankv, double total_pagerank);
 

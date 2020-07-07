@@ -4,6 +4,17 @@
 #include <string>
 #include <vector>
 
+struct edge {
+    int source;
+    int target;
+    int sourceOutDegree;
+    double recScore, fairScore, expectedFair;
+
+    bool operator == (const edge &other) {
+        return (source == other.source && target == other.target);
+    }
+};
+
 typedef struct {
 	std::vector<int> out_neighbors;
 	std::vector<int> in_neighbors;

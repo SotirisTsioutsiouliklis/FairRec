@@ -226,8 +226,157 @@ void pagerank_algorithms::compute_pagerank_no_personalization_vector(std::vector
 	}
 }
 
+pagerank_v pagerank_algorithms::getObjectiveValues(int sourceNode) {
+    // Declare local variables.
+    pagerank_v objectiveValues, rankVector, redAbsorbingProbs, sourceAbsorbingProbs;
+    std::vector<int> neighbors;
+    double redPagerank, nominatorConst, denominatorConst, objectiveNominator, objectiveDenominator;
+    const double jumpProb = 0.15;
+    int sourceOutDegree, neighbor;
+    const int numberOfNodes = g.get_num_nodes();
+    objectiveValues.resize(numberOfNodes);
+    // Get source out degree.
+    sourceOutDegree = g.get_out_degree(sourceNode);
+
+    // Run pagerank.
+    rankVector = get_pagerank();
+    // Get red pagerank.
+    redPagerank = g.get_pagerank_per_community(rankVector)[1];
+
+    // Run absoring to Red.
+    redAbsorbingProbs = get_red_abs_prob();
+    // Run absorbing to source.
+    sourceAbsorbingProbs = get_node_abs_prob(sourceNode);
+    // Get source neighbors.
+    neighbors = g.get_out_neighbors(sourceNode);
+    // Get average Red pagerank of neighbors for nominator.
+    nominatorConst = 0;
+
+    if (sourceOutDegree > 0) {
+        for (int nei = 0; nei < sourceOutDegree; nei++) {
+            neighbor = neighbors[nei];
+            nominatorConst += redAbsorbingProbs[neighbor].pagerank;
+        }
+        nominatorConst *= (1 / (float)sourceOutDegree);
+    } else {
+        for (int nei = 0; nei < numberOfNodes; nei++) {
+            neighbor = nei;
+            nominatorConst += redAbsorbingProbs[neighbor].pagerank;
+        }
+        nominatorConst *= (1 / (float)numberOfNodes);
+    }
+    // Get average Source pagerank of neighbors for denominator.
+    denominatorConst = 0;
+    if (sourceOutDegree > 0) {
+        for (int nei = 0; nei < sourceOutDegree; nei++) {
+            neighbor = neighbors[nei];
+            denominatorConst += sourceAbsorbingProbs[neighbor].pagerank;
+        }
+        denominatorConst *= (1 / (float)sourceOutDegree);
+    } else {
+        for (int nei = 0; nei < numberOfNodes; nei++) {
+            neighbor = nei;
+            denominatorConst += sourceAbsorbingProbs[neighbor].pagerank;
+        }
+        denominatorConst *= (1 / (float)numberOfNodes);
+    }
+    // Calculate the Quantity. Not just the important part but
+    // all so as to have a sanity check.
+    // For all nodes.
+    for (int targetNode = 0; targetNode < numberOfNodes; targetNode++) {
+        // Calculate nominator.
+        objectiveNominator = redAbsorbingProbs[targetNode].pagerank - nominatorConst;
+        objectiveNominator *= ((1 - jumpProb) / jumpProb);
+        // Calculate denominator.
+        objectiveDenominator = sourceAbsorbingProbs[targetNode].pagerank - denominatorConst;
+        objectiveDenominator *= ((1 - jumpProb) / jumpProb);
+        objectiveDenominator = sourceOutDegree + 1 - objectiveDenominator;
+        objectiveValues[targetNode].node_id = targetNode;
+        objectiveValues[targetNode].pagerank = redPagerank + rankVector[sourceNode].pagerank * (objectiveNominator / objectiveDenominator);
+        // Theory check print.
+        if (objectiveDenominator < 0) std::cout << "!!!NEGATIVE DENOMINATOR!!!\n";
+    }
+    
+    pagerank_algorithms::saveVector("objectiveValues.txt", objectiveValues);
+
+    return objectiveValues;
+}
+
 void pagerank_algorithms::sort_pagerank_vector(pagerank_v &pagerank)
 {
 	std::sort(pagerank.begin(), pagerank.end());
 }
+
+// Save vectors.
+void pagerank_algorithms::saveVector(std::string fileName, pagerank_v &logVector) {
+    // Declare local variables.
+    int n = logVector.size();
+
+    // Open log file.
+    std::ofstream logFile(fileName);
+
+    // Write logs to file.
+    logFile << "Edge\tValue\n";
+    for (int i = 0; i < n; i++) {
+        logFile << logVector[i].node_id << "\t" << logVector[i].pagerank << std::endl;
+    }
+
+    // Close file.
+    logFile.close();
+}
+
+void pagerank_algorithms::saveVector(std::string fileName, std::vector<int> &logVector) {
+    // Declare Variables
+    int n = logVector.size();  
+
+    std::ofstream logFile(fileName);
+    // Write nodes.
+    for (int i = 0; i < n; i++) {
+        logFile << logVector[i] << "\n";
+    }
+    // Close file.
+    logFile.close();
+}
+
+void pagerank_algorithms::saveVector(std::string fileName, std::vector<double> &logVector) {
+    // Declare Variables
+    int n = logVector.size();  
+
+    std::ofstream logFile(fileName);
+    // Write nodes.
+    for (int i = 0; i < n; i++) {
+        logFile << logVector[i] << "\n";
+    }
+    // Close file.
+    logFile.close();
+}
+
+void pagerank_algorithms::saveVector(std::string fileName, std::vector<edge> &logVector) {
+    std::ofstream edge_file(fileName);
+    edge_file << "Source\tTarget\tRecScore\tFairScore\n";
+    int n = logVector.size();
+    for (int i = 0; i < n; i++) {
+        edge_file << logVector[i].source << "\t" << logVector[i].target << "\t" << logVector[i].recScore
+        << "\t" << logVector[i].fairScore << "\n";
+    }
+    edge_file.close();
+}
+
+void pagerank_algorithms::saveVector(std::string fileName, std::vector<step_log> &logVector) {
+    // Declare local variables.
+    int n = logVector.size();
+
+    // Open log file.
+    std::ofstream logFile(fileName);
+
+    // Write logs to file.
+    logFile << "Edge\tPagerank\tPrediction\tSum_Prediction\n";
+    for (int i = 0; i < n; i++) {
+        logFile << i << "\t" << logVector[i].red_pagerank << "\t" << logVector[i].red_pagerank_prediction << "\t" << logVector[i].red_pagerank_generalized_prediction << std::endl;
+    }
+
+    // Close file.
+    logFile.close();
+}
+
 

@@ -15,7 +15,6 @@
 #include <cmath>
 #include "graph.hpp"
 #include "pagerank.hpp"
-#include "edgeAddition.hpp"
 #include <chrono>
 #include <omp.h>
 #include <string>
@@ -107,5 +106,5 @@ int main() {
         redPagerankLogs.push_back(redPagerank);     
     }
 
-    EdgeAddition::saveVector("fairnessByRec.txt", redPagerankLogs);
+    pagerank_algorithms::saveVector("fairnessByRec.txt", redPagerankLogs);
 }
