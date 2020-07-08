@@ -11,7 +11,7 @@
  *      2. Compute how much faster is fastGreedy compared to greedy
  *         for a single source.
  * 
- * Do this for 100 random source nodes.
+ * Do this for 100 random source nodes and 100 best by pagerank.
  */
 #include <iostream>
 #include <iomanip>
@@ -36,14 +36,14 @@ int main() {
     graph g("out_graph.txt", "out_community.txt");
     pagerank_algorithms algs(g);
     std::vector<int> sourceNodes = pagerank_algorithms::getRandomSourceNodes();
-
+    
     std::cout << "Start Greedy algorithm...\n";
     auto start = std::chrono::high_resolution_clock::now();
 
     // Run Greedy.
     for (int i = 0; i < 100; i++) {
         std::cout << "Greedy, node: " << i << "\n";
-        algs.getGreedySingleSource(sourceNodes[i], 10);
+        algs.getGreedySingleSource(sourceNodes[i], 100);
     }
 
     auto stop = std::chrono::high_resolution_clock::now();
@@ -51,10 +51,11 @@ int main() {
 
     std::cout << "Start Fast Greedy algorithm...\n";
     start = std::chrono::high_resolution_clock::now();
+
     // Run Fast Greedy.
     for (int i = 0; i < 100; i++) {
         std::cout << "Fast Greedy, node: " << i << "\n";
-        algs.getFastGreedySingleSource(sourceNodes[i], 10);
+        algs.getFastGreedySingleSource(sourceNodes[i], 100);
     }
 
     stop = std::chrono::high_resolution_clock::now();
@@ -64,5 +65,20 @@ int main() {
     std::ofstream fileOne("greedyVsFastGreedyTiming.txt");
     fileOne << "Greedy\tFastGreedy\t(milliseconds)\n";
     fileOne << greedyDuration.count() << "\t" << fastGreedyreedyDuration.count() << "\n";
+    
+    // The same but for the best by pagerank nodes.
+    sourceNodes.clear();
+    sourceNodes = pagerank_algorithms::getBestByPagerankNodes();
 
+    // Run Greedy.
+    for (int i = 0; i < 100; i++) {
+        std::cout << "Greedy, node: " << i << ":" << sourceNodes[i] << "\n";
+        algs.getGreedySingleSource(sourceNodes[i], 100);
+    }
+
+    // Run Fast Greedy.
+    for (int i = 0; i < 100; i++) {
+        std::cout << "Fast Greedy, node: " << i << "\n";
+        algs.getFastGreedySingleSource(sourceNodes[i], 100);
+    }
 }

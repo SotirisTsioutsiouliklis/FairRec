@@ -502,3 +502,21 @@ std::vector<int> pagerank_algorithms::getRandomSourceNodes() {
 
     return sourceNodes;
 }
+
+// Reads best by pagerank nodes.
+std::vector<int> pagerank_algorithms::getBestByPagerankNodes() {
+    std::vector<int> sourceNodes;
+    std::string str;
+    int node;
+
+    std::ifstream pagerankNodes("randomSourceNodes.txt");
+
+    getline (pagerankNodes, str);
+    while (getline (pagerankNodes, str)) {
+        node = std::stoi(str);
+        sourceNodes.push_back(node);
+    }
+    pagerankNodes.close();
+
+    return sourceNodes;
+}
