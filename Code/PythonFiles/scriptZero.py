@@ -4,7 +4,7 @@ You must run it inside the fairnessInRecommendation directory.
 """
 import subprocess
 
-datasets = ['tmdb', 'twitter', 'physics', 'dblp_aminer'] #'blogs', 
+datasets = ['blogs', 'tmdb', 'twitter', 'physics', 'dblp_aminer'] #'blogs', 
 
 for dataset in datasets:
     # Copy Executables.

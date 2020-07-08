@@ -152,9 +152,11 @@ static void logEdgesEffect(graph &g, pagerank_algorithms &algs, std::vector<edge
     redPagerank = g.get_pagerank_per_community(pagerank)[1];
     fairScore.push_back(redPagerank);
     recScore.push_back(0.5);
+    expFairScore.push_back(0.5);
 
     int numberOfEdges = newEdges.size();
-    double gain;
+    double gain, tempRedPagerank;
+    tempRedPagerank = redPagerank;
     for (int i = 0; i < numberOfEdges; i++) {
         g.add_edge(newEdges[i].source, newEdges[i].target);
         // Logs rec and fair scores.
@@ -165,7 +167,8 @@ static void logEdgesEffect(graph &g, pagerank_algorithms &algs, std::vector<edge
         gain += redPagerank;
         fairScore.push_back(redPagerank);
         recScore.push_back(newEdges[i].recScore);
-        expFairScore.push_back(redPagerank + (newEdges[i].recScore * gain) );
+        expFairScore.push_back(tempRedPagerank + (newEdges[i].recScore * gain) );
+        tempRedPagerank = redPagerank;
     }
 
     // Remove new edges.
@@ -175,10 +178,11 @@ static void logEdgesEffect(graph &g, pagerank_algorithms &algs, std::vector<edge
 
     // Set Initial RecScore for nice plots and interpretable results.
     recScore[0] = recScore[1];
+    expFairScore[0] = expFairScore[1];
 
     // Get average Rec.
-    for (int i = 1; i < numberOfEdges; i++) {
-        recScore[i] = (i * recScore[i-1] + recScore[i]) / float(i + 1);
+    for (int i = 1; i < numberOfEdges + 1; i++) {
+        recScore[i] = (i * recScore[i-1] + recScore[i]) / ((double)(i + 1));
     }
 
     // Save
@@ -204,7 +208,7 @@ int main() {
 
     std::cout << "Get recommendation score and Fairness...\n";
     int k = 0;
-
+    //sourceNodes.resize(4);
     for (int node : sourceNodes) {
         std::cout << "Best by pagerank node: " << k++ << ":" << node <<"\n";
         getBestRecEdges(node, newEdges, numberOfEdges);
@@ -216,11 +220,12 @@ int main() {
     }
 
     std::cout << "Get random source nodes...\n";
-    sourceNodes = pagerank_algorithms::getBestByPagerankNodes();
+    sourceNodes = pagerank_algorithms::getRandomSourceNodes();
 
     std::cout << "Get recommendation score and Fairness...\n";
     k = 0;
     
+    //sourceNodes.resize(4);
     for (int node : sourceNodes) {
         std::cout << "Random node: " << k++ << ":" << node <<"\n";
         getBestRecEdges(node, newEdges, numberOfEdges);
