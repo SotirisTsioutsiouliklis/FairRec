@@ -12,6 +12,13 @@
  *         for a single source.
  * 
  * Do this for 100 random source nodes and 100 best by pagerank.
+ * 
+ * Out files:
+ *      1. For each source node: "<node_id>_redPagerankGreedy.txt":
+ *      Rise of the red pagerank as we add edge with greedy algorithm.
+ *      2. For each source node: "<node_id>_redPagerankFastGreedy.txt":
+ *      Rise of the red pagerank as we add edge with fast greedy
+ *      algorithm.
  */
 #include <iostream>
 #include <iomanip>

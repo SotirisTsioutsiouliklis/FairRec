@@ -20,19 +20,27 @@ All the experiments were made in linux Ubuntu. To compile cpp we used gcc compil
         - Python_files
     - experiments
 
-### How to run the algorithms:<br/> 
+### How to run the experiments:<br/> 
 
-1. Greedy single source (independent executable):
+1. Experiment Zero: Compares  greedy with fast greedy algorithm for single source. It computes red pagerank ratio rise for both algorithms for 100 random source nodes and the 100 best by initial pagerank nodes. Then it takes the average red pagerank ratio for the two groups. For each source node it creates two files: "<node_id>_redPagerankGreedy.txt" and "<node_id>_redPagerankFastGreedy.txt".
     
     - Compile:
-        >` g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o singleSourceGreedy.out graph.cpp pagerank.cpp edgeAddition.cpp singleSourceGreedy.cpp`
+        >` g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentZero.out graph.cpp pagerank.cpp experimentZero.cpp`
 
     - Execute: 
-        >` ./singleSourceGreedy.out -s <source node id\> -n <numberOfEdges\>`
+        >` ./experimentZero.out`
 
-    **Note:** You will also find the algorithm as a static method in EdgeAddition class.
+    **Note:** We then take the average red pagerank ratio for each group (random, best by pagerank).
 
-2. Fast greedy single source (independent executable):
+1. Experiment Three: Compares the effect of adding edges based on recommendation score, on greatest red pagerank gain score (fast greedy algorithm) or on greatest expected red pagerank gain in average recommendation score, networks red pagerank ratio and expected red pagerank gain. It computes the forth mentioned scores for 100 random source nodes, for the 100 best by pagerank nodes and takes the average of them for each group (random, by pagerank).
+
+    - Compile:
+        >` g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentThree.out graph.cpp pagerank.cpp experimentThree.cpp`
+
+    - Execute: 
+        >` ./experimentThree.out`
+
+1. Fast greedy single source (independent executable):
     
     - Compile:
         >` g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o singleSourceFastGreedy.out graph.cpp pagerank.cpp edgeAddition.cpp singleSourceFastGreedy.cpp`
