@@ -32,13 +32,13 @@ All the experiments were made in linux Ubuntu. To compile cpp we used gcc compil
 
     **Note:** We then take the average red pagerank ratio for each group (random, best by pagerank).
 
-1. Experiment Three: Compares the effect of adding edges based on recommendation score, on greatest red pagerank gain score (fast greedy algorithm) or on greatest expected red pagerank gain in average recommendation score, networks red pagerank ratio and expected red pagerank gain. It computes the forth mentioned scores for 100 random source nodes, for the 100 best by pagerank nodes and takes the average of them for each group (random, by pagerank).
+1. Experiment Two: Compares the effect of adding edges based on recommendation score, on greatest red pagerank gain score (fast greedy algorithm) or on greatest expected red pagerank gain in average recommendation score, networks red pagerank ratio and expected red pagerank gain. It computes the forth mentioned scores for 100 random source nodes, for the 100 best by pagerank nodes and takes the average of them for each group (random, by pagerank).
 
     - Compile:
-        >` g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentThree.out graph.cpp pagerank.cpp experimentThree.cpp`
+        >` g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentTwo.out graph.cpp pagerank.cpp experimentTwo.cpp`
 
     - Execute: 
-        >` ./experimentThree.out`
+        >` ./experimentTwo.out`
 
 1. Fast greedy single source (independent executable):
     

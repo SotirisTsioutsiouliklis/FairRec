@@ -36,7 +36,6 @@
 #include <string>
 #include <sstream>
 
-
 int main() {
     std::cout << "Greedy vs FastGreedy\n";
     std::cout << "Initialize objects...\n";

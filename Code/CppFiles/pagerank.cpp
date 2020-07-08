@@ -509,7 +509,7 @@ std::vector<int> pagerank_algorithms::getBestByPagerankNodes() {
     std::string str;
     int node;
 
-    std::ifstream pagerankNodes("randomSourceNodes.txt");
+    std::ifstream pagerankNodes("pagerankBestSourceNodes.txt");
 
     getline (pagerankNodes, str);
     while (getline (pagerankNodes, str)) {

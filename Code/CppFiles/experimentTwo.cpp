@@ -1,9 +1,10 @@
 /** 
- * It adds best min(5% of nodes, 100) edges by Fairness, recommendation
- * or expected fairness and computes fairness and average
- * recommendation for each category for every edge is being added.
- * Above quantities are calculated in additive way, that is when we add
- * an edge in the graph we keep it.
+ * It chooses 100 radnom and 100 best by pagerank source nodes.
+ * For each source node it adds best min(5% of nodes, 100) edges by red
+ * pagerank gain, recommendation score or expected red pagerank gain
+ * and computes cumulative red pagerank ratio, average recommendation
+ * score and cumulative expected red pagerank gain per edge added for
+ * each source node.
  * 
  * For every source node it creates three files:
  * 
@@ -13,6 +14,8 @@
  *  for best edges by fairness score.
  *  3. "<nodeid>bestExpectEdges.txt": Recommendation score and fairness
  *  for best edges by expected gain score.
+ * 
+ * ***** Requires edges' recommendation scores have been computed *****
 */
 #include <iostream>
 #include <iomanip>
@@ -29,24 +32,6 @@
 #include <omp.h>
 #include <string>
 #include <sstream>
-
-// Reads best by pagerank nodes.
-static std::vector<int> getBestByPagerankNodes() {
-    std::vector<int> sourceNodes;
-    std::string str;
-    int node;
-
-    std::ifstream pagerankNodes("pagerankBestSourceNodes.txt");
-
-    getline (pagerankNodes, str);
-    while (getline (pagerankNodes, str)) {
-        node = std::stoi(str);
-        sourceNodes.push_back(node);
-    }
-    pagerankNodes.close();
-
-    return sourceNodes;
-}
 
 // Get best edges by recommendation Score.
 static void getBestRecEdges(int node, std::vector<edge> &newEdges, int numberOfEdges) {
@@ -155,11 +140,10 @@ static void getBestExpectEdges(pagerank_algorithms & algs, graph &g, int node, s
     }
 }
 
-// Adds edges and logs fairness and recommendation scores.
+// Adds edges and logs red pagerank ratio, recommendation scores and expected red pagerank ratio.
 static void logEdgesEffect(graph &g, pagerank_algorithms &algs, std::vector<edge> newEdges, std::string logFileName) {
     //Define variables.
-    std::vector<double> fairScore;
-    std::vector<double> recScore;
+    std::vector<double> fairScore, recScore, expFairScore;
     pagerank_v pagerank;
     double redPagerank;
     
@@ -170,17 +154,19 @@ static void logEdgesEffect(graph &g, pagerank_algorithms &algs, std::vector<edge
     recScore.push_back(0.5);
 
     int numberOfEdges = newEdges.size();
+    double gain;
     for (int i = 0; i < numberOfEdges; i++) {
         g.add_edge(newEdges[i].source, newEdges[i].target);
         // Logs rec and fair scores.
+        gain = 0;
+        gain = -redPagerank;
         pagerank = algs.get_pagerank();
         redPagerank = g.get_pagerank_per_community(pagerank)[1];
+        gain += redPagerank;
         fairScore.push_back(redPagerank);
         recScore.push_back(newEdges[i].recScore);
+        expFairScore.push_back(redPagerank + (newEdges[i].recScore * gain) );
     }
-
-    // Store pagerank after added those newEdges.
-    //save_pagerank("_pagerank_" + logFileName, pagerank);
 
     // Remove new edges.
     for (int i = 0; i < numberOfEdges; i++) {
@@ -197,9 +183,9 @@ static void logEdgesEffect(graph &g, pagerank_algorithms &algs, std::vector<edge
 
     // Save
     std::ofstream logFile(logFileName);
-    logFile << "Edge\tAverageRec\tFair\n";
+    logFile << "Edge\tAverageRec\tRedPagerank\tExpRedPagerank\n";
     for (int i = 0; i < numberOfEdges + 1; i++) {
-        logFile << i << "\t" << recScore[i] << "\t" << fairScore[i] << "\n";
+        logFile << i << "\t" << recScore[i] << "\t" << fairScore[i] << "\t" << expFairScore[i] << "\n";
     }
 }
 
@@ -210,17 +196,33 @@ int main() {
     std::vector<edge> newEdges;
 
     std::cout << "Get best by pagerank source nodes...\n";
-    std::vector<int> sourceNodes = getBestByPagerankNodes();
+    std::vector<int> sourceNodes = pagerank_algorithms::getBestByPagerankNodes();
 
     // Keep 5% or 100 nodes. The smallest.
     int numberOfNodes = g.get_num_nodes();
     int numberOfEdges = (numberOfNodes / 20 < 100) ? numberOfNodes / 20 : 100;
 
-    sourceNodes.resize(5);
+    std::cout << "Get recommendation score and Fairness...\n";
+    int k = 0;
+
+    for (int node : sourceNodes) {
+        std::cout << "Best by pagerank node: " << k++ << ":" << node <<"\n";
+        getBestRecEdges(node, newEdges, numberOfEdges);
+        logEdgesEffect(g, algs, newEdges, std::to_string(node) + "bestRecEdges.txt");
+        getBestFairEdges(node, newEdges, numberOfEdges);
+        logEdgesEffect(g, algs, newEdges, std::to_string(node) + "bestFairEdges.txt");
+        getBestExpectEdges(algs, g, node, newEdges, numberOfEdges);
+        logEdgesEffect(g, algs, newEdges, std::to_string(node) + "bestExpectEdges.txt");
+    }
+
+    std::cout << "Get random source nodes...\n";
+    sourceNodes = pagerank_algorithms::getBestByPagerankNodes();
 
     std::cout << "Get recommendation score and Fairness...\n";
+    k = 0;
     
     for (int node : sourceNodes) {
+        std::cout << "Random node: " << k++ << ":" << node <<"\n";
         getBestRecEdges(node, newEdges, numberOfEdges);
         logEdgesEffect(g, algs, newEdges, std::to_string(node) + "bestRecEdges.txt");
         getBestFairEdges(node, newEdges, numberOfEdges);

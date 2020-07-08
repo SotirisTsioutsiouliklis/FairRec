@@ -1,8 +1,8 @@
 /**
- * In this experiments we choose the 100 best by paggerank nodes as
- * source nodes. For each node we add the best edge by recommendation,
- * by fairness and by expected gain. We then compute the networks
- * pagerank for each one of the forthmentioned situations.
+ * In this experiments we choose 100 random nodes and the 100 best by
+ * paggerank nodes as source nodes. For each node we add the best edge
+ * by recommendation, by fairness and by expected gain. We then compute
+ * the networks pagerank for each one of the forthmentioned situations.
  * 
  * Creates three files:
  * 
