@@ -8,7 +8,7 @@
  * source node. For every criterion we add the first edge for all
  * source nodes and we log the red ratio of the network. Then the
  * second for all source node and we log again the red ratio of the
- * network, we continue until ww add 10 edges to all selected source
+ * network, we continue until we add 10 edges to all selected source
  * nodes.
  * 
  * @NOTE: The source nodes that we use have no relation to the typical
