@@ -178,7 +178,7 @@ int main()
     graph g("out_graph.txt", "out_community.txt");
     pagerank_algorithms algs(g);
     int numberOfNodes = g.get_num_nodes();
-    int numberOfSources = numberOfNodes / 5;
+    int numberOfSources = 101;//numberOfNodes / 5;
     std::vector<int> sources = getRandomNodes(g, numberOfSources);
     std::vector<edge> newEdges;
     std::vector<double> redRatioLog;
@@ -188,15 +188,9 @@ int main()
     
     // Keep it to check if the problem is in max size. Check if you can fix it with pointers.
     std::cout << "Vector max size: " << newEdges.max_size() << "Size of edge: " <<sizeof(edge) << "\n";
-    //exit(1);
-    edge ne;
-    ne.source =1;
-    ne.target =2;
+ 
     for (int node : sources) {
-        //getBestRecEdges(node, newEdges, numberOfEdges);
-        for(int k = 0; k < 10; k++) {
-            newEdges.push_back(ne);
-        }
+        getBestRecEdges(node, newEdges, numberOfEdges);
     }
     std::cout << "all good\n";
     exit(1);
