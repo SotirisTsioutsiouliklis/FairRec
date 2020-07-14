@@ -11,8 +11,11 @@
  * network, we continue until we add 10 edges to all selected source
  * nodes.
  * 
- * @NOTE: The source nodes that we use have no relation to the typical
- * source nodes we use for the most of others experiments.
+ * @NOTE: The source nodes that we use are the same to the typical
+ * random source nodes we use for the most of others experiments.
+ * However we have the opportunity to change them by initialize the
+ * seed for the random_suffle(). In this case we must take aggain the
+ * rec scores for all possible edges.
  * 
  * Target of the experiment:
  *      1. See the total impact of recommenders to the red ratio of a
@@ -22,6 +25,8 @@
  *      1. "impactByClassicRec.txt": Pending description...
  *      2. "impactByGainRec.txt": Pending description...
  *      3. "impactByExpGainRec.txt": Pending description...
+ * 
+ * @TODO: Make edges independent of precalculated edge scores.
  */
 #include <iostream>
 #include <iomanip>
@@ -75,13 +80,16 @@ static void getBestRecEdges(int node, std::vector<edge> &newEdges, int numberOfE
     std::vector<edge> candidateEdges;
     edge newEdge;
     std::string str;
+
     // Open file.
     std::ifstream recEdges(std::to_string(node) + "edgeScores.txt");
     std::getline(recEdges, str);
+
     // Read lines.
     while (recEdges >> newEdge.source >> newEdge.target >> newEdge.recScore >> newEdge.fairScore) {
         candidateEdges.push_back(newEdge);
     }
+
     int bestEdgeIndex = 0;
     for (int i = 0; i < numberOfEdges; i++) {
         newEdge.recScore = 0;
@@ -103,12 +111,13 @@ static void getBestRecEdges(int node, std::vector<edge> &newEdges, int numberOfE
 static void getBestFairEdges(int node, std::vector<edge> &newEdges, int numberOfEdges) {
     // Clear edge vector.
     std::vector<edge> candidateEdges;
-
     edge newEdge;
     std::string str;
+    
     // Open file.
     std::ifstream recEdges(std::to_string(node) + "edgeScores.txt");
     std::getline(recEdges, str);
+
     // Read lines.
     while (recEdges >> newEdge.source >> newEdge.target >> newEdge.recScore >> newEdge.fairScore) {
         candidateEdges.push_back(newEdge);
@@ -178,41 +187,46 @@ int main()
     graph g("out_graph.txt", "out_community.txt");
     pagerank_algorithms algs(g);
     int numberOfNodes = g.get_num_nodes();
-    int numberOfSources = 101;//numberOfNodes / 5;
+    int numberOfSources = std::min(100, numberOfNodes / 5);
     std::vector<int> sources = getRandomNodes(g, numberOfSources);
     std::vector<edge> newEdges;
-    std::vector<double> redRatioLog;
+    std::vector<double> redRatioLog, averageRecScore;
+    double recScore = 0;
 
     // First for classic recommender.
     std::cout << "Find Best 10 Rec edges for each node...\n";
     
     // Keep it to check if the problem is in max size. Check if you can fix it with pointers.
-    std::cout << "Vector max size: " << newEdges.max_size() << "Size of edge: " <<sizeof(edge) << "\n";
  
     for (int node : sources) {
         getBestRecEdges(node, newEdges, numberOfEdges);
     }
-    std::cout << "all good\n";
-    exit(1);
+
     // Get initial red ratio.
     pagerank_v pagerank = algs.get_pagerank();
     double redPagerank = g.get_pagerank_per_community(pagerank)[1];
     redRatioLog.push_back(redPagerank);
+    averageRecScore.push_back(0);
 
     std::cout << "Add edges to the graph...\n";
-    for (int unsigned i = 0; i < 10; i++) {
+    for (int i = 0; i < numberOfEdges; i++) {
         for (int node = 0; node < numberOfSources; node++) {
-            g.add_edge(newEdges[node * 10 + i].source, newEdges[node*10 + i].target);
+            g.add_edge(newEdges[node * numberOfEdges + i].source, newEdges[node*numberOfEdges + i].target);
+            recScore += newEdges[node * numberOfEdges + i].recScore;
         }
         // Log red ratio of current state.
         pagerank = algs.get_pagerank();
         redPagerank = g.get_pagerank_per_community(pagerank)[1];
         redRatioLog.push_back(redPagerank);
+        averageRecScore.push_back(recScore / (double)((i + 1) * numberOfEdges) );
     }
+    // For nice display.
+    averageRecScore[0] = averageRecScore[1];
 
     std::cout << "Save by rec logs...\n";
     // Save current logs.
     pagerank_algorithms::saveVector("impactByClassicRec.txt", redRatioLog);
+    pagerank_algorithms::saveVector("recScoreByClassicRec.txt", averageRecScore);
 
     // remove edges from graph().
     for (edge e : newEdges) {
@@ -222,6 +236,8 @@ int main()
     // Clear new edges and logs.
     newEdges.clear();
     redRatioLog.clear();
+    averageRecScore.clear();
+    recScore = 0;
 
     // Second for gain recommender.
     std::cout << "Find Best 10 gain edges for each node...\n";
@@ -233,21 +249,27 @@ int main()
     pagerank = algs.get_pagerank();
     redPagerank = g.get_pagerank_per_community(pagerank)[1];
     redRatioLog.push_back(redPagerank);
+    averageRecScore.push_back(0);
 
     std::cout << "Add edges to the graph...\n";
-    for (int unsigned i = 0; i < 10; i++) {
+    for (int i = 0; i < numberOfEdges; i++) {
         for (int node = 0; node < numberOfSources; node++) {
-            g.add_edge(newEdges[node * 10 + i].source, newEdges[node*10 + i].target);
+            g.add_edge(newEdges[node * numberOfEdges + i].source, newEdges[node*numberOfEdges + i].target);
+            recScore += newEdges[node * numberOfEdges + i].recScore;
         }
         // Log red ratio of current state.
         pagerank = algs.get_pagerank();
         redPagerank = g.get_pagerank_per_community(pagerank)[1];
         redRatioLog.push_back(redPagerank);
+        averageRecScore.push_back(recScore / (double)((i + 1) * numberOfEdges) );
     }
+    // For nice display.
+    averageRecScore[0] = averageRecScore[1];
 
     std::cout << "Save by rec logs...\n";
     // Save current logs.
     pagerank_algorithms::saveVector("impactByGainRec.txt", redRatioLog);
+    pagerank_algorithms::saveVector("recScoreByGain.txt", averageRecScore);
 
     // remove edges from graph().
     for (edge e : newEdges) {
@@ -257,6 +279,8 @@ int main()
     // Clear new edges and logs.
     newEdges.clear();
     redRatioLog.clear();
+    averageRecScore.clear();
+    recScore = 0;
 
     // Last for expected gain recommender.
     std::cout << "Find Best 10 expected gain edges for each node...\n";
@@ -268,21 +292,27 @@ int main()
     pagerank = algs.get_pagerank();
     redPagerank = g.get_pagerank_per_community(pagerank)[1];
     redRatioLog.push_back(redPagerank);
+    averageRecScore.push_back(0);
 
     std::cout << "Add edges to the graph...\n";
-    for (int unsigned i = 0; i < 10; i++) {
+    for (int i = 0; i < numberOfEdges; i++) {
         for (int node = 0; node < numberOfSources; node++) {
-            g.add_edge(newEdges[node * 10 + i].source, newEdges[node*10 + i].target);
+            g.add_edge(newEdges[node * numberOfEdges + i].source, newEdges[node*numberOfEdges + i].target);
+            recScore += newEdges[node * numberOfEdges + i].recScore;
         }
         // Log red ratio of current state.
         pagerank = algs.get_pagerank();
         redPagerank = g.get_pagerank_per_community(pagerank)[1];
         redRatioLog.push_back(redPagerank);
+        averageRecScore.push_back(recScore / (double)((i + 1) * numberOfEdges) );
     }
+    // For nice display.
+    averageRecScore[0] = averageRecScore[1];
 
     std::cout << "Save by rec logs...\n";
     // Save current logs.
     pagerank_algorithms::saveVector("impactByExpGainRec.txt", redRatioLog);
+    pagerank_algorithms::saveVector("recScoreByExpGainRec.txt", averageRecScore);
 
     return 0;
 }
