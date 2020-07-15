@@ -269,7 +269,7 @@ int main()
     std::cout << "Save by rec logs...\n";
     // Save current logs.
     pagerank_algorithms::saveVector("impactByGainRec.txt", redRatioLog);
-    pagerank_algorithms::saveVector("recScoreByGain.txt", averageRecScore);
+    pagerank_algorithms::saveVector("recScoreByGainRec.txt", averageRecScore);
 
     // remove edges from graph().
     for (edge e : newEdges) {
