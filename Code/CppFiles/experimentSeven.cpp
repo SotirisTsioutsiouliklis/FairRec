@@ -14,7 +14,7 @@
  * @NOTE: The source nodes that we use are the same to the typical
  * random source nodes we use for the most of others experiments.
  * However we have the opportunity to change them by initialize the
- * seed for the random_suffle(). In this case we must take aggain the
+ * seed for the random_suffle(). In this case we must take again the
  * rec scores for all possible edges.
  * 
  * Target of the experiment:
