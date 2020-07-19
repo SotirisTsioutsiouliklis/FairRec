@@ -15,9 +15,8 @@ Require files:
     1. 
 
 Create file:
-    1. edgeScores.txt: <sourceNode>\t<targetNode>\t<node2vecRecommendationScore>\t<resourceAllocationScore>\t
-                        <jaccardCoefficientScore>\t<preferencialAttachmentScore>\t<addamicAddarScore>\t
-                        <fairScore>\t<fairGain>
+    1. edgeRecScores.txt: <sourceNode>\t<targetNode>\t<node2vecRecommendationScore>\t<resourceAllocationScore>\t
+                        <jaccardCoefficientScore>\t<preferencialAttachmentScore>\t<addamicAddarScore>\n
 
 Run inside datasets folder.         
 """
@@ -733,6 +732,16 @@ def trainModel(auc = True):
         fileOne.write("TrainClassifierTime: %f sec\n" %(trainingTime - node2vecTime) )
         fileOne.write("TotalTime: %f sec\n" %(time.time() - startTime) )
 
+def getListOfPreds(preds, numberOfPreds):
+    predsList = np.zeros(numberOfPreds)
+
+    i = 0
+    for u, v, p in preds:
+        predsList[i] = p
+        i += 1
+
+    return predsList
+
 # --------------------------------- main ------------------------------------.
 
 # See if there is trained node2vec based classifier - link recommender.
@@ -759,13 +768,13 @@ bestBlueNodes = np.loadtxt('blueBestSourceNodes.txt', skiprows= 1, dtype= int)
 print("Initialize Objects...\n")
 # Init graph.
 graph = nx.read_edgelist('out_graph.txt', nodetype= int, create_using= nx.DiGraph() )
+unGraph = nx.read_edgelist("out_graph.txt", nodetype=int, create_using=nx.Graph() ) # Load graph as undirected.
 nodes = np.concatenate((randomNodes, bestRedNodes, bestBlueNodes) )
 
 # Write files header. It also clears it in case is already written.
-with open('edgeScore.txt', 'w') as fileOne:
+with open('edgeRecScores.txt', 'w') as fileOne:
     fileOne.write('<sourceNode>\t<targetNode>\t<node2vecRecommendationScore>\t<resourceAllocationScore>\t'+
-                    '<jaccardCoefficientScore>\t<preferencialAttachmentScore>\t<addamicAddarScore>\t<fairScore>\t'+
-                    '<fairGain>\n')
+                    '<jaccardCoefficientScore>\t<preferencialAttachmentScore>\t<addamicAddarScore>\n')
 
 # For each source node get their neighbors of maximum distance 3 and
 # compute scores. Don't check for random source existing in red or blue
@@ -788,10 +797,31 @@ for node in nodes:
     # Get candidate edges in a list.
     candidateEdges = [(node, nei) for nei in candidateNeighbors]
 
-    # Compute emebddings for edges.
-    edgeEmbeddings = EdgeEmbeding.hadamart(edges)
+    # Compute node2vec recommendation score for edges.
+    edgeEmbeddings = EdgeEmbeding.hadamart(candidateEdges)
     edgeRecommendationScore = linkRecommender.predict_proba(edgeEmbeddings)
     edgeRecommendationScore = edgeRecommendationScore[0:,1]
 
+    # Compute Other recommendation scores.
+    resourceAllocationPreds = nx.resource_allocation_index(unGraph, candidateEdges)
+    jaccardCoefficientPreds = nx.jaccard_coefficient(unGraph, candidateEdges)
+    preferencialAttachmentPreds = nx.preferential_attachment(unGraph, candidateEdges)
+    addamicAdarPreds = nx.adamic_adar_index(unGraph, candidateEdges)
     
+    # convert results to list.
+    numberOfEdges = len(candidateEdges)
+    resourceAllocationValues = getListOfPreds(resourceAllocationPreds, numberOfEdges)
+    jaccardCoefficientValues = getListOfPreds(jaccardCoefficientPreds, numberOfEdges)
+    preferencialAttachmentValues = getListOfPreds(preferencialAttachmentPreds, numberOfEdges)
+    addamicAdarValues = getListOfPreds(addamicAdarPreds , numberOfEdges)
+
     # Log these score to "edgeScores.txt" file.
+    with open('edgeRecScores.txt', 'a') as fileOne:
+        edge = 0
+        for source, target in candidateEdges:
+            fileOne.write('%d\t%d\t%f\t%f\t%f\t%f\t%f\n' 
+                        %(source, target, edgeRecommendationScore[edge], resourceAllocationValues[edge], 
+                        jaccardCoefficientValues[edge], preferencialAttachmentValues[edge], adamicAdarValues[edge],
+                        ) )
+
+            edge += 1
