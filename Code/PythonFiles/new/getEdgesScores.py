@@ -777,17 +777,17 @@ with open('edgeRecScores.txt', 'w') as fileOne:
 # For each source node get their neighbors of maximum distance 3 and
 # compute scores. Don't check for random source existing in red or blue
 # nodes because it's highly unexpected in large networks.
-print("Total nodes: %d\n" %nodes.size)
-print("Get scores for:\n")
+print("Get scores")
 num = 0
 startTime = time.time()
 for node in nodes:
+    num += 1
     #print("\tnode %d %d\n" %(node, num ))
     # Estimate total time.
     if num == 10:
         stopTime = time.time()
         ellapsedTime = stopTime - startTime
-        print("It will approximatelly need: %f Seconds\n" %(29 * ellapsedTime) )
+        print("It will approximatelly need: %f seconds more\n" %(29 * ellapsedTime) )
     # Get neighbors of maximum distance 3.
     candidateNeighbors = set()
     # for each neighbor of node <node>.
