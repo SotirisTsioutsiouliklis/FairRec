@@ -28,6 +28,7 @@ import subprocess
 import sys
 import pickle
 import networkx as nx
+import time
 
 # Useful classes and functions.
 # TODO: Improve documentations od classes.
@@ -131,13 +132,10 @@ class NodeEmbedding:
         the current hardcoded mode.
         """
         try:
+            subprocess.call(['cp ../../../snap/examples/node2vec/node2vec .'], cwd=".", shell=True)
             subprocess.call(["./node2vec -i:out_graph.edgelist -o:out_nodeEmbeddings.txt -l:3 -d:128 -p:0.3 -dr -v"], cwd=".", shell=True) # Pending for arguments.
         except:
-            try:
-                subprocess.call(['cp ../../../snap/examples/node2vec/node2vec'])
-                subprocess.call(["./node2vec -i:out_graph.edgelist -o:out_nodeEmbeddings.txt -l:3 -d:128 -p:0.3 -dr -v"], cwd=".", shell=True) # Pending for arguments.
-            except:
-                raise Exception("./node2vec didn't run properly! Check that executable exists in the root folder" + 
+            raise Exception("./node2vec didn't run properly! Check that executable exists in the root folder" + 
                                 " or that executable is reachable from the script\n")
 
 class EdgeEmbeding:
@@ -773,16 +771,23 @@ nodes = np.concatenate((randomNodes, bestRedNodes, bestBlueNodes) )
 
 # Write files header. It also clears it in case is already written.
 with open('edgeRecScores.txt', 'w') as fileOne:
-    fileOne.write('<sourceNode>\t<targetNode>\t<node2vecRecommendationScore>\t<resourceAllocationScore>\t'+
-                    '<jaccardCoefficientScore>\t<preferencialAttachmentScore>\t<addamicAddarScore>\n')
+    fileOne.write('sourceNode\ttargetNode\tnode2vecRecommendationScore\tresourceAllocationScore\t'+
+                    'jaccardCoefficientScore\tpreferencialAttachmentScore\tadamicAddarScore\n')
 
 # For each source node get their neighbors of maximum distance 3 and
 # compute scores. Don't check for random source existing in red or blue
 # nodes because it's highly unexpected in large networks.
 print("Total nodes: %d\n" %nodes.size)
 print("Get scores for:\n")
+num = 0
+startTime = time.time()
 for node in nodes:
-    print("\tnode %d\n" %node)
+    #print("\tnode %d %d\n" %(node, num ))
+    # Estimate total time.
+    if num == 10:
+        stopTime = time.time()
+        ellapsedTime = stopTime - startTime
+        print("It will approximatelly need: %f Seconds\n" %(29 * ellapsedTime) )
     # Get neighbors of maximum distance 3.
     candidateNeighbors = set()
     # for each neighbor of node <node>.
@@ -794,34 +799,42 @@ for node in nodes:
             for thirdNei in graph.neighbors(secNei):
                 candidateNeighbors.add(thirdNei)
 
-    # Get candidate edges in a list.
-    candidateEdges = [(node, nei) for nei in candidateNeighbors]
+    # Remove self from candidate Neighbors. If it doesn't exist it's
+    # not a problem.
+    try:
+        candidateNeighbors.remove(node)
+    except:
+        pass
 
-    # Compute node2vec recommendation score for edges.
-    edgeEmbeddings = EdgeEmbeding.hadamart(candidateEdges)
-    edgeRecommendationScore = linkRecommender.predict_proba(edgeEmbeddings)
-    edgeRecommendationScore = edgeRecommendationScore[0:,1]
+    if len(candidateNeighbors) != 0:
+        # Get candidate edges in a list.
+        candidateEdges = [(node, nei) for nei in candidateNeighbors]
 
-    # Compute Other recommendation scores.
-    resourceAllocationPreds = nx.resource_allocation_index(unGraph, candidateEdges)
-    jaccardCoefficientPreds = nx.jaccard_coefficient(unGraph, candidateEdges)
-    preferencialAttachmentPreds = nx.preferential_attachment(unGraph, candidateEdges)
-    addamicAdarPreds = nx.adamic_adar_index(unGraph, candidateEdges)
-    
-    # convert results to list.
-    numberOfEdges = len(candidateEdges)
-    resourceAllocationValues = getListOfPreds(resourceAllocationPreds, numberOfEdges)
-    jaccardCoefficientValues = getListOfPreds(jaccardCoefficientPreds, numberOfEdges)
-    preferencialAttachmentValues = getListOfPreds(preferencialAttachmentPreds, numberOfEdges)
-    addamicAdarValues = getListOfPreds(addamicAdarPreds , numberOfEdges)
+        # Compute node2vec recommendation score for edges.
+        edgeEmbeddings = EdgeEmbeding.hadamart(candidateEdges)
+        edgeRecommendationScore = linkRecommender.predict_proba(edgeEmbeddings)
+        edgeRecommendationScore = edgeRecommendationScore[0:,1]
 
-    # Log these score to "edgeScores.txt" file.
-    with open('edgeRecScores.txt', 'a') as fileOne:
-        edge = 0
-        for source, target in candidateEdges:
-            fileOne.write('%d\t%d\t%f\t%f\t%f\t%f\t%f\n' 
-                        %(source, target, edgeRecommendationScore[edge], resourceAllocationValues[edge], 
-                        jaccardCoefficientValues[edge], preferencialAttachmentValues[edge], adamicAdarValues[edge],
-                        ) )
+        # Compute Other recommendation scores.
+        resourceAllocationPreds = nx.resource_allocation_index(unGraph, candidateEdges)
+        jaccardCoefficientPreds = nx.jaccard_coefficient(unGraph, candidateEdges)
+        preferencialAttachmentPreds = nx.preferential_attachment(unGraph, candidateEdges)
+        adamicAdarPreds = nx.adamic_adar_index(unGraph, candidateEdges)
+        
+        # convert results to list.
+        numberOfEdges = len(candidateEdges)
+        resourceAllocationValues = getListOfPreds(resourceAllocationPreds, numberOfEdges)
+        jaccardCoefficientValues = getListOfPreds(jaccardCoefficientPreds, numberOfEdges)
+        preferencialAttachmentValues = getListOfPreds(preferencialAttachmentPreds, numberOfEdges)
+        adamicAdarValues = getListOfPreds(adamicAdarPreds , numberOfEdges)
 
-            edge += 1
+        # Log these score to "edgeScores.txt" file.
+        with open('edgeRecScores.txt', 'a') as fileOne:
+            edge = 0
+            for source, target in candidateEdges:
+                fileOne.write('%d\t%d\t%f\t%f\t%f\t%f\t%f\n' 
+                            %(source, target, edgeRecommendationScore[edge], resourceAllocationValues[edge], 
+                            jaccardCoefficientValues[edge], preferencialAttachmentValues[edge], adamicAdarValues[edge],
+                            ) )
+
+                edge += 1
