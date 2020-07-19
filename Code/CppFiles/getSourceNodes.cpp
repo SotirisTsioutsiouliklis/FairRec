@@ -12,8 +12,8 @@
  * 
  * It creates three txt files:
  *  1. "randomSourceNodes.txt"
- *  2. "bestRedSourceNodes.txt"
- *  3. "bestBlueSourceNodes.txt"
+ *  2. "redBestedSourceNodes.txt"
+ *  3. "blueBestSourceNodes.txt"
  * 
  * Every file store the nodes in decreasing order.
 */
@@ -164,12 +164,12 @@ int main()
     // Get best by pagerank.
     sourceNodes = getBestByFormulaRed(g, algs, numberOfSources);
     // Save best by pagerank nodes.
-    saveVector("bestRedSourceNodes.txt", sourceNodes);
+    saveVector("redBestSourceNodes.txt", sourceNodes);
     std::cout << "Getting " << numberOfSources << " best by formula blue sources\n";
     // Get best by pagerank.
     sourceNodes = getBestByFormulaBlue(g, algs, numberOfSources);
     // Save best by pagerank nodes.
-    saveVector("bestBlueSourceNodes.txt", sourceNodes);
+    saveVector("blueBestSourceNodes.txt", sourceNodes);
 
     return 0;
 }

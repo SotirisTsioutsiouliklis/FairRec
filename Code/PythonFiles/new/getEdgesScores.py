@@ -739,20 +739,59 @@ def trainModel(auc = True):
 # If so, load id.
 try:
     # Load recommender.
-    linkRecommender = pickle.load(open('edgeClassifier.sav', 'rb'))
+    linkRecommender = pickle.load(open('edgeClassifier.sav', 'rb') )
 except:
     print("No trained classifier spotted. We will try to train one...\n" +
             "Be careful in this case no AUC will be computed and there will not be any evaluation of the model...\n")
     # If not try train. If node2vec doesn't exist, the relative class
     # with raise an error.
-    try:
-        trainModel(False)
-        linkRecommender = pickle.load(open('edgeClassifier.sav', 'rb'))
+    trainModel(False)
+    linkRecommender = pickle.load(open('edgeClassifier.sav', 'rb') )
 
-# Here you have your node2vec link recommender as linkRecommender.
+# Here you have your node2vec link recommender as
+# linkRecommender.
+
 # Get Source Nodes.
+randomNodes = np.loadtxt('randomSourceNodes.txt', skiprows= 1, dtype= int)
+bestRedNodes = np.loadtxt('redBestSourceNodes.txt', skiprows= 1, dtype= int)
+bestBlueNodes = np.loadtxt('blueBestSourceNodes.txt', skiprows= 1, dtype= int)
+
+print("Initialize Objects...\n")
+# Init graph.
+graph = nx.read_edgelist('out_graph.txt', nodetype= int, create_using= nx.DiGraph() )
+nodes = np.concatenate((randomNodes, bestRedNodes, bestBlueNodes) )
+
+# Write files header. It also clears it in case is already written.
+with open('edgeScore.txt', 'w') as fileOne:
+    fileOne.write('<sourceNode>\t<targetNode>\t<node2vecRecommendationScore>\t<resourceAllocationScore>\t'+
+                    '<jaccardCoefficientScore>\t<preferencialAttachmentScore>\t<addamicAddarScore>\t<fairScore>\t'+
+                    '<fairGain>\n')
 
 # For each source node get their neighbors of maximum distance 3 and
-# compute scores.
+# compute scores. Don't check for random source existing in red or blue
+# nodes because it's highly unexpected in large networks.
+print("Total nodes: %d\n" %nodes.size)
+print("Get scores for:\n")
+for node in nodes:
+    print("\tnode %d\n" %node)
+    # Get neighbors of maximum distance 3.
+    candidateNeighbors = set()
+    # for each neighbor of node <node>.
+    for nei in graph.neighbors(node): # Returns iterator for out neighbors.
+        # Add as candidate every neighbor of that node.
+        for secNei in graph.neighbors(nei):
+            candidateNeighbors.add(secNei)
+            # And every neighbor of that node.
+            for thirdNei in graph.neighbors(secNei):
+                candidateNeighbors.add(thirdNei)
 
+    # Get candidate edges in a list.
+    candidateEdges = [(node, nei) for nei in candidateNeighbors]
+
+    # Compute emebddings for edges.
+    edgeEmbeddings = EdgeEmbeding.hadamart(edges)
+    edgeRecommendationScore = linkRecommender.predict_proba(edgeEmbeddings)
+    edgeRecommendationScore = edgeRecommendationScore[0:,1]
+
+    
     # Log these score to "edgeScores.txt" file.
