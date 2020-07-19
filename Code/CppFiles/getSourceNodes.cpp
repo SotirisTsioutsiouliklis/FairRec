@@ -1,10 +1,21 @@
 /**
- * It selects numberOfSources source nodes.
+ * It selects source nodes so as to calculate their recommendation 
+ * scores, etc. so as to have them ready for all kind of experiments
+ * we might need.
  * 
- * 1. Random
- * 2. Best by pagerank
+ * Policies ofselection:
+ *  1. min(0.2 * numberOFNodes, 100) random nodes.
+ *  2. min(0.2 * numberOFNodes, 100) best by pagerank / out degree
+ *     red nodes.
+ *  3. min(0.2 * numberOFNodes, 100) best by pagerank / out degree
+ *     red nodes.
  * 
- * @param numberOfSources (int)
+ * It creates three txt files:
+ *  1. "randomSourceNodes.txt"
+ *  2. "bestRedSourceNodes.txt"
+ *  3. "bestBlueSourceNodes.txt"
+ * 
+ * Every file store the nodes in decreasing order.
 */
 #include <iostream>
 #include "graph.hpp"
@@ -14,7 +25,8 @@
 #include <fstream>
 #include <string>
 
-// Handles command line arguments.
+// Handles command line arguments. Keep it in case we need it.
+/*
 static bool getArguments(const int argc, char ** const argv, int &numberOfSources) {
     if (argc != 2) goto error;
     numberOfSources = std::atoi(argv[1]);
@@ -27,6 +39,7 @@ error:
 
     return false;
 }
+*/
 
 /**
  * Returns k random nodes of graph.
@@ -58,17 +71,44 @@ static std::vector<int> getRandomNodes(const graph &g, int &numberOfSources) {
 }
 
 /**
- * Returns k best by pagerank nodes of graph.
+ * Returns k best by pagerank / out degree red nodes of graph.
  * 
  * @param g (graph): Graph to choose nodes.
  * @param k (int): Number of nodes to choose.
  * @return sourceNodes (std::vector<int>): The chosen nodes.
  *   
 */
-static std::vector<int> getBestByPagerank(pagerank_algorithms &algs, int &numberOfSources) {
+static std::vector<int> getBestByFormulaRed(graph &g, pagerank_algorithms &algs, int &numberOfSources) {
     // Get best by pagerank sources.
     std::vector<int> sourceNodes;
     pagerank_v pagerank = algs.get_pagerank();
+    for (pagerank_t &node : pagerank) {
+        node.pagerank = (g.get_community(node.node_id) == 0) ? 0 : node.pagerank / g.get_out_degree(node.node_id);
+    }
+    algs.sort_pagerank_vector(pagerank);
+    pagerank.resize(numberOfSources);
+    for (int i = 0; i < numberOfSources; i++) {
+        sourceNodes.push_back(pagerank[i].node_id);
+    }
+
+    return sourceNodes;
+}
+
+/**
+ * Returns k best by pagerank / out degree blue nodes of graph.
+ * 
+ * @param g (graph): Graph to choose nodes.
+ * @param k (int): Number of nodes to choose.
+ * @return sourceNodes (std::vector<int>): The chosen nodes.
+ *   
+*/
+static std::vector<int> getBestByFormulaBlue(graph &g, pagerank_algorithms &algs, int &numberOfSources) {
+    // Get best by pagerank sources.
+    std::vector<int> sourceNodes;
+    pagerank_v pagerank = algs.get_pagerank();
+    for (pagerank_t &node : pagerank) {
+        node.pagerank = (g.get_community(node.node_id) == 1) ? 0 : node.pagerank / g.get_out_degree(node.node_id);
+    }
     algs.sort_pagerank_vector(pagerank);
     pagerank.resize(numberOfSources);
     for (int i = 0; i < numberOfSources; i++) {
@@ -100,18 +140,18 @@ static void saveVector(std::string fileName, std::vector<int> vec) {
     log_file.close();
 }
 
-int main(int argc, char **argv)
+int main()
 {
-    std::cout << "Start Program\n";
+    std::cout << "Start source selection process...\n";
     // Command line arguments.
-    int numberOfSources = 0;
+    int numberOfSources = 100;
 
-    std::cout << "Process Command line arguments\n";
+    // Keep in case we need it.
+    //std::cout << "Process Command line arguments\n";
     // Get arguments.
-    if (!getArguments(argc, argv, numberOfSources)) return 1;
+    //if (!getArguments(argc, argv, numberOfSources)) return 1;
 
-    std::cout << "Initializing objects\n";
-    // Declare/Initialize variables.
+    std::cout << "Initializing objects...\n";
     graph g("out_graph.txt", "out_community.txt");
     pagerank_algorithms algs(g);
 
@@ -120,11 +160,16 @@ int main(int argc, char **argv)
     std::vector<int> sourceNodes = getRandomNodes(g, numberOfSources);
     // Save random nodes.
     saveVector("randomSourceNodes.txt", sourceNodes);
-    std::cout << "Getting " << numberOfSources << " best by pagerank sources\n";
+    std::cout << "Getting " << numberOfSources << " best by formula red sources\n";
     // Get best by pagerank.
-    sourceNodes = getBestByPagerank(algs, numberOfSources);
+    sourceNodes = getBestByFormulaRed(g, algs, numberOfSources);
     // Save best by pagerank nodes.
-    saveVector("pagerankBestSourceNodes.txt", sourceNodes);
+    saveVector("bestRedSourceNodes.txt", sourceNodes);
+    std::cout << "Getting " << numberOfSources << " best by formula blue sources\n";
+    // Get best by pagerank.
+    sourceNodes = getBestByFormulaBlue(g, algs, numberOfSources);
+    // Save best by pagerank nodes.
+    saveVector("bestBlueSourceNodes.txt", sourceNodes);
 
     return 0;
 }
