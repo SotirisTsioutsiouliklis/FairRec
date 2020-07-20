@@ -195,8 +195,6 @@ int main()
 
     // First for classic recommender.
     std::cout << "Find Best 10 Rec edges for each node...\n";
-    
-    // Keep it to check if the problem is in max size. Check if you can fix it with pointers.
  
     for (int node : sources) {
         getBestRecEdges(node, newEdges, numberOfEdges);

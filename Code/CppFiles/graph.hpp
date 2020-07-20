@@ -15,6 +15,17 @@ struct edge {
     }
 };
 
+struct recEdge {
+    int source;
+    int target;
+    int sourceOutDegree;
+    double node2vecScore, resAllocScore, jaccCoefScore, prefAttScore, adamicAdarScore;
+
+    bool operator == (const edge &other) {
+        return (source == other.source && target == other.target);
+    }
+};
+
 typedef struct {
 	std::vector<int> out_neighbors;
 	std::vector<int> in_neighbors;
