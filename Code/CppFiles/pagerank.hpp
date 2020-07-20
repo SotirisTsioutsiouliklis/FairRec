@@ -78,6 +78,8 @@ public:
 	// Reads random source nodes.
 	static std::vector<int> getRandomSourceNodes();
 	static std::vector<int> getBestByPagerankNodes();
+	static std::vector<int> getBestRedSourceNodes();
+	static std::vector<int> getBestBlueSourceNodes();
 
 private:
 	void compute_pagerank_no_personalization_vector(std::vector<double> &pagerankv, double total_pagerank);

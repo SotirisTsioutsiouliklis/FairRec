@@ -520,3 +520,39 @@ std::vector<int> pagerank_algorithms::getBestByPagerankNodes() {
 
     return sourceNodes;
 }
+
+// Reads best by pagerank nodes.
+std::vector<int> pagerank_algorithms::getBestRedSourceNodes() {
+    std::vector<int> sourceNodes;
+    std::string str;
+    int node;
+
+    std::ifstream pagerankNodes("redBestedSourceNodes.txt");
+
+    getline (pagerankNodes, str);
+    while (getline (pagerankNodes, str)) {
+        node = std::stoi(str);
+        sourceNodes.push_back(node);
+    }
+    pagerankNodes.close();
+
+    return sourceNodes;
+}
+
+// Reads best by pagerank nodes.
+std::vector<int> pagerank_algorithms::getBestBlueSourceNodes() {
+    std::vector<int> sourceNodes;
+    std::string str;
+    int node;
+
+    std::ifstream pagerankNodes("blueBestSourceNodes.txt");
+
+    getline (pagerankNodes, str);
+    while (getline (pagerankNodes, str)) {
+        node = std::stoi(str);
+        sourceNodes.push_back(node);
+    }
+    pagerankNodes.close();
+
+    return sourceNodes;
+}

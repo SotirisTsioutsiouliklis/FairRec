@@ -1,4 +1,26 @@
 /**
+ * In this experiment we compare the effect of adding edges by
+ * node2vec, resource allocation, Jaccard coefficient, preferencial
+ * attachment and Adamic adar recommendation scores, by gain score or
+ * by expected gain score(our poor approximation of it) and with random
+ * recommendations.
+ * 
+ * @NOTE: All forthmentioned scores are calculated in the initial state
+ * of the network for all the source nodes.
+ * 
+ * We use as source nodes 100 random source nodes.
+ * @TODO: Add other policies as well.
+ *  
+ * To do that we choose min(0.2 * numberOFNodes, 100) random nodes from
+ * the network. We then calculate the forthmentioned score for each
+ * candidate edge of each source node. For every criterion we add the
+ * first edge for all source nodes and we log the red ratio of the
+ * network. Then the second for all source node and we log again the
+ * red ratio of the network, we continue until we add 10 edges to all
+ * selected source nodes.
+ * 
+ * ----------------------------------------------------------------
+ * 
  * This script compares expected fairness with recommendation score
  * and fairness score. We choode as source nodes the 100 best by
  * pagerank nodes. 
