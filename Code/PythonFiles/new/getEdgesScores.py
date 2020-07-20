@@ -792,6 +792,7 @@ for node in nodes:
     candidateNeighbors = set()
     # for each neighbor of node <node>.
     for nei in graph.neighbors(node): # Returns iterator for out neighbors.
+        neighbors.add(nei)
         # Add as candidate every neighbor of that node.
         for secNei in graph.neighbors(nei):
             candidateNeighbors.add(secNei)
@@ -805,6 +806,9 @@ for node in nodes:
         candidateNeighbors.remove(node)
     except:
         pass
+    # Remove neighbors from candindate neighbors. 
+    for nei in graph.neighbors(node):
+        candidateEdges.discard(nei)
 
     if len(candidateNeighbors) != 0:
         # Get candidate edges in a list.
