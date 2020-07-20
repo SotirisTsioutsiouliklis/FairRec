@@ -527,7 +527,7 @@ std::vector<int> pagerank_algorithms::getBestRedSourceNodes() {
     std::string str;
     int node;
 
-    std::ifstream pagerankNodes("redBestedSourceNodes.txt");
+    std::ifstream pagerankNodes("redBestSourceNodes.txt");
 
     getline (pagerankNodes, str);
     while (getline (pagerankNodes, str)) {

@@ -75,6 +75,7 @@ int main() {
     std::ofstream fileOne("greedyVsFastGreedyTiming.txt");
     fileOne << "Greedy\tFastGreedy\t(milliseconds)\n";
     fileOne << greedyDuration.count() << "\t" << fastGreedyreedyDuration.count() << "\n";
+    fileOne.close();
     
     // The same but for the best red nodes.
     sourceNodes.clear();
@@ -91,7 +92,7 @@ int main() {
         std::cout << "Fast Greedy, node: " << i << "\n";
         algs.getFastGreedySingleSource(sourceNodes[i], 100);
     }
-
+    
     // The same but for the best blue nodes.
     sourceNodes.clear();
     sourceNodes = pagerank_algorithms::getBestBlueSourceNodes();
