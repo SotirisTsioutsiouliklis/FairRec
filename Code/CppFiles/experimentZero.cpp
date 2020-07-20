@@ -40,6 +40,7 @@
 #include <sstream>
 
 int main() {
+    omp_set_num_threads(20);
     std::cout << "Greedy vs FastGreedy\n";
     std::cout << "Initialize objects...\n";
     graph g("out_graph.txt", "out_community.txt");
