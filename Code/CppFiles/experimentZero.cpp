@@ -19,6 +19,9 @@
  *      2. For each source node: "<node_id>_redPagerankFastGreedy.txt":
  *      Rise of the red pagerank as we add edge with fast greedy
  *      algorithm.
+ *      3. "greedyVsFastGreedyTiming.txt": Time difference between the
+ *      two algorithms - inlcudes whole algorithms with common parts
+ *      counting.
  */
 #include <iostream>
 #include <iomanip>
