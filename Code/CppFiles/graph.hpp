@@ -19,7 +19,7 @@ struct recEdge {
     int source;
     int target;
     int sourceOutDegree;
-    double node2vecScore, resAllocScore, jaccCoefScore, prefAttScore, adamicAdarScore;
+    double node2vecScore, resAllocScore, jaccCoefScore, prefAttScore, adamicAdarScore, gain, expGain;
 
     bool operator == (const edge &other) {
         return (source == other.source && target == other.target);
