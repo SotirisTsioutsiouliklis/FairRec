@@ -788,23 +788,11 @@ for node in nodes:
         stopTime = time.time()
         ellapsedTime = stopTime - startTime
         print("It will approximatelly need: %f seconds more\n" %(29 * ellapsedTime) )
-    # Get neighbors of maximum distance 3.
-    candidateNeighbors = set()
-    # for each neighbor of node <node>.
-    for nei in graph.neighbors(node): # Returns iterator for out neighbors.
-        # Add as candidate every neighbor of that node.
-        for secNei in graph.neighbors(nei):
-            candidateNeighbors.add(secNei)
-            # And every neighbor of that node.
-            for thirdNei in graph.neighbors(secNei):
-                candidateNeighbors.add(thirdNei)
+    # Get as candidate neighbors all neighbors.
+    candidateNeighbors = set([i for i in range(graph.number_of_nodes() )])
 
-    # Remove self from candidate Neighbors. If it doesn't exist it's
-    # not a problem.
-    try:
-        candidateNeighbors.remove(node)
-    except:
-        pass
+    # Remove self from candidate Neighbors.
+    candidateNeighbors.remove(node)
     # Remove neighbors from candindate neighbors. 
     for nei in graph.neighbors(node):
         candidateNeighbors.discard(nei)

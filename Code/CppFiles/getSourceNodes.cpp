@@ -156,12 +156,14 @@ int main()
     // FInd number of sources.
     int numberOfNodes = g.get_num_nodes();
     int numberOfSources = std::min(numberOfNodes / 5, 100);
+    int numberOfRandSources = numberOfNodes / 10;
 
     std::cout << "Getting " << numberOfSources << " random sources\n";
     // Get numberOfSources Random Source nodes.
-    std::vector<int> sourceNodes = getRandomNodes(g, numberOfSources);
+    std::vector<int> sourceNodes = getRandomNodes(g, numberOfRandSources);
     // Save random nodes.
     saveVector("randomSourceNodes.txt", sourceNodes);
+    /**
     std::cout << "Getting " << numberOfSources << " best by formula red sources\n";
     // Get best by pagerank.
     sourceNodes = getBestByFormulaRed(g, algs, numberOfSources);
@@ -172,6 +174,6 @@ int main()
     sourceNodes = getBestByFormulaBlue(g, algs, numberOfSources);
     // Save best by pagerank nodes.
     saveVector("blueBestSourceNodes.txt", sourceNodes);
-
+    */
     return 0;
 }

@@ -37,6 +37,7 @@ public:
      * formula of the FairRec paper and it is accurate.
     */
     pagerank_v getObjectiveValues(int sourceNode);
+    pagerank_v getDeletionObjectiveValues(int sourceNode);
 
 	void sort_pagerank_vector(pagerank_v &pagerank);
 
