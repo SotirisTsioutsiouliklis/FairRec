@@ -16,7 +16,7 @@ pagerank_algorithms::pagerank_algorithms(graph &g) : g(g), is_cache_valid(false)
 
 // PageRank.
 pagerank_v pagerank_algorithms::get_pagerank(const double C, const double eps, const int max_iter)
-{
+{	
 	// initialize
 	const unsigned int nnodes = g.get_num_nodes();
 	pagerank_v pagerankv(nnodes);
@@ -45,7 +45,6 @@ pagerank_v pagerank_algorithms::get_pagerank(const double C, const double eps, c
 			tmp_pagerank[node] *= C;
 			sum += tmp_pagerank[node];
 		}
-
 		// re-insert "leaked" pagerank
 		double diff = 0.0, new_val;
 		const double leaked = (C - sum) / nnodes;

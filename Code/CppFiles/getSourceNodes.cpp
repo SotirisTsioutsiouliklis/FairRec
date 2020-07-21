@@ -142,10 +142,6 @@ static void saveVector(std::string fileName, std::vector<int> vec) {
 
 int main()
 {
-    std::cout << "Start source selection process...\n";
-    // Command line arguments.
-    int numberOfSources = 100;
-
     // Keep in case we need it.
     //std::cout << "Process Command line arguments\n";
     // Get arguments.
@@ -154,6 +150,12 @@ int main()
     std::cout << "Initializing objects...\n";
     graph g("out_graph.txt", "out_community.txt");
     pagerank_algorithms algs(g);
+
+    std::cout << "Start source selection process...\n";
+
+    // FInd number of sources.
+    int numberOfNodes = g.get_num_nodes();
+    int numberOfSources = std::min(numberOfNodes / 5, 100);
 
     std::cout << "Getting " << numberOfSources << " random sources\n";
     // Get numberOfSources Random Source nodes.

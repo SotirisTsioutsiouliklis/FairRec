@@ -95,12 +95,10 @@ static recEdge getNextNode2vecBest(std::vector<recEdge> &edges) {
 }
 
 /**
- * Get best edges by recommendation Score in order to be added. Add
+ * Appends best edges by recommendation Score in order to be added. Add
  * first number of source nodes at each epoch.
 */
 static void getBestNode2vec(std::vector<recEdge> &candidateEdges, std::vector<recEdge> &newEdges, int numberOfSources, int numberOfEdges) {
-    // Clear edge vector.
-    newEdges.clear();
     recEdge newEdge;
     std::string str;
     std::vector<recEdge> edgesPerSource[numberOfSources];
@@ -126,11 +124,216 @@ static void getBestNode2vec(std::vector<recEdge> &candidateEdges, std::vector<re
 
 }
 
-static void addEdges(pagerank_algorithms & algs, graph &g, std::vector<recEdge> &newEdges, int numberOfEdges, int numberOfSources, std::string postFix) {
+/**
+ * Same for resource allocation.
+*/
+static recEdge getNextResAllocBest(std::vector<recEdge> &edges) {
+    // Assume first one to be the best.
+    recEdge bestEdge = edges[0];
+    int bestEdgeIndex = 0;
+    recEdge e;
+    // Find if there is a better one.
+    for (unsigned int i = 0; i < edges.size(); i++) {
+        e = edges[i];
+        if (e.resAllocScore > bestEdge.resAllocScore) {
+            bestEdge = e;
+            bestEdgeIndex = i;
+        }
+    }
+    // Remove from the next call.
+    edges[bestEdgeIndex].resAllocScore = 0; 
+
+    return bestEdge;
+}
+
+static void getBestResAlloc(std::vector<recEdge> &candidateEdges, std::vector<recEdge> &newEdges, int numberOfSources, int numberOfEdges) {
+    recEdge newEdge;
+    std::string str;
+    std::vector<recEdge> edgesPerSource[numberOfSources];
+    // Separate edges for each source node.
+    int orderOfNode = 0;
+    int currentNode = candidateEdges[0].source;
+    for (recEdge e : candidateEdges) {
+        if (e.source != currentNode) {
+            currentNode = e.source;
+            orderOfNode++;
+            // If 100 means next node is best red.
+            if (orderOfNode == 100) break;
+        }
+        edgesPerSource[orderOfNode].push_back(e);
+    }
+    // Find best edges.
+    for (int epoch = 0; epoch < numberOfEdges; epoch++) {
+        for (int node = 0; node < numberOfSources; node++) {
+            newEdge = getNextResAllocBest(edgesPerSource[node]);
+            newEdges.push_back(newEdge);
+        }
+    }
+
+}
+
+/**
+ * Same for jaccard coefficient.
+*/
+static recEdge getNextJacCoBest(std::vector<recEdge> &edges) {
+    // Assume first one to be the best.
+    recEdge bestEdge = edges[0];
+    int bestEdgeIndex = 0;
+    recEdge e;
+    // Find if there is a better one.
+    for (unsigned int i = 0; i < edges.size(); i++) {
+        e = edges[i];
+        if (e.jaccCoefScore > bestEdge.jaccCoefScore) {
+            bestEdge = e;
+            bestEdgeIndex = i;
+        }
+    }
+    // Remove from the next call.
+    edges[bestEdgeIndex].jaccCoefScore = 0; 
+
+    return bestEdge;
+}
+
+static void getBestJacCo(std::vector<recEdge> &candidateEdges, std::vector<recEdge> &newEdges, int numberOfSources, int numberOfEdges) {
+    recEdge newEdge;
+    std::string str;
+    std::vector<recEdge> edgesPerSource[numberOfSources];
+    // Separate edges for each source node.
+    int orderOfNode = 0;
+    int currentNode = candidateEdges[0].source;
+    for (recEdge e : candidateEdges) {
+        if (e.source != currentNode) {
+            currentNode = e.source;
+            orderOfNode++;
+            // If 100 means next node is best red.
+            if (orderOfNode == 100) break;
+        }
+        edgesPerSource[orderOfNode].push_back(e);
+    }
+    // Find best edges.
+    for (int epoch = 0; epoch < numberOfEdges; epoch++) {
+        for (int node = 0; node < numberOfSources; node++) {
+            newEdge = getNextJacCoBest(edgesPerSource[node]);
+            newEdges.push_back(newEdge);
+        }
+    }
+
+}
+
+
+/** 
+ * Same for preferencial attachment.
+*/
+static recEdge getNextPrefAtBest(std::vector<recEdge> &edges) {
+    // Assume first one to be the best.
+    recEdge bestEdge = edges[0];
+    int bestEdgeIndex = 0;
+    recEdge e;
+    // Find if there is a better one.
+    for (unsigned int i = 0; i < edges.size(); i++) {
+        e = edges[i];
+        if (e.prefAttScore > bestEdge.prefAttScore) {
+            bestEdge = e;
+            bestEdgeIndex = i;
+        }
+    }
+    // Remove from the next call.
+    edges[bestEdgeIndex].prefAttScore = 0; 
+
+    return bestEdge;
+}
+
+static void getBestPrefAt(std::vector<recEdge> &candidateEdges, std::vector<recEdge> &newEdges, int numberOfSources, int numberOfEdges) {
+    recEdge newEdge;
+    std::string str;
+    std::vector<recEdge> edgesPerSource[numberOfSources];
+    // Separate edges for each source node.
+    int orderOfNode = 0;
+    int currentNode = candidateEdges[0].source;
+    for (recEdge e : candidateEdges) {
+        if (e.source != currentNode) {
+            currentNode = e.source;
+            orderOfNode++;
+            // If 100 means next node is best red.
+            if (orderOfNode == 100) break;
+        }
+        edgesPerSource[orderOfNode].push_back(e);
+    }
+    // Find best edges.
+    for (int epoch = 0; epoch < numberOfEdges; epoch++) {
+        for (int node = 0; node < numberOfSources; node++) {
+            newEdge = getNextPrefAtBest(edgesPerSource[node]);
+            newEdges.push_back(newEdge);
+        }
+    }
+
+}
+
+/** 
+ * Same for Adamic Adar.
+*/
+static recEdge getNextAdamAdarBest(std::vector<recEdge> &edges) {
+    // Assume first one to be the best.
+    recEdge bestEdge = edges[0];
+    int bestEdgeIndex = 0;
+    recEdge e;
+    // Find if there is a better one.
+    for (unsigned int i = 0; i < edges.size(); i++) {
+        e = edges[i];
+        if (e.adamicAdarScore > bestEdge.adamicAdarScore) {
+            bestEdge = e;
+            bestEdgeIndex = i;
+        }
+    }
+    // Remove from the next call.
+    edges[bestEdgeIndex].adamicAdarScore = 0; 
+
+    return bestEdge;
+}
+
+static void getBestAdamAdar(std::vector<recEdge> &candidateEdges, std::vector<recEdge> &newEdges, int numberOfSources, int numberOfEdges) {
+    recEdge newEdge;
+    std::string str;
+    std::vector<recEdge> edgesPerSource[numberOfSources];
+    // Separate edges for each source node.
+    int orderOfNode = 0;
+    int currentNode = candidateEdges[0].source;
+    for (recEdge e : candidateEdges) {
+        if (e.source != currentNode) {
+            currentNode = e.source;
+            orderOfNode++;
+            // If 100 means next node is best red.
+            if (orderOfNode == 100) break;
+        }
+        edgesPerSource[orderOfNode].push_back(e);
+    }
+    // Find best edges.
+    for (int epoch = 0; epoch < numberOfEdges; epoch++) {
+        for (int node = 0; node < numberOfSources; node++) {
+            newEdge = getNextAdamAdarBest(edgesPerSource[node]);
+            newEdges.push_back(newEdge);
+        }
+    }
+
+}
+
+
+/** 
+ * Same for maximum gain.
+*/
+
+/** 
+ * Same for maximum expected gain.
+*/
+
+/** 
+ * Same for random.
+*/
+
+static void addEdges(pagerank_algorithms &algs, graph &g, std::vector<recEdge> &newEdges, int numberOfEdges, int numberOfSources, std::string postFix) {
     std::vector<double> redRatioLog, node2vecLog, resLog, jaccLog, prefLog, adamAdarLog;
     double node2vecScore = 0, resAllScore = 0, jaccCoefScore = 0, prefAttScore = 0, adamicAdarScore = 0;
     recEdge newEdge;
-
     // Log initial metrics.
     pagerank_v pagerank = algs.get_pagerank();
     double redPagerank = g.get_pagerank_per_community(pagerank)[1];
@@ -140,12 +343,11 @@ static void addEdges(pagerank_algorithms & algs, graph &g, std::vector<recEdge> 
     jaccLog.push_back(0);
     prefLog.push_back(0);
     adamAdarLog.push_back(0);
-
     // Add edges, log metrics.
     for (int epoch = 0; epoch < numberOfEdges; epoch++) {
         // Add edges for one epoch.
         for (int node = 0; node < numberOfSources; node++) {
-            newEdge = newEdges[(epoch * numberOfEdges) + node];
+            newEdge = newEdges[(epoch * numberOfSources) + node];
             g.add_edge(newEdge.source, newEdge.target);
             node2vecScore += newEdge.node2vecScore;
             resAllScore += newEdge.resAllocScore;
@@ -183,11 +385,11 @@ static void addEdges(pagerank_algorithms & algs, graph &g, std::vector<recEdge> 
 
 }
 
-static void removeEdges(graph g, std::vector<recEdge> newEdges) {
+static void removeEdges(graph &g, std::vector<recEdge> &newEdges) {
     for (recEdge e : newEdges) {
         g.remove_edge(e.source, e.target);
     }
-    
+
 }
 
 int main() {
@@ -199,7 +401,7 @@ int main() {
     int numberOfEdges = 10; // Equivalent to number of epochs.
     int numberOfNodes = g.get_num_nodes();
     int numberOfSources = std::min(100, numberOfNodes / 5);
-    std::vector<recEdge> newEdges(numberOfEdges * numberOfNodes);
+    std::vector<recEdge> newEdges;
 
     std::cout << "Get random source nodes...\n";
     std::vector<int> sourceNodes = pagerank_algorithms::getRandomSourceNodes();
@@ -216,14 +418,56 @@ int main() {
     // Remove edges.
     std::cout << "Remove new edges...\n";
     removeEdges(g, newEdges);
+    // Clear edge list.
+    newEdges.clear();
 
     // Find 10 best by resource allocation edges for each source node.
+    std::cout << "Get best by resource allocation...\n";
+    getBestResAlloc(candidateEdges, newEdges, numberOfSources, numberOfEdges);// In order to be added.
+    // Add edges.
+    std::cout << "Add resource allocation edges...\n";
+    addEdges(algs, g, newEdges, numberOfEdges, numberOfSources, "ByResourceAllocation");
+    // Remove edges.
+    std::cout << "Remove new edges...\n";
+    removeEdges(g, newEdges);
+    // Clear edge list.
+    newEdges.clear();
 
     // Find 10 best by jaccard coefficient edges for each source node.
+    std::cout << "Get best by Jaccard coefficient...\n";
+    getBestJacCo(candidateEdges, newEdges, numberOfSources, numberOfEdges);// In order to be added.
+    // Add edges.
+    std::cout << "Add jaccard coefficient edges...\n";
+    addEdges(algs, g, newEdges, numberOfEdges, numberOfSources, "ByJaccardCoefficient");
+    // Remove edges.
+    std::cout << "Remove new edges...\n";
+    removeEdges(g, newEdges);
+    // Clear edge list.
+    newEdges.clear();
 
     // Find 10 best by preferential attachment edges for each source node.
+    std::cout << "Get best by preferencial attachment...\n";
+    getBestPrefAt(candidateEdges, newEdges, numberOfSources, numberOfEdges);// In order to be added.
+    // Add edges.
+    std::cout << "Add prefferencial attachment edges...\n";
+    addEdges(algs, g, newEdges, numberOfEdges, numberOfSources, "ByPreferencialAttachment");
+    // Remove edges.
+    std::cout << "Remove new edges...\n";
+    removeEdges(g, newEdges);
+    // Clear edge list.
+    newEdges.clear();
 
     // Find 10 best by Adamic Adar edges for each source node.
+    std::cout << "Get best by Adamic Adar...\n";
+    getBestAdamAdar(candidateEdges, newEdges, numberOfSources, numberOfEdges);// In order to be added.
+    // Add edges.
+    std::cout << "Add Adamic Adar edges...\n";
+    addEdges(algs, g, newEdges, numberOfEdges, numberOfSources, "ByAdamicAdar");
+    // Remove edges.
+    std::cout << "Remove new edges...\n";
+    removeEdges(g, newEdges);
+    // Clear edge list.
+    newEdges.clear();
 
     // Find 10 best by maximum gain edges for each source node.
 
