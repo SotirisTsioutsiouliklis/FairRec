@@ -772,12 +772,15 @@ nodes = np.concatenate((randomNodes, bestRedNodes, bestBlueNodes) )
 # Write files header. It also clears it in case is already written.
 with open('edgeRecScores.txt', 'w') as fileOne:
     fileOne.write('sourceNode\ttargetNode\tnode2vecRecommendationScore\tresourceAllocationScore\t'+
-                    'jaccardCoefficientScore\tpreferencialAttachmentScore\tadamicAddarScore\n')
+                    'jaccardCoefficientScore\tpreferencialAttachmentScore\tadamicAddarScore\tgain\texpectedGain\n')
 
 # For each source node get their neighbors of maximum distance 3 and
 # compute scores. Don't check for random source existing in red or blue
 # nodes because it's highly unexpected in large networks.
 print("Get scores")
+# for gain score.
+print('Compute gain score\n')
+subprocess.call(['./getEdgeFairnessScore.out'], cwd='.', shell=True)
 num = 0
 startTime = time.time()
 for node in nodes:
@@ -812,6 +815,10 @@ for node in nodes:
         preferencialAttachmentPreds = nx.preferential_attachment(unGraph, candidateEdges)
         adamicAdarPreds = nx.adamic_adar_index(unGraph, candidateEdges)
         
+        # Compute gain score.
+        gainScore = np.loadtxt('%dedgeFairnessScores.txt' %node, skiprows=1, usecols=1)
+        gainPreds = [gainScore[j] for i, j in candidateEdges]
+
         # convert results to list.
         numberOfEdges = len(candidateEdges)
         resourceAllocationValues = getListOfPreds(resourceAllocationPreds, numberOfEdges)
@@ -823,9 +830,13 @@ for node in nodes:
         with open('edgeRecScores.txt', 'a') as fileOne:
             edge = 0
             for source, target in candidateEdges:
-                fileOne.write('%d\t%d\t%f\t%f\t%f\t%f\t%f\n' 
+                fileOne.write('%d\t%d\t%f\t%f\t%f\t%f\t%f\t%f\t%f\n' 
                             %(source, target, edgeRecommendationScore[edge], resourceAllocationValues[edge], 
                             jaccardCoefficientValues[edge], preferencialAttachmentValues[edge], adamicAdarValues[edge],
+                            gainPreds[edge], gainPreds[edge] * edgeRecommendationScore[edge]
                             ) )
 
                 edge += 1
+                
+for node in nodes:
+    subprocess.call(['rm %dedgeFairnessScores.txt' %node], cwd='.', shell=True)

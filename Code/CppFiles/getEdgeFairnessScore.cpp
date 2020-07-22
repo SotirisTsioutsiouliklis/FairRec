@@ -15,12 +15,12 @@
 #include <iostream>
 #include "graph.hpp"
 #include "pagerank.hpp"
-#include "edgeAddition.hpp"
 #include <vector>
 #include <algorithm>
 #include <fstream>
 #include <string>
 #include <set>
+#include <omp.h>
 
 // Reads random and best by pagerank nodes.
 static std::vector<int> readSourceNodes() {
@@ -30,7 +30,8 @@ static std::vector<int> readSourceNodes() {
     int node;
 
     std::ifstream randomNodes("randomSourceNodes.txt");
-    std::ifstream pagerankNodes("pagerankBestSourceNodes.txt");
+    std::ifstream redPagerankNodes("redBestSourceNodes.txt");
+    std::ifstream bluePagerankNodes("blueBestSourceNodes.txt");
     
     getline (randomNodes, str);
     while (getline (randomNodes, str)) {
@@ -38,17 +39,25 @@ static std::vector<int> readSourceNodes() {
         sourceNodes.insert(node);
     }
 
-    getline (pagerankNodes, str);
-    while (getline (pagerankNodes, str)) {
+    getline (redPagerankNodes, str);
+    while (getline (redPagerankNodes, str)) {
         node = std::stoi(str);
         sourceNodes.insert(node);
     }
+
+    getline (bluePagerankNodes, str);
+    while (getline (bluePagerankNodes, str)) {
+        node = std::stoi(str);
+        sourceNodes.insert(node);
+    }
+
     for (int n : sourceNodes) {
         vecSourceNodes.push_back(n);
     }
 
     randomNodes.close();
-    pagerankNodes.close();
+    redPagerankNodes.close();
+    bluePagerankNodes.close();
 
     return vecSourceNodes;
 }
@@ -62,62 +71,33 @@ static std::vector<int> readSourceNodes() {
  * graph.
  * 
  * TODO: Delete or fix.
-
-static void computeEdgeScores(const graph &g, const int &node) {
-    int numberOfNodes = g.get_num_nodes();
-    pagerank_v edgesScore(numberOfNodes);
-
-    // Initialize edgesScore.
-    for (int i = 0; i < numberOfNodes; i++) {
-        edgesScore[i].node_id = i;
-        edgesScore[i].pagerank = 0;
-    }
-}
 */
 
-/**
- * @param nodes (std::vector<int>): Vector of nodes' ids.
- * 
- * Create text file with the ids of the nodes  in the vector.
-*/
-/**
-static void saveVector(std::string fileName, std::vector<int> vec) {
-    // Declare local variables.
-    int numberOfNodes = vec.size();
-
-    // Open log file.
-    std::ofstream log_file(fileName);
-
-    // Write logs to file.
-    log_file << "Nodes\n";
-    for (int i = 0; i < numberOfNodes; i++) {
-        log_file << vec[i] << std::endl;
-    }
-
-    // Close file.
-    log_file.close();
-}
-*/
 int main()
 {
+    omp_set_num_threads(10);
     std::cout << "Gets fairness scores...\n";
     std::cout << "Initialize objects...\n";
     // Declare/Initialize variables.
     graph g("out_graph.txt", "out_community.txt");
     int numberOFNodes = g.get_num_nodes();
     pagerank_algorithms algs(g);
-    EdgeAddition edgeAddMethod(g, algs);
-    pagerank_v edgesScore(numberOFNodes);
+    pagerank_v edgesScore;
+    double redPagerank = g.get_pagerank_per_community(algs.get_pagerank() )[1];
 
     std::vector<int> sourceNodes = readSourceNodes();
-
+    std::vector<int> neighbors;
     // For each node.
     std::cout << "Computes fairness scores...\n";
-    for (int &node : sourceNodes) {
+    for (int node : sourceNodes) {
         // Compute the edges' scores.
-        edgesScore = edgeAddMethod.getObjectiveValues(node);
+        edgesScore = algs.getObjectiveValues(node);
+        // Convert red ratio to gain.
+        for (pagerank_t &e : edgesScore) {
+            e.pagerank -= redPagerank;
+        }
         // Save the edges' scores.
-        edgeAddMethod.saveVector("out_" + std::to_string(node) + "edgeFairnessScores.txt", edgesScore);
+        pagerank_algorithms::saveVector(std::to_string(node) + "edgeFairnessScores.txt", edgesScore);
     }
 
     return 0;

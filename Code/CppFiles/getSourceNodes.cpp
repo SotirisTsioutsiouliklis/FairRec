@@ -12,7 +12,7 @@
  * 
  * It creates three txt files:
  *  1. "randomSourceNodes.txt"
- *  2. "redBestedSourceNodes.txt"
+ *  2. "redBestSourceNodes.txt"
  *  3. "blueBestSourceNodes.txt"
  * 
  * Every file store the nodes in decreasing order.
@@ -163,7 +163,6 @@ int main()
     std::vector<int> sourceNodes = getRandomNodes(g, numberOfRandSources);
     // Save random nodes.
     saveVector("randomSourceNodes.txt", sourceNodes);
-    /**
     std::cout << "Getting " << numberOfSources << " best by formula red sources\n";
     // Get best by pagerank.
     sourceNodes = getBestByFormulaRed(g, algs, numberOfSources);
@@ -174,6 +173,6 @@ int main()
     sourceNodes = getBestByFormulaBlue(g, algs, numberOfSources);
     // Save best by pagerank nodes.
     saveVector("blueBestSourceNodes.txt", sourceNodes);
-    */
+
     return 0;
 }

@@ -71,26 +71,10 @@ static void getEdgeScores(pagerank_algorithms &algs, graph &g, std::vector<recEd
     std::getline(recEdges, str);
     // Read lines.
     while (recEdges >> newEdge.source >> newEdge.target >> newEdge.node2vecScore >> newEdge.resAllocScore >> newEdge.jaccCoefScore
-            >> newEdge.prefAttScore >> newEdge.adamicAdarScore) {
+            >> newEdge.prefAttScore >> newEdge.adamicAdarScore >> newEdge.gain >> newEdge.expGain) {
         candidateEdges.push_back(newEdge);
     }
-    // Compute Fairness scores.
-    int currentSource = candidateEdges[0].source;
-    objectiveValues = algs.getObjectiveValues(currentSource);
-    for (recEdge &e : candidateEdges) {
-        if (e.source != currentSource) {
-            currentSource = e.source;
-            objectiveValues = algs.getObjectiveValues(currentSource);
-        }
-        e.gain = objectiveValues[e.target].pagerank;
-    }
-    // Compute expected gain by node2vec. The only recommender with
-    // probability interpetation.
-    objectiveValues = algs.get_pagerank(); // We use abusively this name for pagerank.
-    double redPagerank = g.get_pagerank_per_community(objectiveValues)[1];
-    for (recEdge &e : candidateEdges) {
-        e.expGain = (e.gain - redPagerank) * e.node2vecScore;
-    }
+    
 }
 
 // Returs best edge by node2vec and removes it from next competition.
