@@ -1,10 +1,10 @@
 # Very simple Makefile to compile everything
 
 all:
-	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o getSourceNodes.out graph.cpp pagerank.cpp getSourceNodes.cpp
-	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o getEdgeFairnessScore.out graph.cpp pagerank.cpp getEdgeFairnessScore.cpp
+	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o getSourceNodes.out graph.cpp pagerank.cpp getSourceNodes.cpp
+	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o getEdgeFairnessScore.out graph.cpp pagerank.cpp getEdgeFairnessScore.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentZero.out graph.cpp pagerank.cpp experimentZero.cpp
-	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentOne.out graph.cpp pagerank.cpp experimentOne.cpp
+	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentOne.out graph.cpp pagerank.cpp experimentOne.cpp
 
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o singleSourceGreedy.out graph.cpp pagerank.cpp edgeAddition.cpp singleSourceGreedy.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o singleSourceFastGreedy.out graph.cpp pagerank.cpp edgeAddition.cpp singleSourceFastGreedy.cpp

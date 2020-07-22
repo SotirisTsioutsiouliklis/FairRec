@@ -21,26 +21,6 @@
  * 
  * @TODO: All getBestBy functions have common parts. No need to 
  * recalculate. Improve it. 
- * ----------------------------------------------------------------
- * 
- * This script compares expected fairness with recommendation score
- * and fairness score. We choode as source nodes the 100 best by
- * pagerank nodes. 
- * @TODO: Maybe replace best by pagerank with random ones.
- * 
- *  1. We choose the best edge based on recommendation score or on the
- *  expected increase score and we test which brings the greatest gain.
- * 
- *  2. We also choose the best edge based on recommendation score or
- *  fairness and we test which has the highest expected gain.
- * 
- * We take two files:
- * 
- *  1. "expectedVsRecommendationFairness.txt": Gain score of each
- *  best edge for every source node.
- * 
- *  2. "expectedVsRecommendationExpectedFairness.txt": Expected
- *  gain for each best edge for every source node.
 */
 #include <iostream>
 #include <iomanip>
@@ -59,7 +39,7 @@
 #include <sstream>
 
 // Read precomputed scores from file.
-static void getEdgeScores(pagerank_algorithms &algs, graph &g, std::vector<recEdge> &candidateEdges) {
+static void getEdgeScores(std::vector<recEdge> &candidateEdges) {
     // Clear edge vector.
     candidateEdges.clear();
     recEdge newEdge;
@@ -74,7 +54,7 @@ static void getEdgeScores(pagerank_algorithms &algs, graph &g, std::vector<recEd
             >> newEdge.prefAttScore >> newEdge.adamicAdarScore >> newEdge.gain >> newEdge.expGain) {
         candidateEdges.push_back(newEdge);
     }
-    
+
 }
 
 // Returs best edge by node2vec and removes it from next competition.
@@ -113,7 +93,7 @@ static void getBestNode2vec(std::vector<recEdge> &candidateEdges, std::vector<re
             currentNode = e.source;
             orderOfNode++;
             // If 100 means next node is best red.
-            if (orderOfNode == 100) break;
+            if (orderOfNode == numberOfSources) break;
         }
         edgesPerSource[orderOfNode].push_back(e);
     }
@@ -161,7 +141,7 @@ static void getBestResAlloc(std::vector<recEdge> &candidateEdges, std::vector<re
             currentNode = e.source;
             orderOfNode++;
             // If 100 means next node is best red.
-            if (orderOfNode == 100) break;
+            if (orderOfNode == numberOfSources) break;
         }
         edgesPerSource[orderOfNode].push_back(e);
     }
@@ -209,7 +189,7 @@ static void getBestJacCo(std::vector<recEdge> &candidateEdges, std::vector<recEd
             currentNode = e.source;
             orderOfNode++;
             // If 100 means next node is best red.
-            if (orderOfNode == 100) break;
+            if (orderOfNode == numberOfSources) break;
         }
         edgesPerSource[orderOfNode].push_back(e);
     }
@@ -258,7 +238,7 @@ static void getBestPrefAt(std::vector<recEdge> &candidateEdges, std::vector<recE
             currentNode = e.source;
             orderOfNode++;
             // If 100 means next node is best red.
-            if (orderOfNode == 100) break;
+            if (orderOfNode == numberOfSources) break;
         }
         edgesPerSource[orderOfNode].push_back(e);
     }
@@ -306,7 +286,7 @@ static void getBestAdamAdar(std::vector<recEdge> &candidateEdges, std::vector<re
             currentNode = e.source;
             orderOfNode++;
             // If 100 means next node is best red.
-            if (orderOfNode == 100) break;
+            if (orderOfNode == numberOfSources) break;
         }
         edgesPerSource[orderOfNode].push_back(e);
     }
@@ -355,7 +335,7 @@ static void getBestGain(std::vector<recEdge> &candidateEdges, std::vector<recEdg
             currentNode = e.source;
             orderOfNode++;
             // If 100 means next node is best red.
-            if (orderOfNode == 100) break;
+            if (orderOfNode == numberOfSources) break;
         }
         edgesPerSource[orderOfNode].push_back(e);
     }
@@ -368,6 +348,7 @@ static void getBestGain(std::vector<recEdge> &candidateEdges, std::vector<recEdg
     }
 
 }
+
 /** 
  * Same for maximum expected gain.
 */
@@ -402,7 +383,7 @@ static void getBestExpGain(std::vector<recEdge> &candidateEdges, std::vector<rec
             currentNode = e.source;
             orderOfNode++;
             // If 100 means next node is best red.
-            if (orderOfNode == 100) break;
+            if (orderOfNode == numberOfSources) break;
         }
         edgesPerSource[orderOfNode].push_back(e);
     }
@@ -422,14 +403,12 @@ static void getBestExpGain(std::vector<recEdge> &candidateEdges, std::vector<rec
 static recEdge getNextRandomEdge(std::vector<recEdge> &edges) {
     // Assume first one to be the best.
     unsigned int range = edges.size();
-    std::cout << range << "!\n";
     unsigned int index = std::rand()/((RAND_MAX + 1u)/range);// Note: 1+rand()%range is biased    
     recEdge bestEdge = edges[index];
 
     // Remove from the next call.
     edges.erase(edges.begin() + index); 
 
-    std::cout << ".\n";
     return bestEdge;
 }
 
@@ -445,7 +424,7 @@ static void getRandomEdges(std::vector<recEdge> &candidateEdges, std::vector<rec
             currentNode = e.source;
             orderOfNode++;
             // If 100 means next node is best red.
-            if (orderOfNode == 100) break;
+            if (orderOfNode == numberOfSources) break;
         }
         edgesPerSource[orderOfNode].push_back(e);
     }
@@ -532,7 +511,8 @@ int main() {
     std::vector<recEdge> candidateEdges;
     int numberOfEdges = 10; // Equivalent to number of epochs.
     int numberOfNodes = g.get_num_nodes();
-    int numberOfSources = std::min(100, numberOfNodes / 5);
+    //int numberOfSources = std::min(100, numberOfNodes / 5);
+    int numberOfSources = numberOfNodes / 10;
     std::vector<recEdge> newEdges;
 
     std::cout << "Get random source nodes...\n";
@@ -540,7 +520,7 @@ int main() {
 
     // Read candidate edges scores.
     std::cout << "Read edges scores...\n";
-    getEdgeScores(algs, g, candidateEdges);
+    getEdgeScores(candidateEdges);
     // Find 10 best by node2vec edges for each source node.
     std::cout << "Get best by node2vec...\n";
     getBestNode2vec(candidateEdges, newEdges, numberOfSources, numberOfEdges);// In order to be added.
