@@ -38,27 +38,37 @@ for node in randomSources:
     order += 1
     print('\tnode %d : %d' %(order, node))
     # Get Current Neighbors.
-    tempGraph = nx.ego_graph(graph, node, 1) # Returns out ego graph.
-    neighbors = set(tempGraph.nodes)
+    explored = [False for i in range(graph.number_of_nodes() )]
+    candidates = [False for i in range(graph.number_of_nodes() )]
+    neighbors = [False for i in range(graph.number_of_nodes() )]
+
+    toExplore = set()
+    temp = set()
+    for nei in graph.neighbors(node):
+        toExplore.add(nei)
+        neighbors[nei] = True
+
+    neighbors[node] = True
+    explored[node] = True
+
     print("\tFind best by distance")
     # Find proper distance for rec candidates.
-    numberOfOutNeighbors = tempGraph.number_of_nodes()
-    distance = 1
-    numberOfCandidates = 0
-    newCandidates = set()
-    newCandidates.add(node)
+    numberOfOutNeighbors = graph.out_degree(node)
+    numberOfCandidates = sum(candidates)
 
-    while numberOfCandidates < edgesPerSource + numberOfOutNeighbors + 1:
-        for n in tempCandidates:
-            for nei in graph.neighbors(n):
-                tempNodes.add
-
-        tempGraph = nx.ego_graph(graph, node, distance)
-        numberOfCandidates = tempGraph.number_of_nodes() - (numberOfOutNeighbors + 1)
-    
-    # Get ego graph of proper distance.
-    tempGraph = nx.ego_graph(graph, node, distance)
-    candidateNeighbors = set(tempGraph.nodes)
+    while numberOfCandidates < edgesPerSource:
+        for n in toExplore:
+            if not explored[n]:
+                for nei in graph.neighbors(n):
+                    if not neighbors[nei]:
+                        candidates[nei] = True
+                        temp.add(nei)
+        
+            explored[n] = True
+            
+        toExplore = temp.copy()
+        temp.clear()
+        numberOfCandidates = sum(candidates)
 
     print("\tFind best by red personalized pagerank")
     # Find best edges based on red pagerank.
