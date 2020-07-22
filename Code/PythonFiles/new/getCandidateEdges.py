@@ -29,7 +29,24 @@ graph = nx.read_edgelist('out_graph.txt', nodetype= int, create_using= nx.DiGrap
 # Read random source nodes.
 randomSources = np.loadtxt('randomSourceNodes.txt', skiprows=1, dtype= int)
 # Find edges per source.
-edgesPerSource = MAX_EDGES // randomSources.size
+edgesPerSource = min(MAX_EDGES // randomSources.size, graph.number_of_nodes() // 3)
+
+# Run cpp script.
+try:
+    subprocess.call(['./absorbingProbs.out -r'], cwd=".", shell=True) # Read red pageranks.
+    redRatios = np.loadtxt('out_personilized_red.txt', skiprows=1, usecols=1)
+except: # Copy executable for real dataset.
+    try:
+        subprocess.call(['cp ../../../FairRec/Code/CppFiles/absorbingProbs.out .'], cwd=".", shell=True)
+        subprocess.call(['./absorbingProbs.out -r'], cwd=".", shell=True) # Read red pageranks.
+        redRatios = np.loadtxt('out_personilized_red.txt', skiprows=1, usecols=1)
+    except:
+        try: # Copy executable for synthetics.
+            subprocess.call(['cp ../../../../../FairRec/Code/CppFiles/absorbingProbs.out .'], cwd=".", shell=True)
+            subprocess.call(['./absorbingProbs.out -r'], cwd=".", shell=True) # Read red pageranks.
+            redRatios = np.loadtxt('out_personilized_red.txt', skiprows=1, usecols=1)
+        except:
+            sys.exit('Unable to get red absorbing probs.')
 
 print('Find candidates for node: ')
 # For each random source node.
@@ -57,6 +74,7 @@ for node in randomSources:
     numberOfCandidates = sum(candidates)
 
     while numberOfCandidates < edgesPerSource:
+        print(str(numberOfCandidates) + " < " + str(edgesPerSource) )
         for n in toExplore:
             if not explored[n]:
                 for nei in graph.neighbors(n):
@@ -65,30 +83,18 @@ for node in randomSources:
                         temp.add(nei)
         
             explored[n] = True
-            
+
         toExplore = temp.copy()
         temp.clear()
         numberOfCandidates = sum(candidates)
 
+    candidateNeighbors = set([i for i in range(len(candidates) ) if candidates[i] ])
+
     print("\tFind best by red personalized pagerank")
     # Find best edges based on red pagerank.
-    # Run cpp script.
-    try:
-        subprocess.call(['./absorbingProbs.out -r'], cwd=".", shell=True)
-    except: # Copy executable for real dataset.
-        try:
-            subprocess.call(['cp ../../../FairRec/Code/CppFiles/absorbingProbs.out .'], cwd=".", shell=True)
-            subprocess.call(['./absorbingProbs.out -r'], cwd=".", shell=True)
-        except:
-            try: # Copy executable for synthetics.
-                subprocess.call(['cp ../../../../../FairRec/Code/CppFiles/absorbingProbs.out .'], cwd=".", shell=True)
-                subprocess.call(['./absorbingProbs.out -r'], cwd=".", shell=True)
-            except:
-                sys.exit('Unable to get red absorbing probs.')
+    # TODO: Improve to find them in the beggining.
 
     print("\tConcatenate, clean and log")
-    # Read red pageranks.
-    redRatios = np.loadtxt('out_personilized_red.txt', skiprows=1, usecols=1)
     # Get best by red pagerank.
     bestByRedPagerank = np.argsort(-redRatios)
     # Keep only as many as you need.
@@ -100,9 +106,9 @@ for node in randomSources:
 
     # Log in file.
     with open('%dCandidateEdges.txt', 'w') as fileOne:
-        for source, target in candidateNeighbors:
-            fileOne.write('%d\t%d\n' %(source, target) )
+        for target in candidateNeighbors:
+            fileOne.write('%d\t%d\n' %(node, target) )
 
 end = time.time()
 elapseTime = end - start
-pritn("Total time of selecting candidate edges is: %f sec" %elapseTime)
+print("Total time of selecting candidate edges is: %f sec" %elapseTime)
