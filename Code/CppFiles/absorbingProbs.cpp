@@ -9,6 +9,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <vector>
+#include <omp.h>
 #include "graph.hpp"
 #include "pagerank.hpp"
 
@@ -59,7 +60,9 @@ static void save_pagerank(std::string filename_prefix, pagerank_v &pagerankv)
 
 int main(int argc, char **argv)
 {
+	omp_set_num_threads(10);
 	// Declare arguments arguments.
+	std::cout << "Initialize objects\n";
 	pagerank_v pagerankv;
     absorb_mode algo_mode = absorb_mode::NONE;
 	int abs_node;
@@ -73,14 +76,17 @@ int main(int argc, char **argv)
 	switch (algo_mode)
 	{
 	case absorb_mode::RED:
+		std::cout << "Getting Red Absorbing Probs\n";
 		pagerankv = algs.get_red_abs_prob();
 		save_pagerank("personilized_red", pagerankv);
 		break;
 	case absorb_mode::BLUE:
+		std::cout << "Getting Blue Absorbing Probs\n";
 		pagerankv = algs.get_blue_abs_prob();
 		save_pagerank("personilized_blue", pagerankv);
 		break;
 	case absorb_mode::NODE:
+		std::cout << "Getting "+ std::to_string(abs_node) + " Absorbing Probs\n";
 		pagerankv = algs.get_node_abs_prob(abs_node);
 		save_pagerank("personilized_node_" + std::to_string(abs_node), pagerankv);
 		break;
