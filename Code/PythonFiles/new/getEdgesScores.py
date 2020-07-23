@@ -31,7 +31,7 @@ import networkx as nx
 import time
 
 # Useful classes and functions.
-# TODO: Improve documentations od classes.
+# TODO: Improve documentations of classes.
 class Node:
     """ It represent a node object.
 

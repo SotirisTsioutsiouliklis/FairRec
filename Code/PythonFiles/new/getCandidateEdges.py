@@ -12,6 +12,8 @@ Creates:
 
 <nodeID>CandidateEdges.txt (txt file): list of condidates edges for
         each random source node.
+
+TODO: Add best red and blue by criterion source nodes.
 """
 import numpy as np
 import networkx as nx
@@ -25,11 +27,11 @@ start = time.time()
 
 print('Init objects')
 # Init graph.
-#graph = nx.read_edgelist('out_graph.txt', nodetype= int, create_using= nx.DiGraph() )
+graph = nx.read_edgelist('out_graph.txt', nodetype= int, create_using= nx.DiGraph() )
 # Read random source nodes.
-#randomSources = np.loadtxt('randomSourceNodes.txt', skiprows=1, dtype= int)
+randomSources = np.loadtxt('randomSourceNodes.txt', skiprows=1, dtype= int)
 # Find #edges per source.
-#edgesPerSource = min(MAX_EDGES // randomSources.size, graph.number_of_nodes() // 3)
+edgesPerSource = min(MAX_EDGES // randomSources.size, graph.number_of_nodes() // 3)
 
 # Run cpp script for red personalized pageranks.
 print("Get Red absorbing Probs...")
