@@ -16,7 +16,7 @@ Require files:
 
 Create file:
     1. edgeRecScores.txt: <sourceNode>\t<targetNode>\t<node2vecRecommendationScore>\t<resourceAllocationScore>\t
-                        <jaccardCoefficientScore>\t<preferencialAttachmentScore>\t<addamicAddarScore>\n
+                        <jaccardCoefficientScore>\t<preferencialAttachmentScore>\t<addamicAddarScore>\tgain\texpectedGain\n
 
 Run inside datasets folder.         
 """
@@ -790,7 +790,7 @@ for node in nodes:
     if num == 10:
         stopTime = time.time()
         ellapsedTime = stopTime - startTime
-        print("It will approximatelly need: %f seconds more\n" %(29 * ellapsedTime) )
+        print("It will approximatelly need: %f seconds more\n" %((nodes.size % 10) * ellapsedTime) )
     # Get as candidate neighbors all neighbors.
     candidateNeighbors = set([i for i in range(graph.number_of_nodes() )])
 
