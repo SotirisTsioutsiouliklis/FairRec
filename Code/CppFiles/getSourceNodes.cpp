@@ -4,7 +4,7 @@
  * we might need.
  * 
  * Policies ofselection:
- *  1. min(0.2 * numberOFNodes, 100) random nodes.
+ *  1. 0.1 * numberOfNodes random nodes.
  *  2. min(0.2 * numberOFNodes, 100) best by pagerank / out degree
  *     red nodes.
  *  3. min(0.2 * numberOFNodes, 100) best by pagerank / out degree
