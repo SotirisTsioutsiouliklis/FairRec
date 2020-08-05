@@ -790,7 +790,7 @@ for node in nodes:
     if num == 10:
         stopTime = time.time()
         ellapsedTime = stopTime - startTime
-        print("It will approximatelly need: %f seconds more\n" %((nodes.size % 10) * ellapsedTime) )
+        print("It will approximatelly need: %f seconds more\n" %((nodes.size / 10) * ellapsedTime) )
     # Get as candidate neighbors all neighbors.
     candidateNeighbors = set([i for i in range(graph.number_of_nodes() )])
 
