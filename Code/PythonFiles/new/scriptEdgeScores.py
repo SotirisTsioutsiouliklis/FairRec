@@ -7,8 +7,8 @@ datasets = ['blogs', 'tmdb', 'twitter', 'physics', 'dblp_aminer', 'linkedin']
 
 #'homophily_0.10_0.10', 'homophily_0.30_0.10', 'homophily_0.50_0.10', 
 #directories = ['homophily_0.10_0.10', 'homophily_0.10_0.30', 'homophily_0.10_0.50', 'homophily_0.10_0.70', 'homophily_0.10_0.90'] 
-directories = ['homophily_0.30_0.10', 'homophily_0.30_0.30', 'homophily_0.30_0.50', 'homophily_0.30_0.70', 'homophily_0.30_0.90'] 
-#directories = ['homophily_0.50_0.10', 'homophily_0.50_0.30', 'homophily_0.50_0.50', 'homophily_0.50_0.70', 'homophily_0.50_0.90']
+#directories = ['homophily_0.30_0.10', 'homophily_0.30_0.30', 'homophily_0.30_0.50', 'homophily_0.30_0.70', 'homophily_0.30_0.90'] 
+directories = ['homophily_0.50_0.10', 'homophily_0.50_0.30', 'homophily_0.50_0.50', 'homophily_0.50_0.70', 'homophily_0.50_0.90']
 
 if len(sys.argv) != 2:
     sys.exit("Options:\n\tpython3 exp<Number>.py -s : For synthetic datasets\n\tpython3 exp<Number>.py -r : For real datasets")

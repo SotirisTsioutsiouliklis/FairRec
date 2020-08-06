@@ -35,17 +35,11 @@ edgesPerSource = min(MAX_EDGES // randomSources.size, graph.number_of_nodes() //
 
 # Run cpp script for red personalized pageranks.
 print("Get Red absorbing Probs...")
-try: # Copy executable for real dataset.
-    status = subprocess.call(['cp ../../../FairRec/Code/CppFiles/absorbingProbs.out .'], cwd=".", shell=True)
-    if status != 0:
-        raise Exception
-    status = subprocess.call(['./absorbingProbs.out -r'], cwd=".", shell=True) # Read red pageranks.
-    if status != 0:
-        raise Exception
+try:
     redRatios = np.loadtxt('out_personilized_red.txt', skiprows=1, usecols=1)
 except:
-    try: # Copy executable for synthetics.
-        status = subprocess.call(['cp ../../../../../FairRec/Code/CppFiles/absorbingProbs.out .'], cwd=".", shell=True)
+    try: # Copy executable for real dataset.
+        status = subprocess.call(['cp ../../../FairRec/Code/CppFiles/absorbingProbs.out .'], cwd=".", shell=True)
         if status != 0:
             raise Exception
         status = subprocess.call(['./absorbingProbs.out -r'], cwd=".", shell=True) # Read red pageranks.
@@ -53,7 +47,16 @@ except:
             raise Exception
         redRatios = np.loadtxt('out_personilized_red.txt', skiprows=1, usecols=1)
     except:
-        sys.exit('Unable to get red absorbing probs.')
+        try: # Copy executable for synthetics.
+            status = subprocess.call(['cp ../../../../../FairRec/Code/CppFiles/absorbingProbs.out .'], cwd=".", shell=True)
+            if status != 0:
+                raise Exception
+            status = subprocess.call(['./absorbingProbs.out -r'], cwd=".", shell=True) # Read red pageranks.
+            if status != 0:
+                raise Exception
+            redRatios = np.loadtxt('out_personilized_red.txt', skiprows=1, usecols=1)
+        except:
+            sys.exit('Unable to get red absorbing probs.')
 
 print('Find candidates for node: ')
 # For each random source node.

@@ -60,7 +60,7 @@ static void save_pagerank(std::string filename_prefix, pagerank_v &pagerankv)
 
 int main(int argc, char **argv)
 {
-	omp_set_num_threads(10);
+	omp_set_num_threads(20);
 	// Declare arguments arguments.
 	std::cout << "Initialize objects\n";
 	pagerank_v pagerankv;
