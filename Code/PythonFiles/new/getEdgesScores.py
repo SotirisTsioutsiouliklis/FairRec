@@ -31,6 +31,9 @@ import networkx as nx
 import time
 import fairRec as fr
 
+# Load recommender.
+linkRecommender = pickle.load(open('edgeClassifier.sav', 'rb') )
+
 # Get Source Nodes.
 randomNodes = np.loadtxt('randomSourceNodes.txt', skiprows= 1, dtype= int)
 bestRedNodes = np.loadtxt('redBestSourceNodes.txt', skiprows= 1, dtype= int)

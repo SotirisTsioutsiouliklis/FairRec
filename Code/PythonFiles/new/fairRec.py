@@ -12,6 +12,7 @@ import sys
 import pickle
 import networkx as nx
 import time
+import random
 
 # Useful classes and functions.
 # TODO: Improve documentations of classes.
