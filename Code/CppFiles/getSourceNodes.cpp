@@ -158,7 +158,7 @@ int main()
     int numberOfSources = std::min(numberOfNodes / 5, 100);
     int numberOfRandSources = numberOfNodes / 10;
 
-    std::cout << "Getting " << numberOfSources << " random sources\n";
+    std::cout << "Getting " << numberOfRandSources << " random sources\n";
     // Get numberOfSources Random Source nodes.
     std::vector<int> sourceNodes = getRandomNodes(g, numberOfRandSources);
     // Save random nodes.

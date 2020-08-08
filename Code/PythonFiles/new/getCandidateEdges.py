@@ -30,8 +30,6 @@ print('Init objects')
 graph = nx.read_edgelist('out_graph.txt', nodetype= int, create_using= nx.DiGraph() )
 # Read random source nodes.
 randomSources = np.loadtxt('randomSourceNodes.txt', skiprows=1, dtype= int)
-# Find #edges per source.
-edgesPerSource = min(MAX_EDGES // randomSources.size, graph.number_of_nodes() // 3)
 
 # Run cpp script for red personalized pageranks.
 print("Get Red absorbing Probs...")
@@ -58,63 +56,46 @@ except:
         except:
             sys.exit('Unable to get red absorbing probs.')
 
-print('Find candidates for node: ')
 # For each random source node.
 order = 0
 for node in randomSources:
+    # Find #edges per source.
+    maxNei = graph.number_of_nodes() - graph.out_degree(node) - 1
+    edgesPerSource = min(MAX_EDGES // randomSources.size, maxNei)
+
     order += 1
     print('\tnode %d : %d' %(order, node))
     # Get Current Neighbors.
-    explored = [False for i in range(graph.number_of_nodes() )]
-    candidates = [False for i in range(graph.number_of_nodes() )]
-    neighbors = [False for i in range(graph.number_of_nodes() )]
+    neighbors = set()
+    candidates = set()
 
-    toExplore = set([node])
-    temp = set()
     for nei in graph.neighbors(node):
-        neighbors[nei] = True
+        neighbors.add(nei)
 
-    neighbors[node] = True
-
-    print("\tFind best by distance")
-    # Find proper distance for rec candidates.
-    numberOfOutNeighbors = graph.out_degree(node)
-    numberOfCandidates = sum(candidates)
-
-    while numberOfCandidates < edgesPerSource:
-        for n in toExplore:
-            if not explored[n]:
-                for nei in nx.all_neighbors(graph, n):
-                    if not neighbors[nei]:
-                        candidates[nei] = True
-                    if not explored[nei]:
-                        temp.add(nei)
-        
-            explored[n] = True
-
-        toExplore = temp.copy()
-        temp.clear()
-        numberOfCandidates = sum(candidates)
-
-    candidateNeighbors = set([i for i in range(len(candidates) ) if candidates[i] ])
+    neighbors.add(node)
 
     print("\tFind best by red personalized pagerank")
-    # Find best edges based on red pagerank.
-    # TODO: Improve to find them in the beggining.
-
-    print("\tConcatenate, clean and log")
-    # Get best by red pagerank.
-    bestByRedPagerank = np.argsort(-redRatios)
-    # Keep only as many as you need.
-    bestByRedPagerank = bestByRedPagerank[0:edgesPerSource + numberOfOutNeighbors]
-
-    # get candidate nodes.
-    candidateNeighbors.union(set(bestByRedPagerank))
-    candidateNeighbors.difference(neighbors)
+    # Find best by red absorbing prob.
+    if edgesPerSource < maxNei :
+        tempRed = redRatios.copy()
+        for i in range(edgesPerSource):
+            best = 0
+            bestVal = 0.
+            for j in range(len(tempRed) ):
+                if tempRed[j] > bestVal:
+                    bestVal = tempRed[j]
+                    best = j
+            candidates.add(best)
+            # Remove best from next iteration.
+            tempRed[best] = -1.
+    else:
+        for i in range(graph.number_of_nodes() ):
+            if i not in neighbors:
+                candidates.add(i)
 
     # Log in file.
     with open('%dCandidateEdges.txt' %node, 'w') as fileOne:
-        for target in candidateNeighbors:
+        for target in candidates:
             fileOne.write('%d\t%d\n' %(node, target) )
 
 end = time.time()
