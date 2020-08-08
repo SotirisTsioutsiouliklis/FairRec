@@ -67,6 +67,22 @@ except:
     subprocess.call(['cp ~/Workspace/FairRec/Code/CppFiles/getSourceNodes.out .'], cwd= ".", shell= True)
     subprocess.call(['./getSourceNodes.out'], cwd= ".", shell= True)
 
+# Get edge fairness score.
+print('Get edge fairness scores...')
+try:
+    fileOne = open('randomSourceNodes.txt', 'r')
+    fileOne.readline()
+    testNode = int(fileOne.readline() )
+    fileOne.close()
+    fileOne = open('%dedgeFairnessScores.txt' %testNode, 'r')
+    fileOne.close()
+    print('Edge fairnes scores already calculated.')
+except:
+    print('Get edge fairness scores...')
+    subprocess.call(['cp ~/Workspace/FairRec/Code/CppFiles/getEdgeFairnessScore.out .'], cwd= ".", shell= True)
+    subprocess.call(['./getEdgeFairnessScore.out'], cwd= ".", shell= True)
+
+
 # if it needs get candidate edges.
 fileOne = open('out_graph.txt', 'r')
 numberOfNodes = int(fileOne.readline() )
@@ -76,7 +92,14 @@ if numberOfNodes > 35000:
     # Get candidate edges.
 
 # Get edge scores.
+print('Get Edge Scores...')
 try:
-    pass
+    fileOne = open('edgeRecScores.txt', 'r')
+    fileOne.close()
+    print('Edge scores already calculated.')
 except:
-    pass
+    print('Get edge scores...')
+    subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/getEdgesScores.py .'], cwd= ".", shell= True)
+    subprocess.call(['python3 getEdgesScores.py'], cwd= ".", shell= True)
+
+# ------------------------------------------ Start Experiments ------------------------------------------

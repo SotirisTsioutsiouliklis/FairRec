@@ -1,13 +1,13 @@
 /**
- * Computes edge fairness scores for k source nodes.
+ * Computes edge fairness scores for source nodes.
  * 
  * @file getScoreForK.cpp
  * @author Sotiris Tsioutsiouliklis.
  * @version 0.0.1 09/06/2020.
  * 
- * It selects k nodes randomly and creates an edge score file for each
- * node. Edges in file i are all edges with source node i that 
- * don't already exist in the network.
+ * It reads the source nodes from the files and creates an edge score
+ * file for each node. Edges in file i are all edges with source node
+ * i that don't already exist in the network.
  * 
  * @param k (int): Number of nodes.
  * @return <node i>EdgeScores.txt (text): Filesdescribed above.
@@ -72,15 +72,14 @@ static std::vector<int> readSourceNodes() {
  * 
  * TODO: Delete or fix.
 */
-
 int main()
 {
-    omp_set_num_threads(10);
+    omp_set_num_threads(20);
     std::cout << "Gets fairness scores...\n";
     std::cout << "Initialize objects...\n";
     // Declare/Initialize variables.
     graph g("out_graph.txt", "out_community.txt");
-    int numberOFNodes = g.get_num_nodes();
+    //int numberOFNodes = g.get_num_nodes();
     pagerank_algorithms algs(g);
     pagerank_v edgesScore;
     double redPagerank = g.get_pagerank_per_community(algs.get_pagerank() )[1];

@@ -11,7 +11,7 @@
  * We use as source nodes 100 random source nodes.
  * @TODO: Add other policies as well.
  *  
- * To do that we choose min(0.2 * numberOFNodes, 100) random nodes from
+ * To do that we choose min(0.1 * numberOFNodes, 100) random nodes from
  * the network. We then calculate the forthmentioned score for each
  * candidate edge of each source node. For every criterion we add the
  * first edge for all source nodes and we log the red ratio of the
