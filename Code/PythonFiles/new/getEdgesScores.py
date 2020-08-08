@@ -1,5 +1,8 @@
 """ Gets scores for candidate edges.
 
+@NOTE: Let script run all to one do the job.
+@TODO: Update documentation.
+
 Gets the following scores for edges that doesn't exist in the graph and
 that the target node is in maximum distance 3 from the source node. See
 repository's README for exact definition of the scores below.

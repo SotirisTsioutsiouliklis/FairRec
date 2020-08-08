@@ -92,7 +92,7 @@ static void getBestNode2vec(std::vector<recEdge> &candidateEdges, std::vector<re
         if (e.source != currentNode) {
             currentNode = e.source;
             orderOfNode++;
-            // If 100 means next node is best red.
+            // If <> means next node is best red.
             if (orderOfNode == numberOfSources) break;
         }
         edgesPerSource[orderOfNode].push_back(e);
@@ -503,7 +503,7 @@ static void removeEdges(graph &g, std::vector<recEdge> &newEdges) {
 }
 
 int main() {
-    omp_set_num_threads(5);
+    omp_set_num_threads(20);
     std::srand(std::time(nullptr));
     std::cout << "Initialize objects...\n";
     graph g("out_graph.txt", "out_community.txt");
@@ -521,6 +521,7 @@ int main() {
     // Read candidate edges scores.
     std::cout << "Read edges scores...\n";
     getEdgeScores(candidateEdges);
+
     // Find 10 best by node2vec edges for each source node.
     std::cout << "Get best by node2vec...\n";
     getBestNode2vec(candidateEdges, newEdges, numberOfSources, numberOfEdges);// In order to be added.

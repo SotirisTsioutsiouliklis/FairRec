@@ -103,3 +103,16 @@ except:
     subprocess.call(['python3 getEdgesScores.py'], cwd= ".", shell= True)
 
 # ------------------------------------------ Start Experiments ------------------------------------------
+# Run experiment one.
+print('Run experiment one...')
+try:
+    fileOne = open('redRatioByNode2vec.txt', 'r')
+    fileOne.close()
+    print('Experiment one is ready.')
+except:
+    print("Running experiment one...")
+    subprocess.call(['cp ~/Workspace/FairRec/Code/CppFiles/experimentOne.out .'], cwd= ".", shell= True)
+    subprocess.call(['./experimentOne.out'], cwd=".", shell=True)
+
+# Run experiment Two.
+
