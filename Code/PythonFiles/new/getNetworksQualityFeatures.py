@@ -21,7 +21,7 @@ def getNodeCommunities():
             nodeCommunities[node] = {"community" : community}
 
     return nodeCommunities
-
+ 
 def getRedRatio(graph):
     """ Return the ratio of red nodes in graph.
     """
@@ -39,7 +39,7 @@ def getRedRatio(graph):
 def getHomophily(graph):
     """ Return homophily of the graph.
 
-    Homophily = cross edges / expected cross edges.
+    Homophily = cross edges ratio / expected cross edges ratio.
     homophily = 1 means no homophily. homophily > 1 means heterohily.
     homphily < 1 means homophily.
     """
@@ -51,8 +51,10 @@ def getHomophily(graph):
         if edge[0]["community"] != edge[1]["community"]:
             crossEdges += 1
     
+    crossEdgesRatio = crossEdges / graph.number_of_edges()
+
     expectedCrossEdges = 2 * redRatio * blueRatio
-    homophily = crossEdges / expectedCrossEdges
+    homophily = crossEdgesRatio / expectedCrossEdges
 
     return homophily
 
