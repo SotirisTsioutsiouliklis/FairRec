@@ -116,7 +116,7 @@ class NodeEmbedding:
         the current hardcoded mode.
         """
         try:
-            subprocess.call(['cp ../../../snap/examples/node2vec/node2vec .'], cwd=".", shell=True)
+            subprocess.call(['cp ~/Workspace/snap/examples/node2vec/node2vec .'], cwd=".", shell=True)
             subprocess.call(["./node2vec -i:out_graph.edgelist -o:out_nodeEmbeddings.txt -l:3 -d:128 -p:0.3 -dr -v"], cwd=".", shell=True) # Pending for arguments.
         except:
             raise Exception("./node2vec didn't run properly! Check that executable exists in the root folder" + 
