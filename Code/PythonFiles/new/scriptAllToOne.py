@@ -113,6 +113,12 @@ else:
             subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/getEdgesScores.py .'], cwd= ".", shell= True)
             subprocess.call(['python3 getEdgesScores.py'], cwd= ".", shell= True)
 
+# Get networks quality features.
+
+# Get groups quality features.
+
+# Get nodes quality features.
+
 # ------------------------------------------ Start Experiments ------------------------------------------
 # Run experiment one.
 print('Run experiment one...')
