@@ -18,12 +18,11 @@ bestBlueNodes = set(bestBlueNodes)
 
 # Get edges scores.
 edgesScores = pd.read_csv("edgesRecScores.txt", sep='\t')
-randomEdgesScores = edgesScores[edgesScores['sourceNode'] in randomNodes]
-redEdgesScores = edgesScores[edgesScores['sourceNode'] in bestRedNodes]
-blueEdgesScores = edgesScores[edgesScores['sourceNode'] in bestBlueNodes]
+randomEdgesScores = edgesScores[edgesScores['sourceNode'].isin(randomNodes)]
+redEdgesScores = edgesScores[edgesScores['sourceNode'].isin(bestRedNodes)]
+blueEdgesScores = edgesScores[edgesScores['sourceNode'].isin(bestBlueNodes)]
 
 # Write new files.
-randomEdgesScores.to_csv("edgesScoresRandom.txt", sep= '\t')
-redEdgesScores.to_csv("edgesScoresRed.txt", sep= '\t')
-blueEdgesScores.to_csv("edgesScoresBlue.txt", sep= '\t')
-
+randomEdgesScores.to_csv("edgesScoresRandom.txt", sep= '\t', index = False)
+redEdgesScores.to_csv("edgesScoresRed.txt", sep= '\t', index = False)
+blueEdgesScores.to_csv("edgesScoresBlue.txt", sep= '\t', index = False)

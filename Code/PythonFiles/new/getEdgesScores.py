@@ -100,9 +100,9 @@ nodes = np.concatenate((randomNodes, bestRedNodes, bestBlueNodes) )
 startTime = time.time()
 
 # Add score calculations here...
-getEdgesScores("edgesScoreRandom.txt", randomNodes)
-getEdgesScores("edgesScoreRed.txt", bestRedNodes)
-getEdgesScores("edgesScoreBlue.txt", bestBlueNodes)
+getEdgesScores("edgesScoresRandom.txt", randomNodes)
+getEdgesScores("edgesScoresRed.txt", bestRedNodes)
+getEdgesScores("edgesScoresBlue.txt", bestBlueNodes)
 
 stopTime = time.time()
 elapsedTime = stopTime - startTime

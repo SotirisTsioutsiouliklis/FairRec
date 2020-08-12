@@ -90,6 +90,7 @@ fileOne.close()
 if numberOfNodes > 35000:
     pass
     # Get candidate edges.
+    # Get edges scores for candidate edges.
 else:
     # Get edge scores.
     print('Get Edge Scores...')
@@ -97,13 +98,20 @@ else:
         fileOne = open('edgeRecScores.txt', 'r')
         fileOne.close()
         # Separate edges.
+        print("Edges scores have been calculated all together. Separate edges...")
         subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/separateEdgesScores.py .'], cwd= ".", shell= True)
         subprocess.call(['python3 separateEdgesScores.py'], cwd= ".", shell= True)
-        print('Edge scores already calculated.')
+        subprocess.call(['rm edgeRecScores.txt'], cwd= ".", shell= True)
+        print('Edges scores separated.')
     except:
-        print('Get edge scores...')
-        subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/getEdgesScores.py .'], cwd= ".", shell= True)
-        subprocess.call(['python3 getEdgesScores.py'], cwd= ".", shell= True)
+        try:
+            fileONe = open('edgesScoresRandom.txt', 'r')
+            fileOne.close()
+            print('Edges scores have been calculated properly.')
+        except:
+            print('Get edge scores...')
+            subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/getEdgesScores.py .'], cwd= ".", shell= True)
+            subprocess.call(['python3 getEdgesScores.py'], cwd= ".", shell= True)
 
 # ------------------------------------------ Start Experiments ------------------------------------------
 # Run experiment one.
