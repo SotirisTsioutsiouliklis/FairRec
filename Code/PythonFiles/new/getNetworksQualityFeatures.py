@@ -74,7 +74,7 @@ def getRedPagerank():
     """ Calculates the redPagerank of the network.
     """
     pagerank = np.loadtxt("out_pagerank_pagerank.txt")
-    communities = np.loadtxt("out_communities.txt", skiprows = 1)
+    communities = np.loadtxt("out_communities.txt", skiprows = 1)[:,1]
 
     redPagerank = 0
     for i in range(pagerank.size):
