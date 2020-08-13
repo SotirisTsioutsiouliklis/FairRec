@@ -13,7 +13,7 @@ def getNodeCommunities():
     ids and arguments the nodes community.
     """
     nodeCommunities = dict()
-    with open("out_communities.txt", "r") as fileOne:
+    with open("out_community.txt", "r") as fileOne:
         fileOne.readline()
         for line in fileOne:
             node = int(line.split()[0])
@@ -27,12 +27,13 @@ def getRedRatio(graph):
     """
     numberOfRedNodes = 0
     numberOfNodes = graph.number_of_nodes()
+    communities = nx.get_node_attributes(graph, 'community')
 
     for i in range(numberOfNodes):
-        if graph[i]["community"] == 1:
+        if communities[i] == 1:
             numberOfRedNodes += 1
 
-    getRedRatio = numberOfRedNodes / numberOfNodes
+    redRatio = numberOfRedNodes / numberOfNodes
 
     return redRatio
 
@@ -55,15 +56,16 @@ def getGroupHomphily(graph):
     crossEdgesFromRed = 0
     allEdgesFromBlue = 0
     allEdgesFromRed = 0
+    communities = nx.get_node_attributes(graph, 'community')
 
     for edge in graph.edges:
-        if edge[0]["community"] == 0:
+        if communities[edge[0] ] == 0:
             allEdgesFromBlue += 1
-            if edge[1]["community"] == 1:
+            if communities[edge[1] ] == 1:
                 crossEdgesFromBlue += 1
-        if edge[0]["community"] == 1:
+        if communities[edge[0] ] == 1:
             allEdgesFromRed += 1
-            if edge[1]["community"] == 0:
+            if communities[edge[1] ] == 0:
                 crossEdgesFromRed += 1
 
     crossEdgesRatioFromRed = crossEdgesFromRed / allEdgesFromRed
@@ -82,18 +84,18 @@ startTime = time.time()
 # Load graph.
 graph = nx.read_edgelist('out_graph.txt', nodetype= int, create_using= nx.DiGraph() )
 
-# Get red ratio.
-redRatio = getRedRatio(graph)
-
 # Read node attributes.
 nodeAttributes = getNodeCommunities()
 nx.set_node_attributes(graph, nodeAttributes)
+
+# Get red ratio.
+redRatio = getRedRatio(graph)
 
 # Getgroup homophily.
 groupHomophily = getGroupHomphily(graph)
 
 # Store results.
-with open("groupQualityFeatures.txt", "W") as fileOne:
+with open("groupQualityFeatures.txt", "w") as fileOne:
     fileOne.write("Group\tRatio\thomophily\n")
     fileOne.write("%d\t%f\t%f\n" %(0, 1 - redRatio, groupHomophily[0]) )
     fileOne.write("%d\t%f\t%f\n" %(1, redRatio, groupHomophily[1]) )

@@ -14,7 +14,7 @@ def getNodeCommunities():
     ids and arguments the nodes community.
     """
     nodeCommunities = dict()
-    with open("out_communities.txt", "r") as fileOne:
+    with open("out_community.txt", "r") as fileOne:
         fileOne.readline()
         for line in fileOne:
             node = int(line.split()[0])
@@ -28,12 +28,13 @@ def getRedRatio(graph):
     """
     numberOfRedNodes = 0
     numberOfNodes = graph.number_of_nodes()
+    communities = nx.get_node_attributes(graph, 'community')
 
     for i in range(numberOfNodes):
-        if graph[i]["community"] == 1:
+        if communities[i] == 1:
             numberOfRedNodes += 1
 
-    getRedRatio = numberOfRedNodes / numberOfNodes
+    redRatio = numberOfRedNodes / numberOfNodes
 
     return redRatio
 
@@ -76,13 +77,13 @@ def getOutDegreeDistribution(graph):
 def getRedPagerank():
     """ Calculates the redPagerank of the network.
     """
-    pagerank = np.loadtxt("out_pagerank_pagerank.txt")
-    communities = np.loadtxt("out_communities.txt", skiprows = 1)[:,1]
+    pagerank = np.loadtxt("out_pagerank.txt", skiprows= 1)[:,1]
+    communities = np.loadtxt("out_communities.txt", skiprows = 1, dtype= int)
 
-    redPagerank = 0
+    redPagerank = 0.
     for i in range(pagerank.size):
-        if communities[i] == 1:
-            redPagerank += pagerank[i]
+        if communities[i][1] == 1:
+            redPagerank += pagerank[communities[i][0] ]
     
     return redPagerank
 

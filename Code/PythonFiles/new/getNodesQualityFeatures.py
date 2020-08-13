@@ -19,6 +19,7 @@ def getRedPagerank(pagerank, communities):
 
 def getRedInNeighbors(graph, node):
     redInNeighbors = np.zeros(graph.number_of_nodes(), dtype = int)
+
     for i in range(graph.number_of_nodes() ):
         inNeighbors = [nei for nei in graph.predecessors(i) if communities[nei] == 1]
         redInNeighbors[i] = len(inNeighbors)
@@ -40,7 +41,7 @@ def getInRedNeighborRatio(graph, communities):
     return redInNeighborhoodRatio
 
 def getOutRedNeighborRatio(graph, communities):
-    redOutNeighbors = getOutRedNeighborRatio(graph, communities)
+    redOutNeighbors = getRedOutNeighbors(graph, communities)
     redOutNeighborhoodRatio = [redOutNeighbors[i] / graph.out_degree(i) for i in range(graph.number_of_nodes() )] 
 
     return redOutNeighborhoodRatio
@@ -52,9 +53,12 @@ startTime = time.time()
 # Load graph.
 graph = nx.read_edgelist('out_graph.txt', nodetype= int, create_using= nx.DiGraph() )
 # Get pagerank.
-pagerank = np.loadtxt("out_pagerank_pagerank.txt")
-# Get communities.
-communities = np.loadtxt("out_communities.txt", skiprows = 1)[:,1]
+pagerank = np.loadtxt("out_pagerank.txt", skiprows= 1)[:,1]
+# Get communities. TODO: improve.
+preCommunities = np.loadtxt("out_community.txt", skiprows = 1, dtype= int)
+communities = np.zeros(graph.number_of_nodes() )
+for i in range(graph.number_of_nodes() ):
+    communities[preCommunities[i][0]] = preCommunities[i][1]
 # Get red pagerank.
 redPagerank = getRedPagerank(pagerank, communities)
 # Get red neighborhood ratio.
@@ -65,7 +69,7 @@ redOutNeighborsRatio = getOutRedNeighborRatio(graph, communities)
 with open("nodeQualityFeatures.txt", "w") as fileOne:
     fileOne.write("nodeId\tpagerank\tredPagerank\tgroup\tinDegree\toutDegree\tredNeighborsInRatio\tredNeighborsOutRatio\n")
     for i in range(graph.number_of_nodes() ):
-        fileOne.write("%d\t%f\t%f\t%d\t%d\t%f\t%f\t%f\n" %(i, pagerank[i], redPagerank[i], communities[i], 
+        fileOne.write("%d\t%f\t%f\t%d\t%d\t%d\t%f\t%f\n" %(i, pagerank[i], redPagerank[i], communities[i], 
                     graph.in_degree(i), graph.out_degree(i), redInNeighborsRatio[i], redOutNeighborsRatio[i] ) )
 
 # Stop timing.
