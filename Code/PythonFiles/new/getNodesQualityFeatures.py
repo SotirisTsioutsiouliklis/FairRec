@@ -5,6 +5,7 @@ red neighbors ratio.
 """
 import numpy as np
 import networkx as nx
+import time
 
 def getRedPagerank(pagerank, communities):
     """ Calculates the redPagerank of the network.
@@ -45,6 +46,9 @@ def getOutRedNeighborRatio(graph, communities):
     return redOutNeighborhoodRatio
 
 # ---------------------------------------------------------------
+# Start timing.
+startTime = time.time()
+
 # Load graph.
 graph = nx.read_edgelist('out_graph.txt', nodetype= int, create_using= nx.DiGraph() )
 # Get pagerank.
@@ -63,3 +67,11 @@ with open("nodeQualityFeatures.txt", "w") as fileOne:
     for i in range(graph.number_of_nodes() ):
         fileOne.write("%d\t%f\t%f\t%d\t%d\t%f\t%f\t%f\n" %(i, pagerank[i], redPagerank[i], communities[i], 
                     graph.in_degree(i), graph.out_degree(i), redInNeighborsRatio[i], redOutNeighborsRatio[i] ) )
+
+# Stop timing.
+stopTime = time.time()
+
+# Log time.
+elapsedTime = stopTime - startTime
+with open("nodeQualityFeatures-timing.txt", "w") as fileOne:
+    fileOne.write("Total time:\t%f seconds" %elapsedTime)

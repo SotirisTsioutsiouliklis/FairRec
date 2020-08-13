@@ -4,6 +4,7 @@ Quality features: homophily, ratio in network.
 """
 import numpy as np
 import networkx as nx
+import time
 
 def getNodeCommunities():
     """ Returns dictionary with node communities.
@@ -75,6 +76,9 @@ def getGroupHomphily(graph):
     return groupHomophilies
 
 # -------------------------------------------------
+# Start timing.
+startTime = time.time()
+
 # Load graph.
 graph = nx.read_edgelist('out_graph.txt', nodetype= int, create_using= nx.DiGraph() )
 
@@ -93,3 +97,11 @@ with open("groupQualityFeatures.txt", "W") as fileOne:
     fileOne.write("Group\tRatio\thomophily\n")
     fileOne.write("%d\t%f\t%f\n" %(0, 1 - redRatio, groupHomophily[0]) )
     fileOne.write("%d\t%f\t%f\n" %(1, redRatio, groupHomophily[1]) )
+
+# Stop timing.
+stopTime = time.time()
+
+# Log time.
+elapsedTime = stopTime - startTime
+with open("groupQualityFeatures-timing.txt", "w") as fileOne:
+    fileOne.write("Total time:\t%f seconds" %elapsedTime)

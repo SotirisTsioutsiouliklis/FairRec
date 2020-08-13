@@ -5,6 +5,7 @@ degree distribution (in -out), red ratio, red pagerank.
 """
 import numpy as np
 import networkx as nx
+import time
 
 def getNodeCommunities():
     """ Returns dictionary with node communities.
@@ -86,6 +87,9 @@ def getRedPagerank():
     return redPagerank
 
 # ------------------------------------------------------------------------------------
+# Start timing.
+startTime = time.time()
+
 # Load graph.
 graph = nx.read_edgelist('out_graph.txt', nodetype= int, create_using= nx.DiGraph() )
 
@@ -111,3 +115,11 @@ outDegreeDistribution = getOutDegreeDistribution(graph)
 # Store distributions.
 np.savetxt("inDegreeDistribution.txt", inDegreeDistribution, delimiter= '\t')
 np.savetxt("outDegreeDistribution.txt", outDegreeDistribution, delimiter= '\t')
+
+# Stop timing
+stopTime = time.time()
+
+# Log time.
+elapsedTime = stopTime - startTime
+with open("networksQualityFeatures_timing.txt", "w") as fileOne:
+    fileOne.write("Elapsed time:\t%f seconds" % elapsedTime)
