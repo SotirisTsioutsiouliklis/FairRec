@@ -6,14 +6,12 @@ red neighbors ratio.
 import numpy as np
 import networkx as nx
 import time
+import sys
 
-def getRedPagerank(pagerank, communities):
-    """ Calculates the redPagerank of the network.
+def getNodesRedPagerank(pagerank, communities):
+    """ Reads the redPagerank of all nodes and store it.
     """
-    redPagerank = 0
-    for i in range(pagerank.size):
-        if communities[i] == 1:
-            redPagerank += pagerank[i]
+    redPagerank = np.loadtxt("out_personilized_red.txt", skiprows= 1, usecols= 1)
     
     return redPagerank
 
@@ -36,13 +34,13 @@ def getRedOutNeighbors(graph, node):
 
 def getInRedNeighborRatio(graph, communities):
     redInNeighbors = getRedInNeighbors(graph, communities)
-    redInNeighborhoodRatio = [redInNeighbors[i] / graph.in_degree(i) for i in range(graph.number_of_nodes() )] 
+    redInNeighborhoodRatio = [redInNeighbors[i] / graph.in_degree(i) if graph.in_degree(i) != 0 else 0.5 for i in range(graph.number_of_nodes() )] 
 
     return redInNeighborhoodRatio
 
 def getOutRedNeighborRatio(graph, communities):
     redOutNeighbors = getRedOutNeighbors(graph, communities)
-    redOutNeighborhoodRatio = [redOutNeighbors[i] / graph.out_degree(i) for i in range(graph.number_of_nodes() )] 
+    redOutNeighborhoodRatio = [redOutNeighbors[i] / graph.out_degree(i) if graph.out_degree(i) != 0 else 0.5 for i in range(graph.number_of_nodes() )] 
 
     return redOutNeighborhoodRatio
 
@@ -60,7 +58,7 @@ communities = np.zeros(graph.number_of_nodes() )
 for i in range(graph.number_of_nodes() ):
     communities[preCommunities[i][0]] = preCommunities[i][1]
 # Get red pagerank.
-redPagerank = getRedPagerank(pagerank, communities)
+redPagerank = getNodesRedPagerank(pagerank, communities)
 # Get red neighborhood ratio.
 redInNeighborsRatio = getInRedNeighborRatio(graph, communities)
 redOutNeighborsRatio = getOutRedNeighborRatio(graph, communities)

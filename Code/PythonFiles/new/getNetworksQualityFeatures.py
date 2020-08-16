@@ -6,6 +6,7 @@ degree distribution (in -out), red ratio, red pagerank.
 import numpy as np
 import networkx as nx
 import time
+import sys
 
 def getNodeCommunities():
     """ Returns dictionary with node communities.
@@ -49,10 +50,12 @@ def getHomophily(graph):
     blueRatio = 1 - redRatio
     crossEdges = 0
 
+    communities = nx.get_node_attributes(graph, "community")
+
     for edge in graph.edges:
-        if edge[0]["community"] != edge[1]["community"]:
+        if communities[edge[0] ] != communities[edge[1] ]:
             crossEdges += 1
-    
+
     crossEdgesRatio = crossEdges / graph.number_of_edges()
 
     expectedCrossEdges = 2 * redRatio * blueRatio
@@ -65,20 +68,20 @@ def getInDegreeDistribution(graph):
     inDegreesArray = np.array([inDegree for node, inDegree in inDegrees])
     inDegreesDistribution = np.histogram(inDegreesArray, bins= max(inDegreesArray) + 1)
 
-    return inDegreesDistribution
+    return inDegreesDistribution[0]
 
 def getOutDegreeDistribution(graph):
     outDegrees = list(graph.out_degree() )
     outDegreesArray = np.array([outDegree for node, outDegree in outDegrees])
     outDegreesDistribution = np.histogram(outDegreesArray, bins= max(outDegreesArray) + 1)
 
-    return outDegreesDistribution
+    return outDegreesDistribution[0]
 
 def getRedPagerank():
     """ Calculates the redPagerank of the network.
     """
     pagerank = np.loadtxt("out_pagerank.txt", skiprows= 1)[:,1]
-    communities = np.loadtxt("out_communities.txt", skiprows = 1, dtype= int)
+    communities = np.loadtxt("out_community.txt", skiprows = 1, dtype= int)
 
     redPagerank = 0.
     for i in range(pagerank.size):
@@ -105,7 +108,7 @@ redRatio = getRedRatio(graph)
 with open("networksQualityFeatures.txt", "w") as fileOne:
     fileOne.write("NumberOfNodes\t%d\n" %graph.number_of_nodes() )
     fileOne.write("NumberOfEdges\t%d\n" %graph.number_of_edges() )
-    fileOne.write("RedRatio\t%d\n" %redRatio )
+    fileOne.write("RedRatio\t%f\n" %redRatio )
     fileOne.write("RedPagerank\t%f\n" %getRedPagerank() )
     fileOne.write("Homophily\t%f\n" %getHomophily(graph) )
 
