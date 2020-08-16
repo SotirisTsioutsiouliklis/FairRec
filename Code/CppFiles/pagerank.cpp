@@ -582,6 +582,18 @@ void pagerank_algorithms::saveVector(std::string fileName, std::vector<step_log>
     logFile.close();
 }
 
+void pagerank_algorithms::saveVector(std::string fileName, std::vector<recEdge> &logVector) {
+	std::ofstream edge_file(fileName);
+    edge_file << "Source\tTarget\tnode2vecScore\tresAllocScore\tjaccCoefScore\tprefAttScore\tadamicAdarScore\tgain\texpGain\n";
+    int n = logVector.size();
+    for (int i = 0; i < n; i++) {
+        edge_file << logVector[i].source << "\t" << logVector[i].target << "\t" << logVector[i].node2vecScore
+        << "\t" << logVector[i].resAllocScore << "\t" << logVector[i].jaccCoefScore << "\t" << logVector[i].prefAttScore
+		<< "\t" << logVector[i].adamicAdarScore << "\t" << logVector[i].gain << "\t" << logVector[i].expGain << "\n";
+    }
+    edge_file.close();
+}
+
 // Reads random source nodes.
 std::vector<int> pagerank_algorithms::getRandomSourceNodes() {
     std::vector<int> sourceNodes;

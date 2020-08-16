@@ -76,6 +76,7 @@ public:
     static void saveVector(std::string fileName, std::vector<double> &logVector);
     static void saveVector(std::string fileName, std::vector<edge> &logVector);
     static void saveVector(std::string fileName, std::vector<step_log> &logVector);
+    static void saveVector(std::string fileName, std::vector<recEdge> &logVector);
 	// Reads random source nodes.
 	static std::vector<int> getRandomSourceNodes();
 	static std::vector<int> getBestByPagerankNodes();

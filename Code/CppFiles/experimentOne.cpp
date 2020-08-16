@@ -515,8 +515,9 @@ int main() {
     int numberOfSources = numberOfNodes / 10;
     std::vector<recEdge> newEdges;
 
-    std::cout << "Get random source nodes...\n";
-    std::vector<int> sourceNodes = pagerank_algorithms::getRandomSourceNodes();
+    // Most probably I don't need the 2 following lines.
+    //std::cout << "Get random source nodes...\n";
+    //std::vector<int> sourceNodes = pagerank_algorithms::getRandomSourceNodes();
 
     // Read candidate edges scores.
     std::cout << "Read edges scores...\n";
