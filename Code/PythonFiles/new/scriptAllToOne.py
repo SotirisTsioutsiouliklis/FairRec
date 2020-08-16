@@ -1,4 +1,4 @@
-""" This script runs all the required scriptes and experiments in one
+""" This script runs all the required scriptes for experiments in one
 dataset for the FairRec experiments.
 
 It ensures that in each dataset exist all the files that we need
@@ -147,16 +147,36 @@ except:
     subprocess.call(['python3 getNodesQualityFeatures.py'], cwd= ".", shell= True)
 
 # ------------------------------------------ Start Experiments ------------------------------------------
-# Run experiment one.
-print('Run experiment one...')
+# Run experiment one for random sources.
+print('Run experiment one for radom sources...')
 try:
-    fileOne = open('redRatioByNode2vec.txt', 'r')
+    fileOne = open('redRatioByNode2vecRandomSources.txt', 'r')
     fileOne.close()
-    print('Experiment one is ready.')
+    print('Experiment one for random source nodes is ready.')
 except:
-    print("Running experiment one...")
-    subprocess.call(['cp ~/Workspace/FairRec/Code/CppFiles/experimentOne.out .'], cwd= ".", shell= True)
-    subprocess.call(['./experimentOne.out'], cwd=".", shell=True)
+    print("Running experiment one for random source nodes...")
+    subprocess.call(['cp ~/Workspace/FairRec/Code/CppFiles/experimentOneRandom.out .'], cwd= ".", shell= True)
+    subprocess.call(['./experimentOneRandom.out'], cwd=".", shell=True)
 
-# Run experiment Two.
+# Run experiment one for red sources.
+print('Run experiment one for red sources...')
+try:
+    fileOne = open('redRatioByNode2vecRedSources.txt', 'r')
+    fileOne.close()
+    print('Experiment one for red source nodes is ready.')
+except:
+    print("Running experiment one for red source nodes...")
+    subprocess.call(['cp ~/Workspace/FairRec/Code/CppFiles/experimentOneRed.out .'], cwd= ".", shell= True)
+    subprocess.call(['./experimentOneRed.out'], cwd=".", shell=True)
+
+# Run experiment one for random sources.
+print('Run experiment one for blue sources...')
+try:
+    fileOne = open('redRatioByNode2vecBlueSources.txt', 'r')
+    fileOne.close()
+    print('Experiment one for blue source nodes is ready.')
+except:
+    print("Running experiment one for blue source nodes...")
+    subprocess.call(['cp ~/Workspace/FairRec/Code/CppFiles/experimentOneBlue.out .'], cwd= ".", shell= True)
+    subprocess.call(['./experimentOneBlue.out'], cwd=".", shell=True)
 

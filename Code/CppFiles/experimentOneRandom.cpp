@@ -469,15 +469,15 @@ static void addEdges(pagerank_algorithms &algs, graph &g, std::vector<recEdge> &
     adamAdarLog[0] = adamAdarLog[1];
 
     // Save logs.
-    pagerank_algorithms::saveVector("redRatio" + postFix + ".txt", redRatioLog);
-    pagerank_algorithms::saveVector("node2vec" + postFix + ".txt", node2vecLog);
-    pagerank_algorithms::saveVector("resourceAllocation" + postFix + ".txt", resLog);
-    pagerank_algorithms::saveVector("jaccardCoefficient" + postFix + ".txt", jaccLog);
-    pagerank_algorithms::saveVector("prefferentialAttachment" + postFix + ".txt", prefLog);
-    pagerank_algorithms::saveVector("addamicAddar" + postFix + ".txt", adamAdarLog);
-    pagerank_algorithms::saveVector("finalPagerank" + postFix + ".txt", pagerank);
+    pagerank_algorithms::saveVector("redRatio" + postFix + "RandomSources.txt", redRatioLog);
+    pagerank_algorithms::saveVector("node2vec" + postFix + "RandomSources.txt", node2vecLog);
+    pagerank_algorithms::saveVector("resourceAllocation" + postFix + "RandomSources.txt", resLog);
+    pagerank_algorithms::saveVector("jaccardCoefficient" + postFix + "RandomSources.txt", jaccLog);
+    pagerank_algorithms::saveVector("prefferentialAttachment" + postFix + "RandomSources.txt", prefLog);
+    pagerank_algorithms::saveVector("addamicAddar" + postFix + "RandomSources.txt", adamAdarLog);
+    pagerank_algorithms::saveVector("finalPagerank" + postFix + "RandomSources.txt", pagerank);
     // Save selected edges.
-    pagerank_algorithms::saveVector("edgesSelected" + postFix + ".txt", newEdges);
+    pagerank_algorithms::saveVector("edgesSelected" + postFix + "RandomSources.txt", newEdges);
 
 }
 
