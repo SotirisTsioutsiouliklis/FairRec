@@ -3,11 +3,12 @@
 all:
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o getPagerank.out graph.cpp pagerank.cpp getPagerank.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o getSourceNodes.out graph.cpp pagerank.cpp getSourceNodes.cpp
-	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o getEdgeFairnessScore.out graph.cpp pagerank.cpp getEdgeFairnessScore.cpp
+	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o getEdgeFairnessScore.out graph.cpp pagerank.cpp getEdgeFairnessScore.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentZero.out graph.cpp pagerank.cpp experimentZero.cpp
-	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentOneRandom.out graph.cpp pagerank.cpp experimentOneRandom.cpp
-	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentOneRed.out graph.cpp pagerank.cpp experimentOneRed.cpp
-	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentOneBlue.out graph.cpp pagerank.cpp experimentOneBlue.cpp
+	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentOneRandom.out graph.cpp pagerank.cpp experimentOneRandom.cpp
+	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentOneRed.out graph.cpp pagerank.cpp experimentOneRed.cpp
+	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentOneBlue.out graph.cpp pagerank.cpp experimentOneBlue.cpp
+	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentOneGreedy.out graph.cpp pagerank.cpp experimentOneGreedy.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o absorbingProbs.out graph.cpp pagerank.cpp absorbingProbs.cpp
 
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o singleSourceGreedy.out graph.cpp pagerank.cpp edgeAddition.cpp singleSourceGreedy.cpp
