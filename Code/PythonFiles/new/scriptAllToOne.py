@@ -67,22 +67,6 @@ except:
     subprocess.call(['cp ~/Workspace/FairRec/Code/CppFiles/getSourceNodes.out .'], cwd= ".", shell= True)
     subprocess.call(['./getSourceNodes.out'], cwd= ".", shell= True)
 
-# Get edge fairness score.
-print('Get edge fairness scores...')
-try:
-    fileOne = open('randomSourceNodes.txt', 'r')
-    fileOne.readline()
-    testNode = int(fileOne.readline() )
-    fileOne.close()
-    fileOne = open('%dedgeFairnessScores.txt' %testNode, 'r')
-    fileOne.close()
-    print('Edge fairnes scores already calculated.')
-except:
-    print('Get edge fairness scores...')
-    subprocess.call(['cp ~/Workspace/FairRec/Code/CppFiles/getEdgeFairnessScore.out .'], cwd= ".", shell= True)
-    subprocess.call(['./getEdgeFairnessScore.out'], cwd= ".", shell= True)
-
-
 # Get edges' scores. if it needs get candidate edges.
 fileOne = open('out_graph.txt', 'r')
 numberOfNodes = int(fileOne.readline() )
@@ -101,7 +85,7 @@ else:
         print("Edges scores have been calculated all together. Separate edges...")
         subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/separateEdgesScores.py .'], cwd= ".", shell= True)
         subprocess.call(['python3 separateEdgesScores.py'], cwd= ".", shell= True)
-        subprocess.call(['rm edgeRecScores.txt'], cwd= ".", shell= True)
+        #subprocess.call(['rm edgeRecScores.txt'], cwd= ".", shell= True)
         print('Edges scores separated.')
     except:
         try:
@@ -110,6 +94,20 @@ else:
             print('Edges scores have been calculated properly.')
         except:
             print('Get edge scores...')
+            # Get edge fairness score.
+            print('Get edge fairness scores...')
+            try:
+                fileOne = open('randomSourceNodes.txt', 'r')
+                fileOne.readline()
+                testNode = int(fileOne.readline() )
+                fileOne.close()
+                fileOne = open('%dedgeFairnessScores.txt' %testNode, 'r')
+                fileOne.close()
+                print('Edge fairnes scores already calculated.')
+            except:
+                print('Get edge fairness scores...')
+                subprocess.call(['cp ~/Workspace/FairRec/Code/CppFiles/getEdgeFairnessScore.out .'], cwd= ".", shell= True)
+                subprocess.call(['./getEdgeFairnessScore.out'], cwd= ".", shell= True)
             subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/getEdgesScores.py .'], cwd= ".", shell= True)
             subprocess.call(['python3 getEdgesScores.py'], cwd= ".", shell= True)
 

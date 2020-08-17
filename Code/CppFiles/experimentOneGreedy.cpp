@@ -47,7 +47,7 @@ static void getEdgeScores(std::vector<recEdge> &candidateEdges) {
     pagerank_v objectiveValues;
 
     // Open file.
-    std::ifstream recEdges("edgesScoresRed.txt");
+    std::ifstream recEdges("edgesScoresRandom.txt");
     std::getline(recEdges, str);
     // Read lines.
     while (recEdges >> newEdge.source >> newEdge.target >> newEdge.node2vecScore >> newEdge.resAllocScore >> newEdge.jaccCoefScore
@@ -82,15 +82,12 @@ static recEdge getNextNode2vecBest(std::vector<recEdge> &edges) {
  * first number of source nodes at each epoch.
 */
 static void getBestNode2vec(std::vector<recEdge> &candidateEdges, std::vector<recEdge> &newEdges, int numberOfSources, int numberOfEdges) {
-    //std::cout << "soFarSoGood\n";
     recEdge newEdge;
     std::string str;
     std::vector<recEdge> edgesPerSource[numberOfSources];
-    //std::cout << "soFarSoGood\n";
     // Separate edges for each source node.
     int orderOfNode = 0;
     int currentNode = candidateEdges[0].source;
-    //std::cout << "soFarSoGood\n";
     for (recEdge e : candidateEdges) {
         if (e.source != currentNode) {
             currentNode = e.source;
@@ -472,15 +469,15 @@ static void addEdges(pagerank_algorithms &algs, graph &g, std::vector<recEdge> &
     adamAdarLog[0] = adamAdarLog[1];
 
     // Save logs.
-    pagerank_algorithms::saveVector("redRatio" + postFix + "RedSources.txt", redRatioLog);
-    pagerank_algorithms::saveVector("node2vec" + postFix + "RedSources.txt", node2vecLog);
-    pagerank_algorithms::saveVector("resourceAllocation" + postFix + "RedSources.txt", resLog);
-    pagerank_algorithms::saveVector("jaccardCoefficient" + postFix + "RedSources.txt", jaccLog);
-    pagerank_algorithms::saveVector("prefferentialAttachment" + postFix + "RedSources.txt", prefLog);
-    pagerank_algorithms::saveVector("addamicAddar" + postFix + "RedSources.txt", adamAdarLog);
-    pagerank_algorithms::saveVector("finalPagerank" + postFix + "RedSources.txt", pagerank);
+    pagerank_algorithms::saveVector("redRatio" + postFix + "RandomSources.txt", redRatioLog);
+    pagerank_algorithms::saveVector("node2vec" + postFix + "RandomSources.txt", node2vecLog);
+    pagerank_algorithms::saveVector("resourceAllocation" + postFix + "RandomSources.txt", resLog);
+    pagerank_algorithms::saveVector("jaccardCoefficient" + postFix + "RandomSources.txt", jaccLog);
+    pagerank_algorithms::saveVector("prefferentialAttachment" + postFix + "RandomSources.txt", prefLog);
+    pagerank_algorithms::saveVector("addamicAddar" + postFix + "RandomSources.txt", adamAdarLog);
+    pagerank_algorithms::saveVector("finalPagerank" + postFix + "RandomSources.txt", pagerank);
     // Save selected edges.
-    pagerank_algorithms::saveVector("edgesSelected" + postFix + "RedSources.txt", newEdges);
+    pagerank_algorithms::saveVector("edgesSelected" + postFix + "RandomSources.txt", newEdges);
 
 }
 
@@ -500,7 +497,7 @@ int main() {
     std::vector<recEdge> candidateEdges;
     int numberOfEdges = 10; // Equivalent to number of epochs.
     int numberOfNodes = g.get_num_nodes();
-    int numberOfSources = std::min(numberOfNodes / 5, 100);
+    int numberOfSources = numberOfNodes / 10;
     std::vector<recEdge> newEdges;
 
     // Most probably I don't need the 2 following lines.
