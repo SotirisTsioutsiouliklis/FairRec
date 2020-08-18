@@ -50,7 +50,7 @@ static void getEdgeScores(std::unordered_map<int, std::unordered_map<int, std::t
     pagerank_v objectiveValues;
 
     // Open file.
-    std::ifstream recEdges("edgesScoresRandom.txt");
+    std::ifstream recEdges("edgesScoresBlue.txt");
     std::getline(recEdges, str);
     // Read lines.
     while (recEdges >> newEdge.source >> newEdge.target >> newEdge.node2vecScore >> newEdge.resAllocScore >> newEdge.jaccCoefScore
@@ -85,7 +85,7 @@ int main() {
 
     // Run greedy for random sources.
     std::cout << "Get random source nodes...\n";
-    std::vector<int> sourceNodes = pagerank_algorithms::getRandomSourceNodes();
+    std::vector<int> sourceNodes = pagerank_algorithms::getBestBlueSourceNodes();
     // Log initial metrics.
     pagerank_v pagerank = algs.get_pagerank();
     double redPagerank = g.get_pagerank_per_community(pagerank)[1];
@@ -154,15 +154,15 @@ int main() {
     adamAdarLog[0] = adamAdarLog[1];
 
     // Save logs.
-    pagerank_algorithms::saveVector("redRatioByGreedyRandomSources.txt", redRatioLog);
-    pagerank_algorithms::saveVector("node2vecByGreedyRandomSources.txt", node2vecLog);
-    pagerank_algorithms::saveVector("resourceAllocationByGreedyRandomSources.txt", resLog);
-    pagerank_algorithms::saveVector("jaccardCoefficientByGreedyRandomSources.txt", jaccLog);
-    pagerank_algorithms::saveVector("prefferentialAttachmentByGreedyRandomSources.txt", prefLog);
-    pagerank_algorithms::saveVector("addamicAddarByGreedyRandomSources.txt", adamAdarLog);
-    pagerank_algorithms::saveVector("finalPagerankByGreedyRandomSources.txt", pagerank);
+    pagerank_algorithms::saveVector("redRatioByGreedyBlueSources.txt", redRatioLog);
+    pagerank_algorithms::saveVector("node2vecByGreedyBlueSources.txt", node2vecLog);
+    pagerank_algorithms::saveVector("resourceAllocationByGreedyBlueSources.txt", resLog);
+    pagerank_algorithms::saveVector("jaccardCoefficientByGreedyBlueSources.txt", jaccLog);
+    pagerank_algorithms::saveVector("prefferentialAttachmentByGreedyBlueSources.txt", prefLog);
+    pagerank_algorithms::saveVector("addamicAddarByGreedyBlueSources.txt", adamAdarLog);
+    pagerank_algorithms::saveVector("finalPagerankByGreedyBlueSources.txt", pagerank);
     // Save selected edges.
-    pagerank_algorithms::saveVector("edgesSelectedByGreedyRandomSources.txt", newEdges);
+    pagerank_algorithms::saveVector("edgesSelectedByGreedyBlueSources.txt", newEdges);
 
     return 0;
 }

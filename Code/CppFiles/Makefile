@@ -8,7 +8,9 @@ all:
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentOneRandom.out graph.cpp pagerank.cpp experimentOneRandom.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentOneRed.out graph.cpp pagerank.cpp experimentOneRed.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentOneBlue.out graph.cpp pagerank.cpp experimentOneBlue.cpp
-	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentOneGreedy.out graph.cpp pagerank.cpp experimentOneGreedy.cpp
+	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentOneGreedyRandom.out graph.cpp pagerank.cpp experimentOneGreedyRandom.cpp
+	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentOneGreedyRed.out graph.cpp pagerank.cpp experimentOneGreedyRed.cpp
+	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentOneGreedyBlue.out graph.cpp pagerank.cpp experimentOneGreedyBlue.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o absorbingProbs.out graph.cpp pagerank.cpp absorbingProbs.cpp
 
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o singleSourceGreedy.out graph.cpp pagerank.cpp edgeAddition.cpp singleSourceGreedy.cpp

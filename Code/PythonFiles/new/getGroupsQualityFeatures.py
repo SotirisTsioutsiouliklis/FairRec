@@ -1,6 +1,7 @@
 """ Calculates group(red, blue) quality features.
 
 Quality features: homophily, ratio in network.
+TODO: Move inside log from getGroupHomophily.
 """
 import numpy as np
 import networkx as nx
@@ -75,7 +76,7 @@ def getGroupHomphily(graph):
 
     groupHomophilies = (crossEdgesRatioFromBlue / expectedCrossEdgesFromBlue, crossEdgesRatioFromRed / expectedCrossEdgesFromRed)
 
-    return groupHomophilies
+    return groupHomophilies, crossEdgesFromRed, crossEdgesFromBlue, allEdgesFromRed, allEdgesFromBlue
 
 # -------------------------------------------------
 # Start timing.
@@ -92,13 +93,13 @@ nx.set_node_attributes(graph, nodeAttributes)
 redRatio = getRedRatio(graph)
 
 # Getgroup homophily.
-groupHomophily = getGroupHomphily(graph)
+groupHomophily, crossEdgesFromRed, crossEdgesFromBlue, allEdgesFromRed, allEdgesFromBlue = getGroupHomphily(graph)
 
 # Store results.
 with open("groupQualityFeatures.txt", "w") as fileOne:
-    fileOne.write("Group\tRatio\thomophily\n")
-    fileOne.write("%d\t%f\t%f\n" %(0, 1 - redRatio, groupHomophily[0]) )
-    fileOne.write("%d\t%f\t%f\n" %(1, redRatio, groupHomophily[1]) )
+    fileOne.write("Group\tRatio\thomophily\tallEdges\tCrossEdges\n")
+    fileOne.write("%d\t%f\t%f\t%d\t%d\n" %(0, 1 - redRatio, groupHomophily[0], allEdgesFromBlue, crossEdgesFromBlue) )
+    fileOne.write("%d\t%f\t%f\t%d\t%d\n" %(1, redRatio, groupHomophily[1], allEdgesFromRed, crossEdgesFromRed) )
 
 # Stop timing.
 stopTime = time.time()
