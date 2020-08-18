@@ -82,7 +82,6 @@ except:
     subprocess.call(['cp ~/Workspace/FairRec/Code/CppFiles/getEdgeFairnessScore.out .'], cwd= ".", shell= True)
     subprocess.call(['./getEdgeFairnessScore.out'], cwd= ".", shell= True)
 
-
 # Get edges' scores. if it needs get candidate edges.
 fileOne = open('out_graph.txt', 'r')
 numberOfNodes = int(fileOne.readline() )
@@ -113,16 +112,25 @@ else:
             subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/getEdgesScores.py .'], cwd= ".", shell= True)
             subprocess.call(['python3 getEdgesScores.py'], cwd= ".", shell= True)
 
+# Get edges distances.
+try:
+    fileOne = open('edgesDistancesRandomSources.txt', 'r')
+    print("Edges distances already calcualted.")
+except:
+    print('Calculate edge distances...')
+    subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/getEdgesDistances.py .'], cwd= ".", shell= True)
+    subprocess.call(['python3 getEdgesDistances.py'], cwd= ".", shell= True)
+
+
 # Get networks quality features.
-print('Calculate Networks quality features...')
 try:
     fileONe = open('networksQualityFeatures.txt', 'r')
     fileOne.close()
-    print('Networks quality features have been calculated.')
 except:
     print('Calculate Networks quality features...')
     subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/getNetworksQualityFeatures.py .'], cwd= ".", shell= True)
     subprocess.call(['python3 getNetworksQualityFeatures.py'], cwd= ".", shell= True)
+print('Networks quality features ready.')
 
 # Get groups quality features.
 print('Calculate groups quality features...')
