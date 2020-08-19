@@ -50,7 +50,49 @@ All the experiments were made in linux Ubuntu. To compile cpp we used gcc compil
 
     **Note:** You will also find the algorithm as a static method in EdgeAddition class
 
+* Pre experiments script.
+
+    Computes the following:
+    
+    1. Initial pagerank.
+    1. Red absorbing probabilities.
+    1. Node2vec Classifier.
+    1. Node2vec embeddings.
+    1. Source nodes (10% random, 100 best red, 100 best blue).
+    1. Edges' scores.
+    1. Candidate edges distances.
+    1. Network's quality features.
+    1. Groups' quality features.
+    1. Nodes' quality features.
+    1. Time for each of the above.
+
+* Experiments script.
+
+    Execute the following:
+
+    1. Experiment one:
+
+        Compares the impact of the different policies of recommending edges in 10 epochs. 1 epoch is the addition of 1 edge to all source nodes.
+
+    1. Experiment two:
+
+        Compares the (Greedy vs Fast Greedy)...Pending...
+
+* Post experiment script.
+
+    Computes the following:
+
+    1. Selected edges distances.
+
+* Analysis script.
+
+    Produces the following:
+
+    1. Pending.
+
 TODO:
 -----
 
-- [ ] Write down a todo list.
+- [ ] Add to pre experiment script or to get edges scores or  - most probable - to separate edges to delete old fairness scores per node.
+
+- [ ] Add specific details about the files produced etc. in the pre experiment script.

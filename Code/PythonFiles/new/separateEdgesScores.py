@@ -1,6 +1,7 @@
 """ Script to separate the edges scores in appropriate files, depending
 on their group. Random, red or blue.
 """
+import subprocess
 import numpy as np
 import pandas as pd
 import time
@@ -59,29 +60,23 @@ bestRedNodes = np.loadtxt('redBestSourceNodes.txt', skiprows= 1, dtype= int)
 bestBlueNodes = np.loadtxt('blueBestSourceNodes.txt', skiprows= 1, dtype= int)
 
 # Convert to sets for fast searching.
-# TODO: Check if convertion is correct from numpy array to set.
-# Or if it exists better way. A numpy way.
 sourceNodes = set(np.concatenate((randomNodes, bestRedNodes, bestBlueNodes) ) )
 randomNodes = set(randomNodes)
 bestRedNodes = set(bestRedNodes)
 bestBlueNodes = set(bestBlueNodes)
 
 # Get edges scores.
-#edgesScores = pd.read_csv("edgeRecScores.txt", sep='\t')
 edgesScores = readScores("edgeRecScores.txt", sourceNodes) # Dict of dicts.
 storeEdgesInGroup("edgesScoresRandom.txt", randomNodes, edgesScores)
 storeEdgesInGroup("edgesScoresRed.txt", bestRedNodes, edgesScores)
 storeEdgesInGroup("edgesScoresBlue.txt", bestBlueNodes, edgesScores)
-#randomEdgesScores = edgesScores[edgesScores['sourceNode'].isin(randomNodes)]
-#redEdgesScores = edgesScores[edgesScores['sourceNode'].isin(bestRedNodes)]
-#blueEdgesScores = edgesScores[edgesScores['sourceNode'].isin(bestBlueNodes)]
-
-# Write new files.
-#randomEdgesScores.to_csv("edgesScoresRandom.txt", sep= '\t', index = False)
-#redEdgesScores.to_csv("edgesScoresRed.txt", sep= '\t', index = False)
-#blueEdgesScores.to_csv("edgesScoresBlue.txt", sep= '\t', index = False)
 
 stopTime = time.time()
 ellapsedTime = stopTime - startTime
 with open("edgeScoresSeparationTiming.txt", "w") as fileOne:
     fileOne.write("Edges' scores separation time: %f seconds" %ellapsedTime)
+
+# Remove add hoch files. 
+nodes = np.concatenate((randomNodes, bestRedNodes, bestBlueNodes) )         
+for node in nodes:
+    subprocess.call(['rm %dedgeFairnessScores.txt' %node], cwd='.', shell=True)
