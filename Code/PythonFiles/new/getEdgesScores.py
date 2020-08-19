@@ -36,7 +36,7 @@ def getEdgesScores(fileName, nodes):
 
     for node in nodes:
         # Get as candidate neighbors all neighbors.
-        candidateNeighbors = set([i for i in range(graph.number_of_nodes() )])
+        candidateNeighbors = set([i for i in range(graph.number_of_nodes() )] )
 
         # Remove self from candidate Neighbors.
         candidateNeighbors.remove(node)

@@ -11,49 +11,44 @@ import sys
 import pickle
 
 # Calculate initial pagerank.
-print('Get pagerank...')
 try:
     fileOne = open('out_pagerank.txt', 'r')
     fileOne.close()
-    print('Pagerank already calculated.')
 except:
     print("Pagerank calculation...")
     subprocess.call(['cp ~/Workspace/FairRec/Code/CppFiles/getPagerank.out .'], cwd= ".", shell= True)
     subprocess.call(['./getPagerank.out'], cwd= ".", shell= True)
+print('Pagerank is ready.')
 
 # Calculate red absorbing probs.
-print('Take Red absorbing probs...')
 try:
     fileOne = open('out_personilized_red.txt', 'r')
     fileOne.close()
-    print('Reb absorbing probs already calculated.')
 except:
     print("Red absorbing probs calculation...")
     subprocess.call(['cp ~/Workspace/FairRec/Code/CppFiles/absorbingProbs.out .'], cwd= ".", shell= True)
     subprocess.call(['./absorbingProbs.out -r'], cwd= ".", shell= True)
+print('Reb absorbing probs are ready.')
 
 # Get classifier.
-print('Get node2vec classifier...')
 try:
     node2vecRecommender = pickle.load(open('edgeClassifier.sav', 'rb') )
-    print('Classifier already exists.')
 except:
     print('Train classifier...')
     fr.trainModel(False)
+print('Classifier is ready.')
 
 # Get Node embeddings.
-print('Get node embeddings...')
 try:
     fileOne = open('out_nodeEmbeddings.txt', 'r')
     fileOne.close()
-    print('Node embeddings already exists.')
 except:
     print('Calculate node embeddings...')
     subprocess.call(['cp ~/Workspace/snap/examples/node2vec/node2vec .'], cwd= ".", shell= True)
     subprocess.call(['./node2vec -i:out_graph.edgelist -o:out_nodeEmbeddings.txt -l:3 -d:128 -p:0.3 -dr -v'], cwd= ".", shell= True)
+print('Node embeddings are ready.')
 
 # Get source nodes.
-print('Get source nodes...')
 try:
     fileOne = open('randomSourceNodes.txt', 'r')
     fileOne.close()
@@ -61,14 +56,13 @@ try:
     fileOne.close()
     fileOne = open('blueBestSourceNodes.txt', 'r')
     fileOne.close()
-    print('Source nodes already calculated')
 except:
     print('Get source nodes...')
     subprocess.call(['cp ~/Workspace/FairRec/Code/CppFiles/getSourceNodes.out .'], cwd= ".", shell= True)
     subprocess.call(['./getSourceNodes.out'], cwd= ".", shell= True)
+print('Source nodes are ready.')
 
 # Get edge fairness score.
-print('Get edge fairness scores...')
 try:
     fileOne = open('randomSourceNodes.txt', 'r')
     fileOne.readline()
@@ -76,11 +70,11 @@ try:
     fileOne.close()
     fileOne = open('%dedgeFairnessScores.txt' %testNode, 'r')
     fileOne.close()
-    print('Edge fairnes scores already calculated.')
 except:
     print('Get edge fairness scores...')
     subprocess.call(['cp ~/Workspace/FairRec/Code/CppFiles/getEdgeFairnessScore.out .'], cwd= ".", shell= True)
     subprocess.call(['./getEdgeFairnessScore.out'], cwd= ".", shell= True)
+print('Edge fairnes scores are ready.')
 
 # Get edges' scores. if it needs get candidate edges.
 fileOne = open('out_graph.txt', 'r')
@@ -92,35 +86,32 @@ if numberOfNodes > 35000:
     # Get edges scores for candidate edges.
 else:
     # Get edge scores.
-    print('Get Edge Scores...')
     try:
         fileOne = open('edgeRecScores.txt', 'r')
         fileOne.close()
         # Separate edges.
-        print("Edges scores have been calculated all together. Separate edges...")
+        print("Edges scores have been calculated all together. Separate edges scores...")
         subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/separateEdgesScores.py .'], cwd= ".", shell= True)
         subprocess.call(['python3 separateEdgesScores.py'], cwd= ".", shell= True)
         subprocess.call(['rm edgeRecScores.txt'], cwd= ".", shell= True)
-        print('Edges scores separated.')
     except:
         try:
             fileONe = open('edgesScoresRandom.txt', 'r')
             fileOne.close()
-            print('Edges scores have been calculated properly.')
         except:
             print('Get edge scores...')
             subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/getEdgesScores.py .'], cwd= ".", shell= True)
             subprocess.call(['python3 getEdgesScores.py'], cwd= ".", shell= True)
+print('Edges scores are ready.')
 
 # Get edges distances.
 try:
     fileOne = open('edgesDistancesRandomSources.txt', 'r')
-    print("Edges distances already calcualted.")
 except:
     print('Calculate edge distances...')
     subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/getEdgesDistances.py .'], cwd= ".", shell= True)
     subprocess.call(['python3 getEdgesDistances.py'], cwd= ".", shell= True)
-
+print("Edges distances are ready.")
 
 # Get networks quality features.
 try:
@@ -133,27 +124,24 @@ except:
 print('Networks quality features ready.')
 
 # Get groups quality features.
-print('Calculate groups quality features...')
 try:
     fileONe = open('groupQualityFeatures.txt', 'r')
     fileOne.close()
-    print('Groups quality features have been calculated.')
 except:
     print('Calculate groups quality features...')
     subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/getGroupsQualityFeatures.py .'], cwd= ".", shell= True)
     subprocess.call(['python3 getGroupsQualityFeatures.py'], cwd= ".", shell= True)
+print('Groups quality features are ready.')
 
 # Get nodes quality features.
-print('Calculate nodes quality features...')
 try:
     fileONe = open('nodeQualityFeatures.txt', 'r')
     fileOne.close()
-    print('Nodes quality features have been calculated.')
 except:
     print('Calculate nodes quality features...')
     subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/getNodesQualityFeatures.py .'], cwd= ".", shell= True)
     subprocess.call(['python3 getNodesQualityFeatures.py'], cwd= ".", shell= True)
+print('Nodes quality features are ready.')
 
-# ------------------------------------------ Start Experiments ------------------------------------------
 
 
