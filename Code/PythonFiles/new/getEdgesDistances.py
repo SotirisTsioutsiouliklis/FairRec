@@ -47,7 +47,7 @@ with open("edgesDistancesRandomSources.txt", "w") as fileOne:
              #   reversePathLength = 100
             #distance = min(pathLength, reversePathLength)
 
-            fileOne.write("%d\t%d\t\t%d\n" %(sourceNode, targetNode, pathLength) )
+            fileOne.write("%d\t%d\t%d\n" %(sourceNode, targetNode, pathLength) )
 
 # Get candidate edges for random nodes.
 edges = getCandidateEdges("Red")
@@ -70,7 +70,7 @@ with open("edgesDistancesRedSources.txt", "w") as fileOne:
             fileOne.write("%d\t%d\t%d\n" %(sourceNode, targetNode, pathLength) )
 
 # Get candidate edges for random nodes.
-edges = getCandidateEdges("Blue")
+edges = getCandidateEdges("Blue")   
 
 # Write the results.
 with open("edgesDistancesBlueSources.txt", "w") as fileOne:

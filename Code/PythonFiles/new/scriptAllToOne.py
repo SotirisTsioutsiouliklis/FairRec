@@ -5,6 +5,9 @@ It ensures that in each dataset exist all the files that we need
 multiple times andneed time. Then it runstheexperiments.
 """
 import subprocess
+import time
+
+totalStart = time.time()
 
 # Pre experiments.
 try:
@@ -29,3 +32,6 @@ except:
     print("Pre experiments script didn't run successfully.")
 
 
+totalStop =time.time()
+totalElapsed = totalStop - totalStart
+print("Total time for script all to one: %f seconds" %totalElapsed)

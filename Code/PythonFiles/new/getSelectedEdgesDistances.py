@@ -43,7 +43,7 @@ def writeSelectedEdgesDistances(edgesDistances, policy, kind):
             for targetNode in edgesDistances[sourceNode]:
                 if (sourceNode, targetNode) in selectedEdges:
                     fileOne.write("%d\t%d\t%d\n" %(sourceNode, targetNode,
-                                edgesDistances[sourceNode][targetNode])
+                                edgesDistances[sourceNode][targetNode]) )
 
 # ---------------------------------------------------------------
 # Start timing.
