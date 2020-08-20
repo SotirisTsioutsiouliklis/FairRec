@@ -58,6 +58,7 @@ startTime = time.time()
 randomNodes = np.loadtxt('randomSourceNodes.txt', skiprows= 1, dtype= int)
 bestRedNodes = np.loadtxt('redBestSourceNodes.txt', skiprows= 1, dtype= int)
 bestBlueNodes = np.loadtxt('blueBestSourceNodes.txt', skiprows= 1, dtype= int)
+nodes = np.concatenate((randomNodes, bestRedNodes, bestBlueNodes) )  
 
 # Convert to sets for fast searching.
 sourceNodes = set(np.concatenate((randomNodes, bestRedNodes, bestBlueNodes) ) )
@@ -76,7 +77,6 @@ ellapsedTime = stopTime - startTime
 with open("edgeScoresSeparationTiming.txt", "w") as fileOne:
     fileOne.write("Edges' scores separation time: %f seconds" %ellapsedTime)
 
-# Remove add hoch files. 
-nodes = np.concatenate((randomNodes, bestRedNodes, bestBlueNodes) )         
+# Remove add hoch files.        
 for node in nodes:
     subprocess.call(['rm %dedgeFairnessScores.txt' %node], cwd='.', shell=True)

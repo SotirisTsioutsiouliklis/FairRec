@@ -508,100 +508,145 @@ int main() {
     std::cout << "Read edges scores...\n";
     getEdgeScores(candidateEdges);
 
+    auto start = std::chrono::high_resolution_clock::now();
     // Find 10 best by node2vec edges for each source node.
     std::cout << "Get best by node2vec...\n";
     getBestNode2vec(candidateEdges, newEdges, numberOfSources, numberOfEdges);// In order to be added.
     // Add edges.
     std::cout << "Add node2vec edges...\n";
     addEdges(algs, g, newEdges, numberOfEdges, numberOfSources, "ByNode2vec");
+    auto stop = std::chrono::high_resolution_clock::now();
+    auto node2vecTime = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+
     // Remove edges.
     std::cout << "Remove new edges...\n";
     removeEdges(g, newEdges);
     // Clear edge list.
     newEdges.clear();
 
+    start = std::chrono::high_resolution_clock::now();
     // Find 10 best by resource allocation edges for each source node.
     std::cout << "Get best by resource allocation...\n";
     getBestResAlloc(candidateEdges, newEdges, numberOfSources, numberOfEdges);// In order to be added.
     // Add edges.
     std::cout << "Add resource allocation edges...\n";
     addEdges(algs, g, newEdges, numberOfEdges, numberOfSources, "ByResourceAllocation");
+    stop = std::chrono::high_resolution_clock::now();
+    auto resAlocTime = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+
     // Remove edges.
     std::cout << "Remove new edges...\n";
     removeEdges(g, newEdges);
     // Clear edge list.
     newEdges.clear();
 
+    start = std::chrono::high_resolution_clock::now();
     // Find 10 best by jaccard coefficient edges for each source node.
     std::cout << "Get best by Jaccard coefficient...\n";
     getBestJacCo(candidateEdges, newEdges, numberOfSources, numberOfEdges);// In order to be added.
     // Add edges.
     std::cout << "Add jaccard coefficient edges...\n";
     addEdges(algs, g, newEdges, numberOfEdges, numberOfSources, "ByJaccardCoefficient");
+    stop = std::chrono::high_resolution_clock::now();
+    auto jacCoefTime = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+
     // Remove edges.
     std::cout << "Remove new edges...\n";
     removeEdges(g, newEdges);
     // Clear edge list.
     newEdges.clear();
 
+    start = std::chrono::high_resolution_clock::now();
     // Find 10 best by preferential attachment edges for each source node.
     std::cout << "Get best by preferencial attachment...\n";
     getBestPrefAt(candidateEdges, newEdges, numberOfSources, numberOfEdges);// In order to be added.
     // Add edges.
     std::cout << "Add prefferencial attachment edges...\n";
     addEdges(algs, g, newEdges, numberOfEdges, numberOfSources, "ByPreferencialAttachment");
+    stop = std::chrono::high_resolution_clock::now();
+    auto prefAttTime = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+
     // Remove edges.
     std::cout << "Remove new edges...\n";
     removeEdges(g, newEdges);
     // Clear edge list.
     newEdges.clear();
 
+    start = std::chrono::high_resolution_clock::now();
     // Find 10 best by Adamic Adar edges for each source node.
     std::cout << "Get best by Adamic Adar...\n";
     getBestAdamAdar(candidateEdges, newEdges, numberOfSources, numberOfEdges);// In order to be added.
     // Add edges.
     std::cout << "Add Adamic Adar edges...\n";
     addEdges(algs, g, newEdges, numberOfEdges, numberOfSources, "ByAdamicAdar");
+    stop = std::chrono::high_resolution_clock::now();
+    auto adamicAdarTime = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+
     // Remove edges.
     std::cout << "Remove new edges...\n";
     removeEdges(g, newEdges);
     // Clear edge list.
     newEdges.clear();
 
+    start = std::chrono::high_resolution_clock::now();
     // Find 10 best by maximum gain edges for each source node.
     std::cout << "Get best by Gain...\n";
     getBestGain(candidateEdges, newEdges, numberOfSources, numberOfEdges);// In order to be added.
     // Add edges.
     std::cout << "Add Gain edges...\n";
     addEdges(algs, g, newEdges, numberOfEdges, numberOfSources, "ByGain");
+    stop = std::chrono::high_resolution_clock::now();
+    auto gainTime = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+
     // Remove edges.
     std::cout << "Remove new edges...\n";
     removeEdges(g, newEdges);
     // Clear edge list.
     newEdges.clear();
 
+    start = std::chrono::high_resolution_clock::now();
     // Find 10 best by maximum expected gain edges for each source node.
     std::cout << "Get best by Exp Gain...\n";
     getBestExpGain(candidateEdges, newEdges, numberOfSources, numberOfEdges);// In order to be added.
     // Add edges.
     std::cout << "Add Exp Gain edges...\n";
     addEdges(algs, g, newEdges, numberOfEdges, numberOfSources, "ByExpGain");
+    stop = std::chrono::high_resolution_clock::now();
+    auto expGainTime = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+
     // Remove edges.
     std::cout << "Remove new edges...\n";
     removeEdges(g, newEdges);
     // Clear edge list.
     newEdges.clear();
+
+    start = std::chrono::high_resolution_clock::now();
     // Find 10 best by random proposed edges for each source node.
     std::cout << "Get random...\n";
     getRandomEdges(candidateEdges, newEdges, numberOfSources, numberOfEdges);// In order to be added.
     // Add edges.
     std::cout << "Add random edges...\n";
     addEdges(algs, g, newEdges, numberOfEdges, numberOfSources, "ByRandom");
+    stop = std::chrono::high_resolution_clock::now();
+    auto randomTime = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+
     // Remove edges.
     std::cout << "Remove new edges...\n";
     removeEdges(g, newEdges);
     // Clear edge list.
     newEdges.clear();
+
+    //Save time logs.
+    std::ofstream timeFile("experimentOneTiming.txt");
+
+    timeFile << "Node@vec time: " << node2vecTime << " microseconds\n"
+            << "Resource allocation time: " << resAlocTime << " microseconds\n"
+            << "Jaccard coefficient time: " << jacCoefTime << " microseconds\n"
+            << "Prefferential attachment time: " << prefAttTime << " microseconds\n"
+            << "Adamic Addar time: " << adamicAdarTime << " microseconds\n"
+            << "Gain time(fast greedy): " << gainTime << " microseconds\n"
+            << "Expected gain time: " << expGainTime << " microseconds\n"
+            << "Random time: " << randomTime << " microseconds\n";
 
     return 0;
 }

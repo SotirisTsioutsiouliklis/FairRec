@@ -17,10 +17,11 @@ def getCandidateEdgesDistances(kind):
             key = int(info[0])
             val = int(info[1])
             dis = int(info[2])
-            path = int(info[3])
+            #path = int(info[3])
             if key not in edgesDistances:
                 edgesDistances[key] = dict()
-            edgesDistances[key][val] = (dis, path)
+            #edgesDistances[key][val] = (dis, path)
+            edgesDistances[key][val] = dis
 
     return edgesDistances
 
@@ -37,12 +38,12 @@ def writeSelectedEdgesDistances(edgesDistances, policy, kind):
 
     # Write selected edges by policy and kind.
     with open("selectedEdgesBy%s%sSourcesDistances.txt" %(policy, kind), "w") as fileOne:
-        fileOne.write("source\ttarget\tdistance\tpathLength\n")
+        fileOne.write("source\ttarget\tdistance\n")
         for sourceNode in edgesDistances:
             for targetNode in edgesDistances[sourceNode]:
                 if (sourceNode, targetNode) in selectedEdges:
-                    fileOne.write("%d\t%d\t%d\t%d\n" %(sourceNode, targetNode,
-                                edgesDistances[sourceNode][targetNode][0], edgesDistances[sourceNode][targetNode][1]) )
+                    fileOne.write("%d\t%d\t%d\n" %(sourceNode, targetNode,
+                                edgesDistances[sourceNode][targetNode])
 
 # ---------------------------------------------------------------
 # Start timing.
