@@ -3,7 +3,7 @@
 import subprocess
 
 sizes = [0.5]
-homophilies = [0.7]
+homophilies = [0.9]
 
 for size in sizes:
     for homophily in homophilies:
