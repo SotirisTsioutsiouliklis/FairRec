@@ -89,7 +89,7 @@ try:
     fileOne.close()
 except:
     try:
-        fileOne = open("edgeRecSCores.txt", "r")
+        fileOne = open("edgeRecScores.txt", "r")
         fileOne.close()
     except:
         try:
@@ -99,7 +99,7 @@ except:
             print('Get edge fairness scores...')
             subprocess.call(['cp ~/Workspace/FairRec/Code/CppFiles/getEdgeFairnessScore.out .'], cwd= ".", shell= True)
             subprocess.call(['./getEdgeFairnessScore.out'], cwd= ".", shell= True)
-print('Edge fairnes scores are ready.')
+print('Edge fairness scores are ready.')
 stopTime = time.time()
 getFairnessScoresTime = stopTime - startTime
 
