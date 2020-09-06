@@ -5,7 +5,7 @@ It ensures that in each dataset exist all the files that we need
 multiple times andneed time. Then it runstheexperiments.
 """
 import subprocess
-subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/fairRec.py .'], cwd= ".", shell= True)
+subprocess.call(['cp /mnt/sdb1/tsiou/FairRec/Code/PythonFiles/new/fairRec.py .'], cwd= ".", shell= True)
 import fairRec as fr
 import sys 
 import pickle
@@ -18,7 +18,7 @@ try:
     fileOne.close()
 except:
     print("Pagerank calculation...")
-    subprocess.call(['cp ~/Workspace/FairRec/Code/CppFiles/getPagerank.out .'], cwd= ".", shell= True)
+    subprocess.call(['cp /mnt/sdb1/tsiou/FairRec/Code/CppFiles/getPagerank.out .'], cwd= ".", shell= True)
     subprocess.call(['./getPagerank.out'], cwd= ".", shell= True)
 print('Pagerank is ready.')
 stopTime = time.time()
@@ -31,7 +31,7 @@ try:
     fileOne.close()
 except:
     print("Red absorbing probs calculation...")
-    subprocess.call(['cp ~/Workspace/FairRec/Code/CppFiles/absorbingProbs.out .'], cwd= ".", shell= True)
+    subprocess.call(['cp /mnt/sdb1/tsiou/FairRec/Code/CppFiles/absorbingProbs.out .'], cwd= ".", shell= True)
     subprocess.call(['./absorbingProbs.out -r'], cwd= ".", shell= True)
 print('Reb absorbing probs are ready.')
 stopTime = time.time()
@@ -55,7 +55,7 @@ try:
     fileOne.close()
 except:
     print('Calculate node embeddings...')
-    subprocess.call(['cp ~/Workspace/snap/examples/node2vec/node2vec .'], cwd= ".", shell= True)
+    subprocess.call(['cp /mnt/sdb1/tsiou/snap/examples/node2vec/node2vec .'], cwd= ".", shell= True)
     subprocess.call(['./node2vec -i:out_graph.edgelist -o:out_nodeEmbeddings.txt -l:3 -d:128 -p:0.3 -dr -v'], cwd= ".", shell= True)
 print('Node embeddings are ready.')
 stopTime = time.time()
@@ -72,7 +72,7 @@ try:
     fileOne.close()
 except:
     print('Get source nodes...')
-    subprocess.call(['cp ~/Workspace/FairRec/Code/CppFiles/getSourceNodes.out .'], cwd= ".", shell= True)
+    subprocess.call(['cp /mnt/sdb1/tsiou/FairRec/Code/CppFiles/getSourceNodes.out .'], cwd= ".", shell= True)
     subprocess.call(['./getSourceNodes.out'], cwd= ".", shell= True)
 print('Source nodes are ready.')
 stopTime = time.time()
@@ -97,7 +97,7 @@ except:
             fileOne.close()
         except:
             print('Get edge fairness scores...')
-            subprocess.call(['cp ~/Workspace/FairRec/Code/CppFiles/getEdgeFairnessScore.out .'], cwd= ".", shell= True)
+            subprocess.call(['cp /mnt/sdb1/tsiou/FairRec/Code/CppFiles/getEdgeFairnessScore.out .'], cwd= ".", shell= True)
             subprocess.call(['./getEdgeFairnessScore.out'], cwd= ".", shell= True)
 print('Edge fairness scores are ready.')
 stopTime = time.time()
@@ -119,7 +119,7 @@ else:
         fileOne.close()
         # Separate edges.
         print("Edges scores have been calculated all together. Separate edges scores...")
-        subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/separateEdgesScores.py .'], cwd= ".", shell= True)
+        subprocess.call(['cp /mnt/sdb1/tsiou/FairRec/Code/PythonFiles/new/separateEdgesScores.py .'], cwd= ".", shell= True)
         subprocess.call(['python3 separateEdgesScores.py'], cwd= ".", shell= True)
         subprocess.call(['rm edgeRecScores.txt'], cwd= ".", shell= True)
     except:
@@ -128,7 +128,7 @@ else:
             fileOne.close()
         except:
             print('Get edge scores...')
-            subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/getEdgesScores.py .'], cwd= ".", shell= True)
+            subprocess.call(['cp /mnt/sdb1/tsiou/FairRec/Code/PythonFiles/new/getEdgesScores.py .'], cwd= ".", shell= True)
             subprocess.call(['python3 getEdgesScores.py'], cwd= ".", shell= True)
 print('Edges scores are ready.')
 stopTime = time.time()
@@ -140,7 +140,7 @@ try:
     fileOne = open('edgesDistancesRandomSources.txt', 'r')
 except:
     print('Calculate edge distances...')
-    subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/getEdgesDistances.py .'], cwd= ".", shell= True)
+    subprocess.call(['cp /mnt/sdb1/tsiou/FairRec/Code/PythonFiles/new/getEdgesDistances.py .'], cwd= ".", shell= True)
     subprocess.call(['python3 getEdgesDistances.py'], cwd= ".", shell= True)
 print("Edges distances are ready.")
 stopTime = time.time()
@@ -153,7 +153,7 @@ try:
     fileOne.close()
 except:
     print('Calculate Networks quality features...')
-    subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/getNetworksQualityFeatures.py .'], cwd= ".", shell= True)
+    subprocess.call(['cp /mnt/sdb1/tsiou/FairRec/Code/PythonFiles/new/getNetworksQualityFeatures.py .'], cwd= ".", shell= True)
     subprocess.call(['python3 getNetworksQualityFeatures.py'], cwd= ".", shell= True)
 print('Networks quality features ready.')
 stopTime = time.time()
@@ -166,7 +166,7 @@ try:
     fileOne.close()
 except:
     print('Calculate groups quality features...')
-    subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/getGroupsQualityFeatures.py .'], cwd= ".", shell= True)
+    subprocess.call(['cp /mnt/sdb1/tsiou/FairRec/Code/PythonFiles/new/getGroupsQualityFeatures.py .'], cwd= ".", shell= True)
     subprocess.call(['python3 getGroupsQualityFeatures.py'], cwd= ".", shell= True)
 print('Groups quality features are ready.')
 stopTime = time.time()
@@ -179,7 +179,7 @@ try:
     fileOne.close()
 except:
     print('Calculate nodes quality features...')
-    subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/getNodesQualityFeatures.py .'], cwd= ".", shell= True)
+    subprocess.call(['cp /mnt/sdb1/tsiou/FairRec/Code/PythonFiles/new/getNodesQualityFeatures.py .'], cwd= ".", shell= True)
     subprocess.call(['python3 getNodesQualityFeatures.py'], cwd= ".", shell= True)
 print('Nodes quality features are ready.')
 stopTime = time.time()

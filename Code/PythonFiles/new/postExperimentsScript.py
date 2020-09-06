@@ -5,7 +5,7 @@ It ensures that in each dataset exist all the files that we need
 multiple times andneed time. Then it runstheexperiments.
 """
 import subprocess
-subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/fairRec.py .'], cwd= ".", shell= True)
+subprocess.call(['cp /mnt/sdb1/tsiou/FairRec/Code/PythonFiles/new/fairRec.py .'], cwd= ".", shell= True)
 import fairRec as fr
 import sys 
 import pickle
@@ -18,7 +18,7 @@ try:
     fileOne.close()
 except:
     print('Calculate selected edges distances...')
-    subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/getSelectedEdgesDistances.py .'], cwd= ".", shell= True)
+    subprocess.call(['cp /mnt/sdb1/tsiou/FairRec/Code/PythonFiles/new/getSelectedEdgesDistances.py .'], cwd= ".", shell= True)
     subprocess.call(['python3 getSelectedEdgesDistances.py'], cwd= ".", shell= True)
 print("Selected edges distances ready.")
 stopTime = time.time()

@@ -639,14 +639,16 @@ int main() {
     //Save time logs.
     std::ofstream timeFile("experimentOneTiming.txt");
 
-    timeFile << "Node@vec time: " << node2vecTime << " microseconds\n"
-            << "Resource allocation time: " << resAlocTime << " microseconds\n"
-            << "Jaccard coefficient time: " << jacCoefTime << " microseconds\n"
-            << "Prefferential attachment time: " << prefAttTime << " microseconds\n"
-            << "Adamic Addar time: " << adamicAdarTime << " microseconds\n"
-            << "Gain time(fast greedy): " << gainTime << " microseconds\n"
-            << "Expected gain time: " << expGainTime << " microseconds\n"
-            << "Random time: " << randomTime << " microseconds\n";
+    timeFile << "Node@vec time: " << node2vecTime.count() << " microseconds\n"
+            << "Resource allocation time: " << resAlocTime.count() << " microseconds\n"
+            << "Jaccard coefficient time: " << jacCoefTime.count() << " microseconds\n"
+            << "Prefferential attachment time: " << prefAttTime.count() << " microseconds\n"
+            << "Adamic Addar time: " << adamicAdarTime.count() << " microseconds\n"
+            << "Gain time(fast greedy): " << gainTime.count() << " microseconds\n"
+            << "Expected gain time: " << expGainTime.count() << " microseconds\n"
+            << "Random time: " << randomTime.count() << " microseconds\n";
+        
+    timeFile.close();
 
     return 0;
 }

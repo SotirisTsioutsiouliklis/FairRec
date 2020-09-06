@@ -11,14 +11,14 @@ totalStart = time.time()
 
 # Pre experiments.
 try:
-    subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/preExperimentsScript.py .'], cwd= ".", shell= True)
+    subprocess.call(['cp /mnt/sdb1/tsiou/FairRec/Code/PythonFiles/new/preExperimentsScript.py .'], cwd= ".", shell= True)
     subprocess.call(['python3 preExperimentsScript.py'], cwd= ".", shell= True)
 except:
     print("Pre experiments script didn't run successfully.")
     
 # Experiments.
 try:
-    subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/experimentsScript.py .'], cwd= ".", shell= True)
+    subprocess.call(['cp /mnt/sdb1/tsiou/FairRec/Code/PythonFiles/new/experimentsScript.py .'], cwd= ".", shell= True)
     subprocess.call(['python3 experimentsScript.py'], cwd= ".", shell= True)
 except:
     print("Experiments script didn't run successfully.")
@@ -26,7 +26,7 @@ except:
 # Post experiments.
 # Pre experiments.
 try:
-    subprocess.call(['cp ~/Workspace/FairRec/Code/PythonFiles/new/postExperimentsScript.py .'], cwd= ".", shell= True)
+    subprocess.call(['cp /mnt/sdb1/tsiou/FairRec/Code/PythonFiles/new/postExperimentsScript.py .'], cwd= ".", shell= True)
     subprocess.call(['python3 postExperimentsScript.py'], cwd= ".", shell= True)
 except:
     print("Pre experiments script didn't run successfully.")
