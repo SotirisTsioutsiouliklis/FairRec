@@ -72,7 +72,7 @@ def getGroupHomphily(graph):
     crossEdgesRatioFromRed = crossEdgesFromRed / allEdgesFromRed
     crossEdgesRatioFromBlue = crossEdgesFromBlue / allEdgesFromBlue
     expectedCrossEdgesFromRed = blueRatio
-    expectedCrossEdgesFromBlue = redRatio 
+    expectedCrossEdgesFromBlue = redRatio
 
     groupHomophilies = (crossEdgesRatioFromBlue / expectedCrossEdgesFromBlue, crossEdgesRatioFromRed / expectedCrossEdgesFromRed)
 
