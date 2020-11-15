@@ -41,35 +41,6 @@ public:
 
 	void sort_pagerank_vector(pagerank_v &pagerank);
 
-	/**
-     * A greedy algorithm to add edges to a graph in
-     * order to maximize red pagerank ratio. It adds k edges to a single
-     * source of the graph based on formula of the FairRec paper.
-     * 
-     * Creates two files:
-     *      1. "<sourceNode>RedPagerankGreedy.txt": Red ratio of pagerank
-     *          per edge added.
-     *      2. "<sourceNode>edgesGreedy.txt": Edges that added to graph.
-     * 
-     * @param sourceNode (int): The source node for the edges.
-     * @param numberOfEdges (int): The number of edges to add.
-    */
-    void getGreedySingleSource(int sourceNode, int numberOfEdges);
-	/**
-     * The "fast greedy" algorithm described in fairRec paper to add edges
-     * to a graph in order to maximize red pagerank ratio. It adds k edges
-     * to a single source of the graph based on formula of the FairRec
-     * paper.
-     *
-     * Creates two files:
-     *      1. "<sourceNode>RedPagerankGreedy.txt": Red ratio of pagerank per edge
-     *          added.
-     *      2. "<sourceNode>edgesGreedy.txt": Edges that added to graph.
-     * 
-     * @param sourceNode (int): The source node for the edges.
-     * @param numberOfEdges (int): The number of edges to add.
-    */
-    void getFastGreedySingleSource(int sourceNode, int numberOfEdges);
 	// Save various vectors.
     static void saveVector(std::string fileName, pagerank_v &logVector);
     static void saveVector(std::string fileName, std::vector<int> &logVector);
