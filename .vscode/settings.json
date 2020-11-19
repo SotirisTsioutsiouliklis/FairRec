@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "cstring": "cpp",
+        "vector": "cpp",
+        "istream": "cpp",
+        "chrono": "cpp"
+    }
+}

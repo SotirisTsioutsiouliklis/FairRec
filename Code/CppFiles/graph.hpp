@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+using namespace std;
+
 struct edge {
     int source;
     int target;
@@ -27,10 +29,10 @@ struct recEdge {
 };
 
 typedef struct {
-	std::vector<int> out_neighbors;
-	std::vector<int> in_neighbors;
-	std::vector<int> in_neighbors_per_community; // we need this just for printing
-	std::vector<int> out_neighbors_per_community;
+	vector<int> out_neighbors;
+	vector<int> in_neighbors;
+	vector<int> in_neighbors_per_community; // we need this just for printing
+	vector<int> out_neighbors_per_community;
 	int out_degree;
 	int community;
 } node_t;
@@ -47,12 +49,12 @@ typedef struct {
 } node_topk;
 
 typedef struct {
-	std::vector<int> nodes;
+	vector<int> nodes;
 	int community_id;
 } community_t;
 
 typedef struct {
-	std::vector<int> nodes;
+	vector<int> nodes;
 	int attribute_id;
 } attribute_t;
 
@@ -63,21 +65,23 @@ typedef struct pagerank_s {
 	bool operator < (const struct pagerank_s &other) {return (pagerank > other.pagerank);} /* to sort in descending order */
 } pagerank_t;
 
-typedef std::vector<pagerank_t> pagerank_v;
+typedef vector<pagerank_t> pagerank_v;
 
 class graph
 {
 public:
-	graph(const std::string &graph_filename, const std::string &com_filename);
+	graph(const string &graph_filename, const string &com_filename);
 	/* ~graph(); */
 
-	void load_attributes(const std::string &attribute_filename);
+	void load_attributes(const string &attribute_filename);
 
-	void load_community_percentage(const std::string &percentage_filename);
+	void load_community_percentage(const string &percentage_filename);
 	double get_community_percentage(const int community) const;
 
 	void add_edge(const int src_node, const int dest_node);
+	void add_edges(vector<recEdge> &edges);
 	void remove_edge(const int src_node, const int dest_node);
+	void remove_edges(vector<recEdge> &edges);
 
 	int get_num_nodes() const {return nnodes;}
 	int get_num_edges() const {return nedges;}
@@ -88,19 +92,19 @@ public:
 	int get_community(const int node) const ;
 	int count_in_neighbors_with_community(const int node_id, const int target_community);
 	int count_out_neighbors_with_community(const int node_id, const int target_community);
-	const std::vector<int> &get_out_neighbors(int node_id) const;
-	const std::vector<int> &get_in_neighbors(int node_id) const;
-	std::vector<double> get_pagerank_per_community(pagerank_v pagerankv) const;
+	const vector<int> &get_out_neighbors(int node_id) const;
+	const vector<int> &get_in_neighbors(int node_id) const;
+	vector<double> get_pagerank_per_community(pagerank_v pagerankv) const;
 	community_t *get_communities();
 	int get_community_size(const int community_id);
 
-	std::vector<int> &get_nodes_with_attribute(const int attribute_id);
+	vector<int> &get_nodes_with_attribute(const int attribute_id);
 
 private:
 
-	void load_graph(const std::string &graph_filename);
-	void load_num_nodes(const std::string &graph_filename);
-	void load_communities(const std::string &com_filename);
+	void load_graph(const string &graph_filename);
+	void load_num_nodes(const string &graph_filename);
+	void load_communities(const string &com_filename);
 
 	int nnodes;
 	int nedges;
@@ -108,7 +112,7 @@ private:
 
 	int ncommunities;
 	community_t *communities;
-	std::vector<double> comm_percentage; // pagerank percentage each community should get
+	vector<double> comm_percentage; // pagerank percentage each community should get
 
 	int nattributes; // for personalization
 	attribute_t *attributes;
