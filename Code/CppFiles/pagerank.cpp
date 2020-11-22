@@ -259,8 +259,7 @@ pagerank_v pagerank_algorithms::getObjectiveValues(int sourceNode) {
         }
         nominatorConst *= (1 / (float)sourceOutDegree);
     } else {
-        for (int nei = 0; nei < numberOfNodes; nei++) {
-            neighbor = nei;
+        for (int neighbor = 0; neighbor < numberOfNodes; neighbor++) {
             nominatorConst += redAbsorbingProbs[neighbor].pagerank;
         }
         nominatorConst *= (1 / (float)numberOfNodes);
@@ -274,8 +273,7 @@ pagerank_v pagerank_algorithms::getObjectiveValues(int sourceNode) {
         }
         denominatorConst *= (1 / (float)sourceOutDegree);
     } else {
-        for (int nei = 0; nei < numberOfNodes; nei++) {
-            neighbor = nei;
+        for (int neighbor = 0; neighbor < numberOfNodes; neighbor++) {
             denominatorConst += sourceAbsorbingProbs[neighbor].pagerank;
         }
         denominatorConst *= (1 / (float)numberOfNodes);
@@ -302,22 +300,19 @@ pagerank_v pagerank_algorithms::getObjectiveValues(int sourceNode) {
     return objectiveValues;
 }
 
-/**
- * 
-
 pagerank_v pagerank_algorithms::getDeletionObjectiveValues(int sourceNode) {
     // Declare local variables.
     pagerank_v objectiveValues, rankVector, redAbsorbingProbs, sourceAbsorbingProbs;
 	pagerank_t oldEdge;
-    std::vector<int> neighbors, restNeighbors;
+    vector<int> neighbors, restNeighbors;
     double redPagerank, nominatorConst, denominatorConst, objectiveNominator, objectiveDenominator, tempRedPagerank;
     const double jumpProb = 0.15;
     int sourceOutDegree, neighbor;
     const int numberOfNodes = g.get_num_nodes();
-    objectiveValues.resize(numberOfNodes);
 
     // Get source out degree.
     sourceOutDegree = g.get_out_degree(sourceNode);
+
     // Run pagerank.
     rankVector = get_pagerank();
     // Get red pagerank.
@@ -328,67 +323,44 @@ pagerank_v pagerank_algorithms::getDeletionObjectiveValues(int sourceNode) {
     sourceAbsorbingProbs = get_node_abs_prob(sourceNode);
     // Get source neighbors.
     neighbors = g.get_out_neighbors(sourceNode);
-	if (sourceOutDegree = 1) {
-		// After deleting that edge all the nodes assumed to be his neighbors.
-		// Can't but recalculate pagerank.
-		g.remove_edge(sourceNode, neighbors[0]);
-		tempRedPagerank = g.get_pagerank_per_community(get_pagerank() )[1];
-		g.add_edge(sourceNode, neighbors[0]);
-		oldEdge.node_id = neighbors[0];
-		oldEdge.pagerank = tempRedPagerank - redPagerank;
-	} else {
-		for (int nei = 0; nei < sourceOutDegree; nei++) {
+	if (sourceOutDegree > 1) { // Required for W.C.C.
+		for (int nei : neighbors) {
+			if (g.get_in_degree(nei) == 1) continue; // Required for W.C.C.
+			
+			// Get average Red pagerank of neighbors for nominator.
+			nominatorConst = 0;
 
-		}
-	}
-
-	for (int nei : neighbors) {
-		// Get average Red pagerank of neighbors for nominator.
-		nominatorConst = 0;
-
-		if (sourceOutDegree > 0) {
 			for (int nei = 0; nei < sourceOutDegree; nei++) {
 				neighbor = neighbors[nei];
 				nominatorConst += redAbsorbingProbs[neighbor].pagerank;
 			}
 			nominatorConst *= (1 / (float)sourceOutDegree);
-		} else {
-			for (int nei = 0; nei < numberOfNodes; nei++) {
-				neighbor = nei;
-				nominatorConst += redAbsorbingProbs[neighbor].pagerank;
-			}
-			nominatorConst *= (1 / (float)numberOfNodes);
-		}
-		// Get average Source pagerank of neighbors for denominator.
-		denominatorConst = 0;
-		if (sourceOutDegree > 0) {
+
+			// Get average Source pagerank of neighbors for denominator.
+			denominatorConst = 0;
+
 			for (int nei = 0; nei < sourceOutDegree; nei++) {
 				neighbor = neighbors[nei];
 				denominatorConst += sourceAbsorbingProbs[neighbor].pagerank;
 			}
 			denominatorConst *= (1 / (float)sourceOutDegree);
-		} else {
-			for (int nei = 0; nei < numberOfNodes; nei++) {
-				neighbor = nei;
-				denominatorConst += sourceAbsorbingProbs[neighbor].pagerank;
+
+			// Calculate the Quantity. Not just the important part but
+			// all so as to have a sanity check.
+			// For all nodes.
+			pagerank_t tempNode;
+			for (int targetNode = 0; targetNode < numberOfNodes; targetNode++) {
+				// Calculate nominator.
+				objectiveNominator = nominatorConst - redAbsorbingProbs[targetNode].pagerank;
+				objectiveNominator *= ((1 - jumpProb) / jumpProb);
+				// Calculate denominator.
+				objectiveDenominator = denominatorConst - sourceAbsorbingProbs[targetNode].pagerank;
+				objectiveDenominator *= ((1 - jumpProb) / jumpProb);
+				objectiveDenominator = sourceOutDegree - 1 - objectiveDenominator;
+				tempNode.node_id = targetNode;
+				tempNode.pagerank = redPagerank + rankVector[sourceNode].pagerank * (objectiveNominator / objectiveDenominator);
+				objectiveValues.push_back(tempNode);
 			}
-			denominatorConst *= (1 / (float)numberOfNodes);
-		}
-		// Calculate the Quantity. Not just the important part but
-		// all so as to have a sanity check.
-		// For all nodes.
-		for (int targetNode = 0; targetNode < numberOfNodes; targetNode++) {
-			// Calculate nominator.
-			objectiveNominator = redAbsorbingProbs[targetNode].pagerank - nominatorConst;
-			objectiveNominator *= ((1 - jumpProb) / jumpProb);
-			// Calculate denominator.
-			objectiveDenominator = sourceAbsorbingProbs[targetNode].pagerank - denominatorConst;
-			objectiveDenominator *= ((1 - jumpProb) / jumpProb);
-			objectiveDenominator = sourceOutDegree + 1 - objectiveDenominator;
-			objectiveValues[targetNode].node_id = targetNode;
-			objectiveValues[targetNode].pagerank = redPagerank + rankVector[sourceNode].pagerank * (objectiveNominator / objectiveDenominator);
-			// Theory check print.
-			if (objectiveDenominator < 0) std::cout << "!!!NEGATIVE DENOMINATOR!!!\n";
 		}
 
 	}
@@ -398,7 +370,7 @@ pagerank_v pagerank_algorithms::getDeletionObjectiveValues(int sourceNode) {
 
     return objectiveValues;
 }
-*/
+
 
 void pagerank_algorithms::sort_pagerank_vector(pagerank_v &pagerank)
 {
