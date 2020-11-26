@@ -52,9 +52,5 @@ int main()
         }
     }
 
-    // Save edge scores.
-    saveVector("deletion_scores_predicted.txt", predictedEdges);
-    saveVector("deletion_scores_actual.txt", actuallEdges);
-
     return 0;
 }
