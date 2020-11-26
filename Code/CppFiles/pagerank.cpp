@@ -387,21 +387,18 @@ pagerank_v pagerank_algorithms::getDeletionObjectiveValues(int sourceNode)
 		// Get average Source pagerank of neighbors for denominator.
 		denominatorConst = 0;
 
-		for (int nei : neighbors)
+		for (int nei = 0; nei < sourceOutDegree; nei++)
 		{
-
-			for (int nei = 0; nei < sourceOutDegree; nei++)
-			{
-				neighbor = neighbors[nei];
-				nominatorConst += redAbsorbingProbs[neighbor].pagerank;
-			}
-
-			for (int nei = 0; nei < sourceOutDegree; nei++)
-			{
-				neighbor = neighbors[nei];
-				denominatorConst += sourceAbsorbingProbs[neighbor].pagerank;
-			}
+			neighbor = neighbors[nei];
+			nominatorConst += redAbsorbingProbs[neighbor].pagerank;
 		}
+
+		for (int nei = 0; nei < sourceOutDegree; nei++)
+		{
+			neighbor = neighbors[nei];
+			denominatorConst += sourceAbsorbingProbs[neighbor].pagerank;
+		}
+
 		nominatorConst *= (1 / (float)sourceOutDegree);
 		denominatorConst *= (1 / (float)sourceOutDegree);
 
