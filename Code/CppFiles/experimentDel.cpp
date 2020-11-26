@@ -34,7 +34,7 @@ int main()
     edge_file_act << "Source\tTarget\tExpected Fairness\n";
 
     // For every source nodes.
-    for (int node = 0; node < 1; node++) {
+    for (int node = 0; node < numberOfNodes; node++) {
         // Get scores for out edges.
         tempEdges = algs.getDeletionObjectiveValues(node);
         // Log edges and scores.
