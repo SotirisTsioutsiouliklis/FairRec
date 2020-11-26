@@ -9,6 +9,8 @@
 #include "pagerank.hpp"
 #include <stdlib.h>
 
+using namespace std;
+
 pagerank_algorithms::pagerank_algorithms(graph &g) : g(g), is_cache_valid(false)
 {
 	// nothing to do here
@@ -303,9 +305,8 @@ pagerank_v pagerank_algorithms::getObjectiveValues(int sourceNode) {
 pagerank_v pagerank_algorithms::getDeletionObjectiveValues(int sourceNode) {
     // Declare local variables.
     pagerank_v objectiveValues, rankVector, redAbsorbingProbs, sourceAbsorbingProbs;
-	pagerank_t oldEdge;
     vector<int> neighbors, restNeighbors;
-    double redPagerank, nominatorConst, denominatorConst, objectiveNominator, objectiveDenominator, tempRedPagerank;
+    double redPagerank, nominatorConst, denominatorConst, objectiveNominator, objectiveDenominator;
     const double jumpProb = 0.15;
     int sourceOutDegree, neighbor;
     const int numberOfNodes = g.get_num_nodes();
