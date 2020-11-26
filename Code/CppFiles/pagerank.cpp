@@ -366,7 +366,6 @@ pagerank_v pagerank_algorithms::getDeletionObjectiveValues(int sourceNode)
 	double redPagerank, nominatorConst, denominatorConst, objectiveNominator, objectiveDenominator;
 	const double jumpProb = 0.15;
 	int sourceOutDegree, neighbor;
-	const int numberOfNodes = g.get_num_nodes();
 
 	// Get source out degree.
 	sourceOutDegree = g.get_out_degree(sourceNode);
@@ -383,27 +382,27 @@ pagerank_v pagerank_algorithms::getDeletionObjectiveValues(int sourceNode)
 	neighbors = g.get_out_neighbors(sourceNode);
 	if (sourceOutDegree > 1)
 	{ // Required for W.C.C.
-		if (g.get_in_degree(nei) == 1)
-			continue; // Required for W.C.C.
-
 		// Get average Red pagerank of neighbors for nominator.
 		nominatorConst = 0;
-
-		for (int nei = 0; nei < sourceOutDegree; nei++)
-		{
-			neighbor = neighbors[nei];
-			nominatorConst += redAbsorbingProbs[neighbor].pagerank;
-		}
-		nominatorConst *= (1 / (float)sourceOutDegree);
-
 		// Get average Source pagerank of neighbors for denominator.
 		denominatorConst = 0;
 
-		for (int nei = 0; nei < sourceOutDegree; nei++)
+		for (int nei : neighbors)
 		{
-			neighbor = neighbors[nei];
-			denominatorConst += sourceAbsorbingProbs[neighbor].pagerank;
+
+			for (int nei = 0; nei < sourceOutDegree; nei++)
+			{
+				neighbor = neighbors[nei];
+				nominatorConst += redAbsorbingProbs[neighbor].pagerank;
+			}
+
+			for (int nei = 0; nei < sourceOutDegree; nei++)
+			{
+				neighbor = neighbors[nei];
+				denominatorConst += sourceAbsorbingProbs[neighbor].pagerank;
+			}
 		}
+		nominatorConst *= (1 / (float)sourceOutDegree);
 		denominatorConst *= (1 / (float)sourceOutDegree);
 
 		// Calculate the Quantity. Not just the important part but
@@ -412,6 +411,8 @@ pagerank_v pagerank_algorithms::getDeletionObjectiveValues(int sourceNode)
 		pagerank_t tempNode;
 		for (int targetNode : neighbors)
 		{
+			if (g.get_in_degree(targetNode) == 1)
+				continue; // Required for W.C.C.
 			// Calculate nominator.
 			objectiveNominator = nominatorConst - redAbsorbingProbs[targetNode].pagerank;
 			objectiveNominator *= ((1 - jumpProb) / jumpProb);
