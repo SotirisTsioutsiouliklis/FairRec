@@ -19,16 +19,6 @@
 
 using namespace std;
 
-saveVector(std::string fileName, std::vector<edge> &logVector) {
-    std::ofstream edge_file(fileName);
-    edge_file << "Source\tTarget\tExpected Fairness\n";
-    int n = logVector.size();
-    for (int i = 0; i < n; i++) {
-        edge_file << logVector[i].source << "\t" << logVector[i].target << "\t" << logVector[i].expectedFair << "\n";
-    }
-    edge_file.close();
-}
-
 int main()
 {
     omp_set_num_threads(20);
