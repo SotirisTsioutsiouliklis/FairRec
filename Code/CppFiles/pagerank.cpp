@@ -350,7 +350,7 @@ pagerank_v pagerank_algorithms::getDeletionObjectiveValues(int sourceNode) {
 			// all so as to have a sanity check.
 			// For all nodes.
 			pagerank_t tempNode;
-			for (int targetNode = 0; targetNode < numberOfNodes; targetNode++) {
+			for (int targetNode : neighbors) {
 				// Calculate nominator.
 				objectiveNominator = nominatorConst - redAbsorbingProbs[targetNode].pagerank;
 				objectiveNominator *= ((1 - jumpProb) / jumpProb);
