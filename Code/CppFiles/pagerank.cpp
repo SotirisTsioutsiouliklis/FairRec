@@ -295,50 +295,35 @@ pagerank_v pagerank_algorithms::getObjectiveValues(int sourceNode)
 	sourceAbsorbingProbs = get_node_abs_prob(sourceNode);
 	// Get source neighbors.
 	neighbors = g.get_out_neighbors(sourceNode);
+
 	// Get average Red pagerank of neighbors for nominator.
 	nominatorConst = 0;
 
-	if (sourceOutDegree > 0)
-	{
-		for (int nei = 0; nei < sourceOutDegree; nei++)
-		{
-			neighbor = neighbors[nei];
-			nominatorConst += redAbsorbingProbs[neighbor].pagerank;
-		}
-		nominatorConst *= (1 / (float)sourceOutDegree);
-	}
-	else
-	{
-		for (int neighbor = 0; neighbor < numberOfNodes; neighbor++)
-		{
-			nominatorConst += redAbsorbingProbs[neighbor].pagerank;
-		}
-		nominatorConst *= (1 / (float)numberOfNodes);
-	}
 	// Get average Source pagerank of neighbors for denominator.
 	denominatorConst = 0;
-	if (sourceOutDegree > 0)
-	{
-		for (int nei = 0; nei < sourceOutDegree; nei++)
-		{
+
+	if (sourceOutDegree > 0) {
+		for (int nei = 0; nei < sourceOutDegree; nei++) {
 			neighbor = neighbors[nei];
+			nominatorConst += redAbsorbingProbs[neighbor].pagerank;
 			denominatorConst += sourceAbsorbingProbs[neighbor].pagerank;
 		}
+		nominatorConst *= (1 / (float)sourceOutDegree);
 		denominatorConst *= (1 / (float)sourceOutDegree);
 	}
-	else
-	{
-		for (int neighbor = 0; neighbor < numberOfNodes; neighbor++)
-		{
+	else {
+		for (int neighbor = 0; neighbor < numberOfNodes; neighbor++) {
+			nominatorConst += redAbsorbingProbs[neighbor].pagerank;
 			denominatorConst += sourceAbsorbingProbs[neighbor].pagerank;
 		}
+		nominatorConst *= (1 / (float)numberOfNodes);
 		denominatorConst *= (1 / (float)numberOfNodes);
 	}
+
 	// Calculate the Quantity. Not just the important part but
 	// all so as to have a sanity check.
 	// For all nodes.
-	for (int targetNode = 0; targetNode < numberOfNodes; targetNode++)
-	{
+	for (int targetNode = 0; targetNode < numberOfNodes; targetNode++) {
 		// Calculate nominator.
 		objectiveNominator = redAbsorbingProbs[targetNode].pagerank - nominatorConst;
 		objectiveNominator *= ((1 - jumpProb) / jumpProb);
