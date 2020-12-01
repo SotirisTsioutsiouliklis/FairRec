@@ -31,7 +31,7 @@ int main()
     std::ofstream edge_file("deletion_scores_predicted.txt");
     std::ofstream edge_file_act("deletion_scores_actual.txt");
     edge_file << "Source\tTarget\tExpected Fairness\n";
-    edge_file_act << "Source\tTarget\tExpected Fairness\n";
+    edge_file_act << "Source\tTarget\tActual Fairness\n";
 
     // For every source nodes.
     for (int node = 0; node < numberOfNodes; node++) {
