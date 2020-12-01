@@ -37,18 +37,28 @@ int main()
     for (int node = 0; node < numberOfNodes; node++) {
         // Get scores for out edges.
         tempEdges = algs.getDeletionObjectiveValues(node);
+
         // Log edges and scores.
         for (pagerank_t &e : tempEdges) {
+            // Write into file the score given by the function
             edge_file << node << "\t" << e.node_id << "\t" << e.pagerank << "\n";
             edge_file.flush();
 
             // Remove edge.
             g.remove_edge(node, e.node_id);
+
+            // Get peagerank after edge removal
             pagerank = algs.get_pagerank();
+
+            // Get pagerank for the red team after edge removal
             redPagerank = g.get_pagerank_per_community(pagerank)[1];
+
+            // Write into file the actual pagerank score
             edge_file_act << node << "\t" << e.node_id << "\t" << redPagerank << "\n";
-            g.add_edge(node, e.node_id);
             edge_file_act.flush();
+
+            // readd edge
+            g.add_edge(node, e.node_id);
         }
     }
 

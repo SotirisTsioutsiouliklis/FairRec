@@ -380,44 +380,41 @@ pagerank_v pagerank_algorithms::getDeletionObjectiveValues(int sourceNode)
 	sourceAbsorbingProbs = get_node_abs_prob(sourceNode);
 	// Get source neighbors.
 	neighbors = g.get_out_neighbors(sourceNode);
-	if (sourceOutDegree > 1)
-	{ // Required for W.C.C.
-		// Get average Red pagerank of neighbors for nominator.
-		nominatorConst = 0;
-		// Get average Source pagerank of neighbors for denominator.
-		denominatorConst = 0;
 
-		for (int nei = 0; nei < sourceOutDegree; nei++)
-		{
-			neighbor = neighbors[nei];
-			nominatorConst += redAbsorbingProbs[neighbor].pagerank;
-		}
-
-		for (int nei = 0; nei < sourceOutDegree; nei++)
-		{
-			neighbor = neighbors[nei];
-			denominatorConst += sourceAbsorbingProbs[neighbor].pagerank;
-		}
-
-		nominatorConst *= (1 / (float)sourceOutDegree);
-		denominatorConst *= (1 / (float)sourceOutDegree);
-
+	if (sourceOutDegree > 1) { // Required for W.C.C.
 		// Calculate the Quantity. Not just the important part but
 		// all so as to have a sanity check.
-		// For all nodes.
 		pagerank_t tempNode;
-		for (int targetNode : neighbors)
-		{
-			if (g.get_in_degree(targetNode) == 1)
-				continue; // Required for W.C.C.
+
+		// For each out neighbor.
+		for (int targetNode : neighbors) {
+
+			// Get average Red pagerank of neighbors for nominator excluding the targetNode
+			nominatorConst = 0;
+
+			// Get average Source pagerank of neighbors for denominator excluding the targetNode
+			denominatorConst = 0;
+
+			for (int nei : neighbors) {
+				if (nei == targetNode) continue;
+				nominatorConst += redAbsorbingProbs[nei].pagerank;
+				denominatorConst += sourceAbsorbingProbs[nei].pagerank;
+			}
+
+			nominatorConst *= (1 / (float) sourceOutDegree);
+			denominatorConst *= (1 / (float) sourceOutDegree);
+
 			// Calculate nominator.
 			objectiveNominator = nominatorConst - redAbsorbingProbs[targetNode].pagerank;
 			objectiveNominator *= ((1 - jumpProb) / jumpProb);
+
 			// Calculate denominator.
 			objectiveDenominator = denominatorConst - sourceAbsorbingProbs[targetNode].pagerank;
 			objectiveDenominator *= ((1 - jumpProb) / jumpProb);
 			objectiveDenominator = sourceOutDegree - 1 - objectiveDenominator;
+
 			tempNode.node_id = targetNode;
+			// P(R)' = ....
 			tempNode.pagerank = redPagerank + rankVector[sourceNode].pagerank * (objectiveNominator / objectiveDenominator);
 			objectiveValues.push_back(tempNode);
 		}
