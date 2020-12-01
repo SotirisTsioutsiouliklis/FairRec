@@ -350,7 +350,7 @@ pagerank_v pagerank_algorithms::getDeletionObjectiveValues(int sourceNode)
 	vector<int> neighbors, restNeighbors;
 	double redPagerank, nominatorConst, denominatorConst, objectiveNominator, objectiveDenominator;
 	const double jumpProb = 0.15;
-	int sourceOutDegree, neighbor;
+	int sourceOutDegree;
 
 	// Get source out degree.
 	sourceOutDegree = g.get_out_degree(sourceNode);
@@ -404,8 +404,6 @@ pagerank_v pagerank_algorithms::getDeletionObjectiveValues(int sourceNode)
 			objectiveValues.push_back(tempNode);
 		}
 	}
-
-	//pagerank_algorithms::saveVector("objectiveValues.txt", objectiveValues);
 
 	return objectiveValues;
 }

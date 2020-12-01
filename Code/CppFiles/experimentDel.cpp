@@ -61,6 +61,8 @@ int main()
             g.add_edge(node, e.node_id);
         }
     }
+    edge_file.close();
+    edge_file_act.close();
 
     return 0;
 }
