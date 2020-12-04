@@ -381,7 +381,7 @@ pagerank_v pagerank_algorithms::getDeletionObjectiveValues(int sourceNode)
 			denominatorConst = 0;
 
 			for (int nei : neighbors) {
-				if (nei == targetNode) continue;
+				// if (nei == targetNode) continue;
 				nominatorConst += redAbsorbingProbs[nei].pagerank;
 				denominatorConst += sourceAbsorbingProbs[nei].pagerank;
 			}
