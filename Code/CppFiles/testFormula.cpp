@@ -64,6 +64,9 @@ int main()
 
     // get objective values.
     objective_values = algs.getDeletionObjectiveValues(source_node);
+    for (pagerank_t nn : objective_values) {
+        std::cout << nn.node_id << nn.pagerank << std::endl;
+    }
 
     // remove the edge and log the results.
     g.remove_edge(source_node, candidate_node);
