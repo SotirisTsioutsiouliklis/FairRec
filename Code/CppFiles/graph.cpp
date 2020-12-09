@@ -140,7 +140,7 @@ void graph::remove_edge(const int src_node, const int dest_node) {
 	nodes[src_node].out_neighbors.erase(std::remove(nodes[src_node].out_neighbors.begin(),
 										nodes[src_node].out_neighbors.end(),
 										dest_node), nodes[src_node].out_neighbors.end());
-	nodes[dest_node].out_neighbors.erase(std::remove(nodes[dest_node].out_neighbors.begin(),
+	nodes[dest_node].in_neighbors.erase(std::remove(nodes[dest_node].out_neighbors.begin(),
 										nodes[dest_node].out_neighbors.end(),
 										src_node), nodes[dest_node].out_neighbors.end());
 	//nodes[src_node].out_neighbors.pop_back();
