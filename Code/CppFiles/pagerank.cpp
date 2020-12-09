@@ -404,7 +404,6 @@ pagerank_v pagerank_algorithms::getDeletionObjectiveValues(int sourceNode)
 			tempNode.node_id = targetNode;
 			// P(R)' = ....
 			tempNode.pagerank = redPagerank + rankVector[sourceNode].pagerank * (objectiveNominator / objectiveDenominator);
-			//tempNode.pagerank = redPagerank - rankVector[sourceNode].pagerank * (objectiveNominator / objectiveDenominator);
 			objectiveValues.push_back(tempNode);
 		}
 	}
