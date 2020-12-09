@@ -17,8 +17,6 @@
 #include <string>
 #include <sstream>
 
-using namespace std;
-
 int main()
 {
     omp_set_num_threads(20);
@@ -34,9 +32,9 @@ int main()
     pagerank_v objective_values = algs.getObjectiveValues(source_node);
 
     // Find node to add.
-    vector<int> out_neigh = g.get_out_neighbors(10);
+    std::vector<int> out_neigh = g.get_out_neighbors(10);
     for (int i = 0; i < g.get_num_nodes(); i++) {
-        if (find(out_neigh.begin(), out_neigh.end(), i) != out_neigh.end()) {
+        if (std::find(out_neigh.begin(), out_neigh.end(), i) != out_neigh.end()) {
             candidate_node = i;
             break;
         }
