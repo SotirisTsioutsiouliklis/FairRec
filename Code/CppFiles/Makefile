@@ -1,8 +1,8 @@
 # Very simple Makefile to compile everything
 
 all:
-	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o deletionScores.out graph.cpp pagerank.cpp experimentDel.cpp
-	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o testFormula.out graph.cpp pagerank.cpp testFormula.cpp
+	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o deletionScores.out graph.cpp pagerank.cpp experimentDel.cpp
+	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o testFormula.out graph.cpp pagerank.cpp testFormula.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o getPagerank.out graph.cpp pagerank.cpp getPagerank.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o getSourceNodes.out graph.cpp pagerank.cpp getSourceNodes.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o getEdgeFairnessScore.out graph.cpp pagerank.cpp getEdgeFairnessScore.cpp
