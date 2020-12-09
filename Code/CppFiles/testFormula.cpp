@@ -51,7 +51,7 @@ int main()
     g.remove_edge(source_node, candidate_node);
 
     // Find node to remove.
-    for (int i = 0; i < g.get_num_nodes(); i++) {
+    for (int i : out_neigh) {
         if (g.get_out_neighbors(source_node).size() == 1 ) {
             break;
         }
