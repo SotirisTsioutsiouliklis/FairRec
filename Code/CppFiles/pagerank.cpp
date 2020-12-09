@@ -373,6 +373,9 @@ pagerank_v pagerank_algorithms::getDeletionObjectiveValues(int sourceNode)
 
 		// For each out neighbor.
 		for (int targetNode : neighbors) {
+			if (g.get_in_neighbors(targetNode).size() == 1) {
+				continue;
+			}
 
 			// Get average Red pagerank of neighbors for nominator excluding the targetNode
 			nominatorConst = 0;
