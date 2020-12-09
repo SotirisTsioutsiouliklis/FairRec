@@ -47,7 +47,7 @@ int main()
 		std::cout << i;
 	}
 	std::cout << "\n";
-	for (int i : g.get_in_neighbors()) {
+	for (int i : g.get_in_neighbors(candidate_node)) {
 		std::cout << i;
 	}
 	std::cout << "\n";
@@ -62,7 +62,7 @@ int main()
 		std::cout << i;
 	}
 	std::cout << "\n";
-	for (int i : g.get_in_neighbors()) {
+	for (int i : g.get_in_neighbors(candidate_node)) {
 		std::cout << i;
 	}
 	std::cout << "\n";
@@ -75,7 +75,7 @@ int main()
 		std::cout << i;
 	}
 	std::cout << "\n";
-	for (int i : g.get_in_neighbors()) {
+	for (int i : g.get_in_neighbors(candidate_node)) {
 		std::cout << i;
 	}
 	std::cout << "\n";
@@ -96,7 +96,7 @@ int main()
 		std::cout << i;
 	}
 	std::cout << "\n";
-	for (int i : g.get_in_neighbors()) {
+	for (int i : g.get_in_neighbors(candidate_node)) {
 		std::cout << i;
 	}
 	std::cout << "\n";
@@ -115,12 +115,12 @@ int main()
     pagerank = algs.get_pagerank();
     red_pagerank = g.get_pagerank_per_community(pagerank)[1];
     edge_file << network_fairness << "\t" << red_pagerank << "\t" << candidate_pagerank << "\n";
-    
+
     for (int i : g.get_out_neighbors(source_node)) {
 		std::cout << i;
 	}
 	std::cout << "\n";
-	for (int i : g.get_in_neighbors()) {
+	for (int i : g.get_in_neighbors(candidate_node)) {
 		std::cout << i;
 	}
 	std::cout << "\n";
