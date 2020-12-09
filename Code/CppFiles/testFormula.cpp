@@ -68,10 +68,6 @@ int main()
 
     // get objective values.
     pagerank_v neg_objective_values = algs.getDeletionObjectiveValues(source_node);
-    for (pagerank_t nn : neg_objective_values) {
-        std::cout << nn.node_id << " : " << nn.pagerank << std::endl;
-    }
-    std::cout << candidate_node << std::endl;
 
     // remove the edge and log the results.
     double candidate_pagerank;
