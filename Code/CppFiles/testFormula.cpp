@@ -45,7 +45,7 @@ int main()
     // Add edge and log result.
     g.add_edge(source_node, candidate_node);
     pagerank_v pagerank = algs.get_pagerank();
-    double red_pagerank = g.get_pagerank_per_community()[1];
+    double red_pagerank = g.get_pagerank_per_community(pagerank)[1];
     edge_file << red_pagerank << "\t" << objective_values[candidate_node] << "\n";
 
     // remove edge to bring graph in initial state.
@@ -69,7 +69,7 @@ int main()
     // remove the edge and log the results.
     g.remove_edge(source_node, candidate_node);
     pagerank = algs.get_pagerank();
-    red_pagerank = g.get_pagerank_per_community()[1];
+    red_pagerank = g.get_pagerank_per_community(pagerank)[1];
     edge_file << red_pagerank << "\t" << objective_values[candidate_node] << "\n";
 
 
