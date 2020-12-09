@@ -70,10 +70,16 @@ int main()
     std::cout << candidate_node << std::endl;
 
     // remove the edge and log the results.
+    double candidate_pagerank;
+    for (pagerank_t nn : neg_objective_values) {
+        if (nn.node_id == candidate_node) {
+            candidate_pagerank = nn.pagerank;
+        }
+    }
     g.remove_edge(source_node, candidate_node);
     pagerank = algs.get_pagerank();
     red_pagerank = g.get_pagerank_per_community(pagerank)[1];
-    edge_file << red_pagerank << "\t" << neg_objective_values[0].pagerank << "\n" << "\t" << "\t" << neg_objective_values[1].pagerank << "\n";
+    edge_file << red_pagerank << "\t" << candidate_pagerank << "\n";
 
 
     return 0;
