@@ -65,14 +65,14 @@ int main()
     // get objective values.
     pagerank_v neg_objective_values = algs.getDeletionObjectiveValues(source_node);
     for (pagerank_t nn : neg_objective_values) {
-        std::cout << nn.node_id << nn.pagerank << std::endl;
+        std::cout << nn.node_id << " : " << nn.pagerank << std::endl;
     }
 
     // remove the edge and log the results.
     g.remove_edge(source_node, candidate_node);
     pagerank = algs.get_pagerank();
     red_pagerank = g.get_pagerank_per_community(pagerank)[1];
-    edge_file << red_pagerank << "\t" << neg_objective_values[0].pagerank << "\n";
+    edge_file << red_pagerank << "\t" << neg_objective_values[0].pagerank << "\n" << "\t" << "\t" << neg_objective_values[1].pagerank << "\n";
 
 
     return 0;
