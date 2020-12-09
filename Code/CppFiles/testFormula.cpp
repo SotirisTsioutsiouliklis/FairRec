@@ -43,6 +43,14 @@ int main()
             break;
         }
     }
+    for (int i : g.get_out_neighbors(source_node)) {
+		std::cout << i;
+	}
+	std::cout << "\n";
+	for (int i : g.get_in_neighbors()) {
+		std::cout << i;
+	}
+	std::cout << "\n";
 
     // Add edge and log result.
     g.add_edge(source_node, candidate_node);
@@ -50,9 +58,27 @@ int main()
     double red_pagerank = g.get_pagerank_per_community(pagerank)[1];
     edge_file << network_fairness << "\t" << red_pagerank << "\t" << objective_values[candidate_node].pagerank << "\n";
 
+    for (int i : g.get_out_neighbors(source_node)) {
+		std::cout << i;
+	}
+	std::cout << "\n";
+	for (int i : g.get_in_neighbors()) {
+		std::cout << i;
+	}
+	std::cout << "\n";
+
     // remove edge to bring graph in initial state.
     g.remove_edge(source_node, candidate_node);
     network_fairness = g.get_pagerank_per_community(algs.get_pagerank())[1];
+
+    for (int i : g.get_out_neighbors(source_node)) {
+		std::cout << i;
+	}
+	std::cout << "\n";
+	for (int i : g.get_in_neighbors()) {
+		std::cout << i;
+	}
+	std::cout << "\n";
 
     // Find node to remove.
     for (int i : out_neigh) {
@@ -65,6 +91,15 @@ int main()
             candidate_node = i;
         }
     }
+
+    for (int i : g.get_out_neighbors(source_node)) {
+		std::cout << i;
+	}
+	std::cout << "\n";
+	for (int i : g.get_in_neighbors()) {
+		std::cout << i;
+	}
+	std::cout << "\n";
 
     // get objective values.
     pagerank_v neg_objective_values = algs.getDeletionObjectiveValues(source_node);
@@ -80,7 +115,15 @@ int main()
     pagerank = algs.get_pagerank();
     red_pagerank = g.get_pagerank_per_community(pagerank)[1];
     edge_file << network_fairness << "\t" << red_pagerank << "\t" << candidate_pagerank << "\n";
-
+    
+    for (int i : g.get_out_neighbors(source_node)) {
+		std::cout << i;
+	}
+	std::cout << "\n";
+	for (int i : g.get_in_neighbors()) {
+		std::cout << i;
+	}
+	std::cout << "\n";
 
     return 0;
 }
