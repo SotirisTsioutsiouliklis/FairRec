@@ -45,7 +45,7 @@ int main()
     g.add_edge(source_node, candidate_node);
     pagerank_v pagerank = algs.get_pagerank();
     double red_pagerank = g.get_pagerank_per_community(pagerank)[1];
-    edge_file << red_pagerank << "\t" << objective_values[candidate_node] << "\n";
+    edge_file << red_pagerank << "\t" << objective_values[candidate_node].pagerank << "\n";
 
     // remove edge to bring graph in initial state.
     g.remove_edge(source_node, candidate_node);
@@ -61,7 +61,7 @@ int main()
             candidate_node = i;
         }
     }
-/*
+
     // get objective values.
     objective_values = algs.getDeletionObjectiveValues(source_node);
 
@@ -69,8 +69,8 @@ int main()
     g.remove_edge(source_node, candidate_node);
     pagerank = algs.get_pagerank();
     red_pagerank = g.get_pagerank_per_community(pagerank)[1];
-    edge_file << red_pagerank << "\t" << objective_values[candidate_node] << "\n";
-*/
+    edge_file << red_pagerank << "\t" << objective_values[candidate_node].pagerank << "\n";
+
 
     return 0;
 }
