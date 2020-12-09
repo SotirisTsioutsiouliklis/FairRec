@@ -24,10 +24,13 @@ int main()
     
     int source_node = 10;
     int candidate_node;
+    double network_fairness;
     graph g("out_graph.txt", "out_community.txt");
     pagerank_algorithms algs(g);
     std::ofstream edge_file("testing-scores.txt");
-    edge_file << "actual\tpredicted\n";
+    edge_file << "initial\tactual\tpredicted\n";
+
+    network_fairness = g.get_pagerank_per_community(algs.get_pagerank())[1];
 
     // get addition predictions.
     pagerank_v objective_values = algs.getObjectiveValues(source_node);
@@ -45,10 +48,11 @@ int main()
     g.add_edge(source_node, candidate_node);
     pagerank_v pagerank = algs.get_pagerank();
     double red_pagerank = g.get_pagerank_per_community(pagerank)[1];
-    edge_file << red_pagerank << "\t" << objective_values[candidate_node].pagerank << "\n";
+    edge_file << network_fairness << "\t" << red_pagerank << "\t" << objective_values[candidate_node].pagerank << "\n";
 
     // remove edge to bring graph in initial state.
     g.remove_edge(source_node, candidate_node);
+    network_fairness = g.get_pagerank_per_community(algs.get_pagerank())[1];
 
     // Find node to remove.
     for (int i : out_neigh) {
@@ -79,7 +83,7 @@ int main()
     g.remove_edge(source_node, candidate_node);
     pagerank = algs.get_pagerank();
     red_pagerank = g.get_pagerank_per_community(pagerank)[1];
-    edge_file << red_pagerank << "\t" << candidate_pagerank << "\n";
+    edge_file << network_fairness << "\t" << red_pagerank << "\t" << candidate_pagerank << "\n";
 
 
     return 0;
