@@ -40,7 +40,7 @@ int main()
             break;
         }
     }
-/*
+
     // Add edge and log result.
     g.add_edge(source_node, candidate_node);
     pagerank_v pagerank = algs.get_pagerank();
@@ -61,7 +61,7 @@ int main()
             candidate_node = i;
         }
     }
-
+/*
     // get objective values.
     objective_values = algs.getDeletionObjectiveValues(source_node);
 
