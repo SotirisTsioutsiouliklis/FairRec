@@ -16,6 +16,7 @@
 #include <omp.h>
 #include <string>
 #include <sstream>
+#include <algorithm>
 
 int main()
 {
