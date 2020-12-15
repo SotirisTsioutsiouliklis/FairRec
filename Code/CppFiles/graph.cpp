@@ -137,8 +137,20 @@ void graph::add_edges(vector<recEdge> &edges) {
 }
 
 void graph::remove_edge(const int src_node, const int dest_node) {
-	nodes[src_node].out_neighbors.pop_back();
-	nodes[dest_node].in_neighbors.pop_back();
+	int position;
+	for (int i = 0; i < nodes[src_node].out_neighbors.size(); i++) {
+		if (nodes[src_node].out_neighbors[i] == dest_node) {
+			position = i;
+		}
+	}
+	nodes[src_node].out_neighbors.erase(nodes[src_node].out_neighbors.begin() + position);
+
+	for (int i = 0; i < nodes[dest_node].in_neighbors.size(); i++) {
+		if (nodes[dest_node].in_neighbors[i] == src_node) {
+			position = i;
+		}
+	}
+	nodes[dest_node].in_neighbors.erase(nodes[dest_node].in_neighbors.begin() + position);
 	--nodes[src_node].out_neighbors_per_community[nodes[dest_node].community];
 	--nodes[dest_node].in_neighbors_per_community[nodes[src_node].community];
 	--nodes[src_node].out_degree;
