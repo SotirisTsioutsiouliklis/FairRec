@@ -271,6 +271,7 @@ void pagerank_algorithms::compute_pagerank_no_personalization_vector(std::vector
 	}
 }
 
+
 pagerank_v pagerank_algorithms::getObjectiveValues(int sourceNode)
 {
 	// Declare local variables.
