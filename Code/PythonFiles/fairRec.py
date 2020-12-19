@@ -155,7 +155,6 @@ class EdgeEmbeding:
             for line in file_one:
                 info = line.split()
                 nodeId = int(info[0])
-                
 
                 for i in range(1, len(info)):
                     nodeEmbeddings[nodeId][i-1] = float(info[i])  
@@ -203,7 +202,6 @@ class EdgeEmbeding:
             for line in file_one:
                 info = line.split()
                 nodeId = int(info[0])
-                
 
                 for i in range(1, len(info)):
                     nodeEmbeddings[nodeId][i-1] = float(info[i])  
