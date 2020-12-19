@@ -9,8 +9,6 @@ import time
 from collections import namedtuple
 import sys
 
-Times = namedtuple('Times', ['total', 'candidates', 'jaccard', 'preferential', 'adamic', 'resource'])
-
 # Get all subdirectories of current folder.
 datasets = []
 for root, dirs, files in os.walk("."):
@@ -29,7 +27,7 @@ for dataset in datasets:
     nodes = int(lines[0])
     
     number_of_nodes.append(nodes)
-    number_of_edges.append(edges)
+    number_of_edges.append(edges)   
 
 # Convert to numpy arrays.
 datasets = np.array(datasets)
@@ -48,9 +46,6 @@ for i in range(len(datasets)):
     np.random.shuffle(nodes_ids)
     nodes_ids = nodes_ids[0: (number_of_nodes[i] // 10)]
     source_nodes[dataset] = nodes_ids
-
-# Take recommendation scores by node sizes.
-n_datasets = datasets[index_nodes]
 
 # Take recommendation scores by node sizes.
 n_datasets = datasets[index_nodes]
@@ -119,7 +114,7 @@ for dataset in n_datasets:
     
     # Log time.
     with open("elapsed_times.txt", "a") as file_one:
-        file_one.write(f"{dataset}\t{times_total}\t{times_candidates}\t{times_jaccard}\t{times.adamic}\t{times_resource}\t{times_preferential}\n")
+        file_one.write(f"{dataset}\t{times_total}\t{times_candidates}\t{times_jaccard}\t-\t{times_resource}\t{times_preferential}\n")
         
     sys.stdout.write("\r")
     sys.stdout.write(f"dataset: {dataset} | progress: {(n_dataset / len(datasets)) * 100}%")
