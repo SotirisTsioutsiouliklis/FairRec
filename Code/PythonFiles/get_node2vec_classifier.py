@@ -168,7 +168,7 @@ negativeTestSample = [i for i in negative_sample[digraph.number_of_edges() // 10
 
 # Get node Embeddings from node2vec.
 # Copy node2vec executable.
-run(["cp", "~/mnt/sdb1/tsiou/snap/examples/node2vec/node2vec", "."])
+run(["cp", "/mnt/sdb1/tsiou/snap/examples/node2vec/node2vec", "."])
 # Run node2vec with default settings.
 run(["./node2vec", "-i:out_graph.edgelist", "-o:out_nodeEmbeddings.txt", "-l:3", "-d:128", "-p:0.3", "-dr", "-v"])
 
