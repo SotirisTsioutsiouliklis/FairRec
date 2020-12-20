@@ -149,7 +149,13 @@ with open("positive_sample.txt", "w") as file_one:
 with open("out_graph.edgelist", "w") as file_one:
     for i, j in digraph.edges:
         file_one.write(f"{i}\t{j}\n")
-
+# Get negative sample.
+negative_sample = [(random.randint(0, digraph.number_of_nodes() - 1), random.randint(0, digraph.number_of_nodes() - 1))
+                   for i in range(digraph.number_of_edges() // 10)]
+# Store negative sample.
+with open("negative_sample.txt", "w") as file_one:
+    for i, j in negative_sample:
+        file_one.write(f"{i}\t{j}\n")
 
 # One file with the graph without the positive sample to train node2vec:"out_graph.edgelist".
 # Positiveand negative samples should have train and test set. Compute AUC.
