@@ -127,7 +127,7 @@ degree = degree[index]
 # Get nodes with more than 10 degree.
 top_nodes = set([ids[i] for i in range(digraph.number_of_nodes()) if degree[i] >= 10])
 # Compute wanted to remove edges.
-wanted_edges = digraph.number_of_edges() // 10
+wanted_edges = digraph.number_of_edges() // 8
 removed_edges = set()
 random_edges = list(digraph.edges)
 random.shuffle(random_edges)
@@ -151,14 +151,19 @@ with open("out_graph.edgelist", "w") as file_one:
         file_one.write(f"{i}\t{j}\n")
 # Get negative sample.
 negative_sample = [(random.randint(0, digraph.number_of_nodes() - 1), random.randint(0, digraph.number_of_nodes() - 1))
-                   for i in range(digraph.number_of_edges() // 10)]
+                   for i in range(wanted_edges)]
 # Store negative sample.
 with open("negative_sample.txt", "w") as file_one:
     for i, j in negative_sample:
         file_one.write(f"{i}\t{j}\n")
 
-# One file with the graph without the positive sample to train node2vec:"out_graph.edgelist".
-# Positiveand negative samples should have train and test set. Compute AUC.
+################################
+# Split to test and train sets #
+################################
+positiveTrainSample = [i for removed_edges[0:digraph.number_of_edges() // 10]]
+negativeTrainSample = [i for negative_sample[0:digraph.number_of_edges() // 10]]
+positiveTestSample = [i for removed_edges[digraph.number_of_edges() // 10:]]
+negativeTestSample = [i for negative_sample[digraph.number_of_edges() // 10:0]]
 
 # Get node Embeddings from node2vec.
 # Copy node2vec executable.
