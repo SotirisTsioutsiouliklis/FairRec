@@ -113,7 +113,44 @@ class EdgeEmbeding:
         return edgeEmbedings
 
 
-# Create train graph.
+######################
+# Create train graph #
+######################
+# Read graph from edgelist.
+digraph = nx.read_edgelist("out_graph.txt", nodetype=int, create_using=nx.DiGraph())
+# Sort id & degrees by degree.
+degree = np.array([digraph.degree(i) for i in range(digraph.number_of_nodes())])
+ids = np.arange(0, digraph.number_of_nodes(), 1)
+index = np.argsort(-degree)
+ids = ids[index]
+degree = degree[index]
+# Get nodes with more than 10 degree.
+top_nodes = set([ids[i] for i in range(digraph.number_of_nodes()) if degree[i] >= 10])
+# Compute wanted to remove edges.
+wanted_edges = digraph.number_of_edges() // 10
+removed_edges = set()
+random_edges = list(digraph.edges)
+random.shuffle(random_edges)
+# Find edges to remove.
+for i, j in random_edges:
+    if i in top_nodes and j in top_nodes:
+        removed_edges.add((i, j))
+
+    if len(removed_edges) == wanted_edges:
+        break
+# Remove the edges from the initial graph.
+for i, j in removed_edges:
+    digraph.remove_edge(i, j)
+# Store positive example.
+with open("positive_sample.txt", "w") as file_one:
+    for i, j in removed_edges:
+        file_one.write(f"{i}\t{j}\n")
+# Store train graph.
+with open("out_graph.edgelist", "w") as file_one:
+    for i, j in digraph.edges:
+        file_one.write(f"{i}\t{j}\n")
+
+
 # One file with the graph without the positive sample to train node2vec:"out_graph.edgelist".
 # Positiveand negative samples should have train and test set. Compute AUC.
 
