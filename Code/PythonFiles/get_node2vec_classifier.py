@@ -164,7 +164,7 @@ removed_edges = list(removed_edges)
 positiveTrainSample = [i for i in removed_edges[0:digraph.number_of_edges() // 10]]
 negativeTrainSample = [i for i in negative_sample[0:digraph.number_of_edges() // 10]]
 positiveTestSample = [i for i in removed_edges[digraph.number_of_edges() // 10:]]
-negativeTestSample = [i for i in negative_sample[digraph.number_of_edges() // 10:0]]
+negativeTestSample = [i for i in negative_sample[digraph.number_of_edges() // 10:]]
 
 # Get node Embeddings from node2vec.
 # Copy node2vec executable.
