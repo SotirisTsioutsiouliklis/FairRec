@@ -8,6 +8,7 @@ import pickle
 import networkx as nx
 import random
 from subprocess import run
+import time
 
 
 class EdgeEmbeding:
@@ -113,6 +114,7 @@ class EdgeEmbeding:
         return edgeEmbedings
 
 
+start = time.time()
 ######################
 # Create train graph #
 ######################
@@ -199,3 +201,7 @@ auc = roc_auc_score(yTest, probs)
 # Save AUC.
 with open("outAuc.txt", "w") as fileOne:
     fileOne.write("auc: " + str(auc))
+elapsed = time.time() - start
+
+with open("node2vec_elapsed_time.txt", "r") as file_one:
+    file_one.write(f"time: {elapsed}")
