@@ -160,6 +160,7 @@ with open("negative_sample.txt", "w") as file_one:
 ################################
 # Split to test and train sets #
 ################################
+removed_edges = list(removed_edges)
 positiveTrainSample = [i for i in removed_edges[0:digraph.number_of_edges() // 10]]
 negativeTrainSample = [i for i in negative_sample[0:digraph.number_of_edges() // 10]]
 positiveTestSample = [i for i in removed_edges[digraph.number_of_edges() // 10:]]
