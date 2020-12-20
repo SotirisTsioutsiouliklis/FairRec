@@ -203,5 +203,5 @@ with open("outAuc.txt", "w") as fileOne:
     fileOne.write("auc: " + str(auc))
 elapsed = time.time() - start
 
-with open("node2vec_elapsed_time.txt", "r") as file_one:
+with open("node2vec_elapsed_time.txt", "w") as file_one:
     file_one.write(f"time: {elapsed}")
