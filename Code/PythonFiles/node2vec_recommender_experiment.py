@@ -150,11 +150,18 @@ n_datasets = datasets[index_nodes]
 with open("node2vec_elapsed_time.txt", "w") as file_one:
     file_one.write("dataset\ttime\n")
 
+n_dataset = 0
 for dataset in n_datasets:
-    run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/Python_files/get_node2vec_classifier.py", "."], cwd=f"{dataset}")
+    n_dataset += 1
+    run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/PythonFiles/get_node2vec_classifier.py", "."], cwd=f"{dataset}")
     start = time.time()
     run(['python3', 'get_node2vec_classifier.py'], cwd=f"{dataset}")
     elapsed = time.time() - start
 
+
     with open("node2vec_elapsed_time.txt", "a") as file_one:
         file_one.write(f"{dataset}\t{elapsed}\n")
+
+    sys.stdout.write("\r")
+    sys.stdout.write(f"dataset: {dataset} | progress: {(n_dataset / len(n_datasets)) * 100}%")
+    sys.stdout.flush()
