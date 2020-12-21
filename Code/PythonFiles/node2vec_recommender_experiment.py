@@ -151,94 +151,10 @@ with open("node2vec_elapsed_time.txt", "w") as file_one:
     file_one.write("dataset\ttime\n")
 
 for dataset in n_datasets:
+    run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/Python_files/get_node2vec_classifier.py", "."], cwd=f"{dataset}")
     start = time.time()
-    ######################
-    # Create train graph #
-    ######################
-    # Read graph from edgelist.
-    digraph = nx.read_edgelist(f"{dataset}/out_graph.txt", nodetype=int, create_using=nx.DiGraph())
-    # Sort id & degrees by degree.
-    degree = np.array([digraph.degree(i) for i in range(digraph.number_of_nodes())])
-    ids = np.arange(0, digraph.number_of_nodes(), 1)
-    index = np.argsort(-degree)
-    ids = ids[index]
-    degree = degree[index]
-    # Get nodes with more than 10 degree.
-    top_nodes = set([ids[i] for i in range(digraph.number_of_nodes()) if degree[i] >= 10])
-    # Compute wanted to remove edges.
-    wanted_edges = digraph.number_of_edges() // 8
-    removed_edges = set()
-    random_edges = list(digraph.edges)
-    random.shuffle(random_edges)
-    # Find edges to remove.
-    for i, j in random_edges:
-        if i in top_nodes and j in top_nodes:
-            removed_edges.add((i, j))
-
-        if len(removed_edges) == wanted_edges:
-            break
-    # Remove the edges from the initial graph.
-    for i, j in removed_edges:
-        digraph.remove_edge(i, j)
-    # Store positive example.
-    with open(f"{dataset}/positive_sample.txt", "w") as file_one:
-        for i, j in removed_edges:
-            file_one.write(f"{i}\t{j}\n")
-    # Store train graph.
-    with open(f"{dataset}/out_graph.edgelist", "w") as file_one:
-        for i, j in digraph.edges:
-            file_one.write(f"{i}\t{j}\n")
-    # Get negative sample.
-    negative_sample = [(random.randint(0, digraph.number_of_nodes() - 1), random.randint(0, digraph.number_of_nodes() - 1))
-                    for i in range(wanted_edges)]
-    # Store negative sample.
-    with open(f"{dataset}/negative_sample.txt", "w") as file_one:
-        for i, j in negative_sample:
-            file_one.write(f"{i}\t{j}\n")
-
-    ################################
-    # Split to test and train sets #
-    ################################
-    removed_edges = list(removed_edges)
-    positiveTrainSample = [i for i in removed_edges[0:digraph.number_of_edges() // 10]]
-    negativeTrainSample = [i for i in negative_sample[0:digraph.number_of_edges() // 10]]
-    positiveTestSample = [i for i in removed_edges[digraph.number_of_edges() // 10:]]
-    negativeTestSample = [i for i in negative_sample[digraph.number_of_edges() // 10:]]
-
-    # Get node Embeddings from node2vec.
-    # Copy node2vec executable.
-    run(["cp", "/mnt/sdb1/tsiou/snap/examples/node2vec/node2vec", "."], cwd=f"{dataset}")
-    # Run node2vec with default settings.
-    run(["./node2vec", "-i:out_graph.edgelist", "-o:out_nodeEmbeddings.txt", "-l:3", "-d:128", "-p:0.3", "-dr", "-v"], cwd=f"{dataset}")
-
-    # Create edge embeddings.
-    # Train set.
-    positiveTrainEmbeddings = EdgeEmbeding.hadamart(positiveTrainSample)
-    negativeTrainEmbeddings = EdgeEmbeding.hadamart(negativeTrainSample)
-    # Test set.
-    positiveTestEmbeddings = EdgeEmbeding.hadamart(positiveTestSample)
-    negativeTestEmbeddings = EdgeEmbeding.hadamart(negativeTestSample)
-
-    # Train classifier.
-    # Get train/test sets.
-    xTrain = np.concatenate((positiveTrainEmbeddings, negativeTrainEmbeddings), axis=0)
-    yTrain = np.array([1 for i in range(len(positiveTrainEmbeddings))] + [0 for i in range(len(negativeTrainEmbeddings))])
-    xTest = np.concatenate((positiveTestEmbeddings, negativeTestEmbeddings), axis=0)
-    yTest = np.array([1 for i in range(len(positiveTestEmbeddings))] + [0 for i in range(len(negativeTestEmbeddings))])
-    # fit the model.
-    clf = LogisticRegression()
-    clf.fit(xTrain, yTrain)
-    # Save model.
-    pickle.dump(clf, open(f'{dataset}/edgeClassifier.sav', 'wb'))
-    # Evaluate model using AUC.
-    probs = clf.predict_proba(xTest)
-    # Probabilities belonging to category 1.
-    probs = probs[0:, 1]
-    auc = roc_auc_score(yTest, probs)
-    # Save AUC.
-    with open(f"{dataset}/outAuc.txt", "w") as fileOne:
-        fileOne.write("auc: " + str(auc))
+    run(['python3', 'get_node2vec_classifier.py'], cwd=f"{dataset}")
     elapsed = time.time() - start
 
     with open("node2vec_elapsed_time.txt", "a") as file_one:
-        file_one.write(f"{datasets}: {elapsed}")
+        file_one.write(f"{dataset}\t{elapsed}\n")
