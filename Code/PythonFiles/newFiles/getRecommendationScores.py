@@ -102,7 +102,7 @@ class InputErrors:
     @staticmethod
     def valueError():
         """ Terminates script and print message for acceptable
-        <distance> values
+        values.
         """
         sys.exit("Error! Policy not valid.\n\
                  acceptable policies:\n\

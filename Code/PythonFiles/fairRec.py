@@ -165,7 +165,7 @@ class EdgeEmbeding:
             targetNode = edges[i][1]
 
             edgeEmbedings[i] = np.multiply(nodeEmbeddings[sourceNode], nodeEmbeddings[targetNode]) 
-        
+
         # Save edge embeddings.
         with open("out_edgeEmbeddings.txt", "w") as fileOne:
             fileOne.write("edge\tEmbedding\n")
