@@ -155,7 +155,6 @@ class EdgeEmbeding:
             for line in file_one:
                 info = line.split()
                 nodeId = int(info[0])
-                
 
                 for i in range(1, len(info)):
                     nodeEmbeddings[nodeId][i-1] = float(info[i])  
@@ -166,7 +165,7 @@ class EdgeEmbeding:
             targetNode = edges[i][1]
 
             edgeEmbedings[i] = np.multiply(nodeEmbeddings[sourceNode], nodeEmbeddings[targetNode]) 
-        
+
         # Save edge embeddings.
         with open("out_edgeEmbeddings.txt", "w") as fileOne:
             fileOne.write("edge\tEmbedding\n")
@@ -203,7 +202,6 @@ class EdgeEmbeding:
             for line in file_one:
                 info = line.split()
                 nodeId = int(info[0])
-                
 
                 for i in range(1, len(info)):
                     nodeEmbeddings[nodeId][i-1] = float(info[i])  
