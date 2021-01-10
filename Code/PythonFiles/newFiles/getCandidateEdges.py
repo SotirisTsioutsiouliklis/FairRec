@@ -47,16 +47,27 @@ class InputErrors:
 def get_candidates(graph: nx.Graph, source: int, distance: int) -> set:
     neighbors = set()
     neighbors.add(source)
+    # Find immediate neighbors.
+    neighbors.union(set([n for n in graph.neighbors(source)]))
+    # Find nodes in distance < than the distance.
+    candidate_edges = neighbors.copy()
+    for i in range(2, distance + 1):
+        for j in candidate_edges:
+            candidate_edges = candidate_edges.union(set([n for n in graph.neighbors(j)]))
+    candidate_edges = candidate_edges - neighbors
+
+    # Comment out section computes neighbors of distance = , not <=.
+    """
     # Find nodes in distance < than the distance.
     for i in range(1, distance):
         temp_neighbors = set()
         for j in neighbors:
             temp_neighbors = temp_neighbors.union(set([n for n in graph.neighbors(j)]))
         neighbors = neighbors.union(temp_neighbors)
-    # Find candidates.
-    candidate_edges = set()
+
     for j in neighbors:
         candidate_edges = candidate_edges.union(set([n for n in graph.neighbors(j) if n not in neighbors]))
+    """
 
     return candidate_edges
 
