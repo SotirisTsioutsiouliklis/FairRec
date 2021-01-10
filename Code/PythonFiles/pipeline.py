@@ -50,7 +50,7 @@ run(["cp", "/mnt/sdb1/tsiou/FaiRec/Code/PythonFiles/getClassifier.py", "."])
 run(["python3", "getClassifier.py", "-p", "positive_sample_edges_node2vec_embeddings.csv", "-n", "negative_sample_edges_node2vec_embeddings.csv", "-o", "node2vec_recommender.sav"])
 
 # 13. Get fairwalk classifier.
-run(["python3", "getClassifier.py", "-p", "positive_sample_edges_fairwalk_embeddings.csv", "-n", "negative_sample_edges_fairwalk_embeddings.csv", "-o", "node2vec_recommender.sav"])
+run(["python3", "getClassifier.py", "-p", "positive_sample_edges_fairwalk_embeddings.csv", "-n", "negative_sample_edges_fairwalk_embeddings.csv", "-o", "fairwalk_recommender.sav"])
 
 # 14. Get red absorbing probabilities.
 run(["cp", "/mnt/sdb1/tsiou/FaiRec/Code/PythonFiles/getRedAbsorbingProbs.py", "."])
@@ -70,12 +70,16 @@ run(["python3", "getRecommendationScores.py", "-i", "candidate_edges.csv", "-p",
 run(["python3", "getRecommendationScores.py", "-i", "candidate_edges.csv", "-p", "preferential-attachment", "-o", "preferential_attachment_scores.csv"])
 
 # 19. Get node2vec scores.
-run(["python3", "getRecommendationScores.py", "-i", "candidate_edges.csv", "-p", "from-classifier", "-p", "node2vec", "-o", "node2vec_scores.csv"])
+run(["python3", "getRecommendationScores.py", "-i", "candidate_edges.csv", "-p", "from-classifier", "-c", "node2vec_recommender.sav", "-o", "node2vec_scores.csv"])
 
 # 20. Get fairwalk scores.
+run(["python3", "getRecommendationScores.py", "-i", "candidate_edges.csv", "-p", "from-classifier", "-c", "fairwalk_recommender.sav", "-o", "fairwalk_scores.csv"])
 
 # 21. Get fair scores.
+run(["python3", "getRecommendationScores.py", "-i", "candidate_edges.csv", "-p", "fair", "-o", "fair_scores.csv"])
 
 # 22. Get multiplicative hybrid node2vec scores.
+run(["python3", "getRecommendationScores.py", "-i", "candidate_edges.csv", "-p", "multiplicative-hybrid", "-f", "fair_scores.csv", "-c", "node2vec_scores.csv", "-o", "hybrid_node2vec_scores.csv"])
 
 # 23. Get multiplicative hybrid fairwalk scores.
+run(["python3", "getRecommendationScores.py", "-i", "candidate_edges.csv", "-p", "multiplicative-hybrid", "-f", "fair_scores.csv", "-c", "fairwalk_scores.csv", "-o", "hybrid_node2vec_scores.csv"])
