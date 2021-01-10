@@ -48,7 +48,7 @@ def get_candidates(graph: nx.Graph, source: int, distance: int) -> set:
     neighbors = set()
     neighbors.add(source)
     # Find immediate neighbors.
-    neighbors.union(set([n for n in graph.neighbors(source)]))
+    neighbors = neighbors.union(set([n for n in graph.neighbors(source)]))
     # Find nodes in distance < than the distance.
     candidate_edges = neighbors.copy()
     for i in range(2, distance + 1):
@@ -114,6 +114,7 @@ if __name__ == "__main__":
         order += 1
         sys.stdout.write("\r")
         sys.stdout.write(f"{(order / total_nodes) * 100}%")
+        sys.stdout.flush()
     # Write candidates in a file.
     candidates = pd.DataFrame(data={"Sources": candidate_sources, "Targets": candidate_targets}, dtype=int)
     candidates.to_csv(output_file, index=False)
