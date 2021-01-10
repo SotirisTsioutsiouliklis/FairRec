@@ -111,13 +111,11 @@ for dataset in n_datasets:
     
     # Total time.
     times_total = time.time() - start
-    
+
     # Log time.
     with open("elapsed_times.txt", "a") as file_one:
         file_one.write(f"{dataset}\t{times_total}\t{times_candidates}\t{times_jaccard}\t-\t{times_resource}\t{times_preferential}\n")
-        
+
     sys.stdout.write("\r")
     sys.stdout.write(f"dataset: {dataset} | progress: {(n_dataset / len(datasets)) * 100}%")
-    sys.stdout.flush()    
-            
-        
+    sys.stdout.flush()

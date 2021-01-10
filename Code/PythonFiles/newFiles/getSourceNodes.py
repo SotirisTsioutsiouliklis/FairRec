@@ -9,12 +9,12 @@ file to store them. The different policies of selecting souce nodes are:
 Examples:
     The general syntax is the following:
 
-    >>> python3 getSourceNodes.py -p <policy> -a <additional_arguments> -o <output_file>
+    >>> python3 getSourceNodes.py -p <policy> -a <additional_arguments> [-o <output_file>]
 
     Additional arguments is specified in the following policies to
     select source nodes:
         1. random:
-            >>> python3 getSourceNodes.py -p random -a <percentage_of_nodes> -o <output_file>
+            >>> python3 getSourceNodes.py -p random -a <percentage_of_nodes> [-o <output_file>]
 
             >>> python3 getSourceNodes.py -p random -a 10 -o random_source_nodes.csv
 
