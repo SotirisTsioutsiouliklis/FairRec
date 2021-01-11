@@ -21,8 +21,8 @@ vector<string> split (const string &s, char delim) {
     stringstream ss (s);
     string item;
 
-    while (getline (ss, item, delim)) {
-        result.push_back (stoi(item));
+    while (getline(ss, item, delim)) {
+        result.push_back(atoi(item));
     }
 
     return result;
