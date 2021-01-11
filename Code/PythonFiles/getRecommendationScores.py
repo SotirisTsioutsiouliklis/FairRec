@@ -220,7 +220,7 @@ if __name__ == "__main__":
     elif policy == "fair":
         RecommendationPolicies.fair(input_file, output_file)
     elif policy == "multiplicative-hybrid":
-        scores = RecommendationPolicies.multiplicativeHybrid(edges, fair_scores_file, classifier_score_file, output_file)
+        scores = RecommendationPolicies.multiplicativeHybrid(edges, fair_scores_file, classifier_score_file)
     else:
         InputErrors.valueError()
 
