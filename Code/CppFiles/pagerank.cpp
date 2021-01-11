@@ -284,7 +284,7 @@ void pagerank_algorithms::compute_pagerank_no_personalization_vector(std::vector
 }
 
 // Convention 
-pagerank_v pagerank_algorithms::read_red_abs()
+pagerank_v read_red_abs()
 {
 	ifstream my_file("red_absorbing_probabilities.csv");
 	vector<float> red_probs;
