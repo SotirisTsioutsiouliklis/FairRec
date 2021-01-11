@@ -13,11 +13,11 @@ run(["python3", "getCandidateEdges.py", "-i", "random_source_nodes.csv", "-d", "
 
 # 3. Get positive edge sample
 run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/PythonFiles/getPositiveEdgeSample.py", "."])
-run(["cp", "python3", "getPositiveEdgeSample.py", "-g", "out_graph.txt", "-p", "100", "-o", "positive_edge_sample.csv"])
+run(["python3", "getPositiveEdgeSample.py", "-g", "out_graph.txt", "-p", "100", "-o", "positive_edge_sample.csv"])
 
 # 4. Get negative edges sample.
 run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/PythonFiles/getNegativeEdgeSample.py", "."])
-run(["cp", "python3", "getNegativeEdgeSample.py", "-g", "out_graph.txt", "-p", "100", "-o", "negative_edge_sample.csv"])
+run(["python3", "getNegativeEdgeSample.py", "-g", "out_graph.txt", "-p", "100", "-o", "negative_edge_sample.csv"])
 
 # 5. Get node2vec node embeddings.
 run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/PythonFiles/getNodeEmbeddings.py", "."])
