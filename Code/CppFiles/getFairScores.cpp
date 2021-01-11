@@ -17,7 +17,7 @@ using namespace std;
 
 
 vector<string> split (const string &s, char delim) {
-    vector<string> result;
+    vector<int> result;
     stringstream ss (s);
     string item;
 
