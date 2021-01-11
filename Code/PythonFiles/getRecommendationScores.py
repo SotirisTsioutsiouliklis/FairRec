@@ -104,7 +104,7 @@ class RecommendationPolicies:
         edgeEmbeddings = edges[:, 2:]
         # Get scores.
         edgeRecommendationScores = linkRecommender.predict_proba(edgeEmbeddings)
-        return [(edges[i][0], edges[i][1], edgeRecommendationScores[i]) for i in range(len(edgeRecommendationScores))]
+        return [(edges[i][0], edges[i][1], edgeRecommendationScores[i][1]) for i in range(len(edgeRecommendationScores))]
 
     @staticmethod
     def fair(edge_file: str, output_file: str):
