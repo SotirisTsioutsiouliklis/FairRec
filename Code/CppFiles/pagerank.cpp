@@ -11,6 +11,18 @@
 
 using namespace std;
 
+vector<float> split (const string &s, char delim) {
+    vector<float> result;
+    stringstream ss (s);
+    string item;
+
+    while (getline(ss, item, delim)) {
+        result.push_back(stof(item));
+    }
+
+    return result;
+}
+
 pagerank_algorithms::pagerank_algorithms(graph &g) : g(g), is_cache_valid(false)
 {
 	// nothing to do here
@@ -271,6 +283,33 @@ void pagerank_algorithms::compute_pagerank_no_personalization_vector(std::vector
 	}
 }
 
+// Convention 
+pagerank_v pagerank_algorithms::read_red_abs()
+{
+	ifstream my_file("red_absorbing_probabilities.csv");
+	vector<float> red_probs;
+	string info;
+	float score;
+	pagerank_v result;
+	pagerank_t node;
+
+	// Read scores.
+	getline(my_file, info);
+	while (getline(my_file, info)) {
+        score = split(info, ',')[1];
+        red_probs.push_back(score);
+    }
+
+	// Convert to pagerank_v
+	for (int i = 0; i < red_probs.size(); ++i) {
+		node.node_id = i;
+		node.pagerank = red_probs[i];
+		result.push_back(node);
+	}
+
+	return result;
+}
+
 
 pagerank_v pagerank_algorithms::getObjectiveValues(int sourceNode)
 {
@@ -291,7 +330,7 @@ pagerank_v pagerank_algorithms::getObjectiveValues(int sourceNode)
 	redPagerank = g.get_pagerank_per_community(rankVector)[1];
 
 	// Run absoring to Red.
-	redAbsorbingProbs = get_red_abs_prob();
+	redAbsorbingProbs = read_red_abs();//get_red_abs_prob();
 	// Run absorbing to source.
 	sourceAbsorbingProbs = get_node_abs_prob(sourceNode);
 	// Get source neighbors.
