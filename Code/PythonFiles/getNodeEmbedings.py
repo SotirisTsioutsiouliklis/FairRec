@@ -27,11 +27,18 @@ from subprocess import run
 
 class NodeEmbeddings:
     @staticmethod
-    def node2vec(graph_file: str, output_file: str) -> pd.DataFrame:
-        # Copy node2vec executale from snap.
-        run(["cp", "/mnt/sdb1/tsiou/snap/examples/node2vec/node2vec", "."], cwd=".")
-        # Run node2vec executable.
-        run(["./node2vec", f"-i:{graph_file}", f"-o:{output_file}", "-l:3", "-d:128", "-p:0.3", "-dr", "-v"])
+    def policy_run(graph_file: str, output_file: str, groups_file=None) -> pd.DataFrame:
+        if groups_file is not None:
+            # Copy fairwalk executale from snap.
+            run(["cp", "/mnt/sdb1/tsiou/snap-fair/examples/node2vec/fairwalk", "."], cwd=".")
+            # Run fairwalk executable.
+            run(["./fairwalk", f"-i:{graph_file}", f"-g:{groups_file}", f"-o:{output_file}", "-l:3", "-d:128", "-p:0.3",
+                 "-dr", "-v"])
+        else:
+            # Copy node2vec executale from snap.
+            run(["cp", "/mnt/sdb1/tsiou/snap/examples/node2vec/node2vec", "."], cwd=".")
+            # Run node2vec executable.
+            run(["./node2vec", f"-i:{graph_file}", f"-o:{output_file}", "-l:3", "-d:128", "-p:0.3", "-dr", "-v"])
         # Convert output to conventional output.
         with open(output_file, "r") as file_one:
             info = file_one.readline().split()
@@ -51,14 +58,6 @@ class NodeEmbeddings:
         nodeEmbeddings.insert(loc=0, column="Nodes", value=np.arange(0, numberOfNodes, 1, dtype=int))
 
         return nodeEmbeddings
-
-    @staticmethod
-    def fairwalk(graph_file: str, output_file: str):
-        sys.exit("fairwalk not implemented yet")
-        # Copy fairwalk executale from snap.
-        run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/CppFiles/getSourceNodes.out", "."], cwd=".")
-        # Run fairwalk executable.
-        run(["./node2vec", f"-i:{graph_file}", f"-o:{output_file}", "-l:3", "-d:128", "-p:0.3", "-dr", "-v"])
 
 
 # Adjust print message according to the new features added.
@@ -113,9 +112,11 @@ if __name__ == "__main__":
 
     # Get node embeddings.
     if policy == "node2vec":
-        nodeEmbeddings = NodeEmbeddings.node2vec(graph_file, output_file)
+        nodeEmbeddings = NodeEmbeddings.policy_run(graph_file, output_file)
     elif policy == "fairwalk":
-        nodeEmbeddings = NodeEmbeddings.fairwalk(graph_file, output_file)
+        # if graph_file is test.edgelist the groups file should be test.groups
+        groups_file  = graph_file.split(".")[0] + ".groups"
+        nodeEmbeddings = NodeEmbeddings.policy_run(graph_file, output_file, groups_file)
     else:
         InputErrors.valueError()
 
