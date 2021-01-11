@@ -189,7 +189,7 @@ if __name__ == "__main__":
         else:
             InputErrors.argumentError()
     elif len(sys.argv) == 11:
-        if sys.argv[1] == "-i" and sys.argv[3] == "-p" and sys.argv[5] == "-f" and sys.argv[7] == "-c" and sys.argv[7] == "-o":
+        if sys.argv[1] == "-i" and sys.argv[3] == "-p" and sys.argv[5] == "-f" and sys.argv[7] == "-c" and sys.argv[9] == "-o":
             input_file = sys.argv[2]
             policy = sys.argv[4]
             fair_scores_file = sys.argv[6]
