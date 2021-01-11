@@ -57,6 +57,7 @@ import pickle
 import pandas as pd
 import networkx as nx
 from random import random
+from subprocess import run
 from typing import List, Tuple
 from sklearn.linear_model import LogisticRegression
 
@@ -105,10 +106,9 @@ class RecommendationPolicies:
         return [(edges[i][0], edges[i][1], edgeRecommendationScores[i]) for i in range(len(edgeRecommendationScores))]
 
     @staticmethod
-    def fair(edges: np.array) -> List[Tuple[int, int, float]]:
-        # Check for red absorbing probs dependency.
-        # Get fair scores with cpp file
-        pass
+    def fair(edge_file: str, output_file: str):
+        run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/CppFiles/getFairScores.out", "."])
+        run(["./getFairScores.out", "-e", f"{edge_file}", "-o", f"{output_file}"])
 
     @staticmethod
     def multiplicativeHybrid(edges: np.array, fair_scores_file: str, clasiffier_scores_file: str) -> List[Tuple[int, int, float]]:
@@ -205,12 +205,13 @@ if __name__ == "__main__":
     elif policy == "from-classifier":
         scores = RecommendationPolicies.fromClassifier(edges)
     elif policy == "fair":
-        scores = RecommendationPolicies.fair(edges)
+        RecommendationPolicies.fair(input_file, output_file)
     elif policy == "multiplicative-hybrid":
         scores = RecommendationPolicies.multiplicativeHybrid(edges)
     else:
         InputErrors.valueError()
 
     # Save scores.
-    scores = pd.DataFrame(scores, columns=["Sources", "Targets", "Scores"])
-    scores.to_csv(output_file, index=False)
+    if policy != "fair":
+        scores = pd.DataFrame(scores, columns=["Sources", "Targets", "Scores"])
+        scores.to_csv(output_file, index=False)
