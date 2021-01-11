@@ -63,10 +63,11 @@ int main(int argc, char **argv)
         targets = iter->second;
         obj_values = algs.getObjectiveValues(source);
         for (int target : targets) {
-            edge_scores << source << "," << target << "," << obj_values[target] << "\n";
+            edge_scores << source << "," << target << "," << obj_values[target].pagerank << "\n";
         }
 
     }
+    edge_scores.close();
         
 
     return 0;
