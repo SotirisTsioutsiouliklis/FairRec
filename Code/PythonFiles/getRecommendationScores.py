@@ -101,6 +101,7 @@ class RecommendationPolicies:
         linkRecommender = pickle.load(open(classifier_file, 'rb'))
         # Get edge embeddings.
         edgeEmbeddings = edges[:, 2:]
+        print(edgeEmbeddings[0])
         # Get scores.
         edgeRecommendationScores = linkRecommender.predict_proba(edgeEmbeddings)
         return [(edges[i][0], edges[i][1], edgeRecommendationScores[i]) for i in range(len(edgeRecommendationScores))]

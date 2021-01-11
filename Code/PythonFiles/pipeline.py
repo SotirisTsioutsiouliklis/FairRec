@@ -70,10 +70,10 @@ run(["python3", "getRecommendationScores.py", "-i", "candidate_edges.csv", "-p",
 run(["python3", "getRecommendationScores.py", "-i", "candidate_edges.csv", "-p", "preferential-attachment", "-o", "preferential_attachment_scores.csv"])
 
 # 19. Get node2vec scores.
-run(["python3", "getRecommendationScores.py", "-i", "candidate_edges.csv", "-p", "from-classifier", "-c", "node2vec_recommender.sav", "-o", "node2vec_scores.csv"])
+run(["python3", "getRecommendationScores.py", "-i", "candidate_edges_node2vec_embeddings.csv", "-p", "from-classifier", "-c", "node2vec_recommender.sav", "-o", "node2vec_scores.csv"])
 
 # 20. Get fairwalk scores.
-run(["python3", "getRecommendationScores.py", "-i", "candidate_edges.csv", "-p", "from-classifier", "-c", "fairwalk_recommender.sav", "-o", "fairwalk_scores.csv"])
+run(["python3", "getRecommendationScores.py", "-i", "candidate_edges_fairwalk_embeddings.csv", "-p", "from-classifier", "-c", "fairwalk_recommender.sav", "-o", "fairwalk_scores.csv"])
 
 # 21. Get fair scores.
 run(["python3", "getRecommendationScores.py", "-i", "candidate_edges.csv", "-p", "fair", "-o", "fair_scores.csv"])
