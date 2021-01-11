@@ -188,6 +188,18 @@ if __name__ == "__main__":
                 InputErrors.valueError()
         else:
             InputErrors.argumentError()
+    elif len(sys.argv) == 11:
+        if sys.argv[1] == "-i" and sys.argv[3] == "-p" and sys.argv[5] == "-f" and sys.argv[7] == "-c" and sys.argv[7] == "-o":
+            input_file = sys.argv[2]
+            policy = sys.argv[4]
+            fair_scores_file = sys.argv[6]
+            classifier_score_file = sys.argv[8]
+            output_file = sys.argv[10]
+            # Check valid policy.
+            if policy not in policies:
+                InputErrors.valueError()
+        else:
+            InputErrors.argumentError()
 
     # Load candidate edges.
     edges = pd.read_csv(input_file, header=0, names=["Sources", "Targets"]).to_numpy()
@@ -208,7 +220,7 @@ if __name__ == "__main__":
     elif policy == "fair":
         RecommendationPolicies.fair(input_file, output_file)
     elif policy == "multiplicative-hybrid":
-        scores = RecommendationPolicies.multiplicativeHybrid(edges)
+        scores = RecommendationPolicies.multiplicativeHybrid(edges, fair_scores_file, classifier_score_file, output_file)
     else:
         InputErrors.valueError()
 
