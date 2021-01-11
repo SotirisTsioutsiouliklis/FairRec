@@ -39,10 +39,10 @@ run(["python3", "getEdgeEmbeddings.py", "-i", "node2vec_node_embeddings.csv", "-
 # 10. Get positive edge sample fairwalk embeddings.
 run(["python3", "getEdgeEmbeddings.py", "-i", "fairwalk_node_embeddings.csv", "-e", "positive_edge_sample.csv", "-p", "hadamart", "-o", "positive_sample_edges_fairwalk_embeddings.csv"])
 
-# 10. Get positive edge sample node2vec embeddings.
+# 10. Get negative edge sample node2vec embeddings.
 run(["python3", "getEdgeEmbeddings.py", "-i", "node2vec_node_embeddings.csv", "-e", "negative_edge_sample.csv", "-p", "hadamart", "-o", "negative_sample_edges_node2vec_embeddings.csv"])
 
-# 11. Get positive edge sample fairwalk embeddings.
+# 11. Get negative edge sample fairwalk embeddings.
 run(["python3", "getEdgeEmbeddings.py", "-i", "fairwalk_node_embeddings.csv", "-e", "negative_edge_sample.csv", "-p", "hadamart", "-o", "negative_sample_edges_fairwalk_embeddings.csv"])
 
 # 12. Get node2vec classifier.
