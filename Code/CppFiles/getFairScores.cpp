@@ -48,7 +48,7 @@ int main(int argc, char **argv)
     // Read edges.
     ifstream source_nodes(edge_file);
     getline(source_nodes, str_edge);
-    while getline(source_nodes, str_edge) {
+    while (getline(source_nodes, str_edge)) {
         edge = split(str_edge, ",");
         source = edge[0];
         target = edge[1];
