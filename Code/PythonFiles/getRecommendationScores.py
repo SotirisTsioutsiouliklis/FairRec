@@ -180,7 +180,7 @@ if __name__ == "__main__":
         if sys.argv[1] == "-i" and sys.argv[3] == "-p" and sys.argv[5] == "-c" and sys.argv[7] == "-o":
             input_file = sys.argv[2]
             policy = sys.argv[4]
-            classifier_file_file = sys.argv[6]
+            classifier_file = sys.argv[6]
             output_file = sys.argv[8]
             # Check valid policy.
             if policy not in policies:
@@ -203,7 +203,7 @@ if __name__ == "__main__":
     elif policy == "resource-allocation":
         scores = RecommendationPolicies.resourceAllocation(edges)
     elif policy == "from-classifier":
-        scores = RecommendationPolicies.fromClassifier(edges)
+        scores = RecommendationPolicies.fromClassifier(edges, classifier_file)
     elif policy == "fair":
         RecommendationPolicies.fair(input_file, output_file)
     elif policy == "multiplicative-hybrid":
