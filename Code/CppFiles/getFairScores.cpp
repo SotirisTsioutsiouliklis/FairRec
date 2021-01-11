@@ -58,7 +58,7 @@ int main(int argc, char **argv)
     // Save results.
     ofstream edge_scores(edge_scores_file);
     edge_scores << "Sources,Targets,Scores\n";
-    for (map<int, vector<int>::iterator iter = adj_list.begin(); iter != adj_list.end(); ++iter) {
+    for (map<int, vector<int>>::iterator iter = adj_list.begin(); iter != adj_list.end(); ++iter) {
         source = iter->first;
         targets = iter->second;
         obj_values = algs.getObjectiveValues(source);
