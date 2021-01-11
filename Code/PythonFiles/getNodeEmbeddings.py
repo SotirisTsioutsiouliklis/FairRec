@@ -32,7 +32,7 @@ class NodeEmbeddings:
             # Copy fairwalk executale from snap.
             run(["cp", "/mnt/sdb1/tsiou/snap-fair/examples/node2vec/fairwalk", "."], cwd=".")
             # Run fairwalk executable.
-            run(["./fairwalk", f"-i:{graph_file}", f"-g:{groups_file}", f"-o:{output_file}", "-l:3", "-d:128", "-p:0.3",
+            run(["./fairwalk", f"-i:{graph_file}", f"-g:{groups_file}", f"-o:{output_file}", "-l:2", "-d:128", "-p:0.3",
                  "-dr", "-v"])
         else:
             # Copy node2vec executale from snap.
