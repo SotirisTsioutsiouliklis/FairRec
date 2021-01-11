@@ -100,7 +100,7 @@ class RecommendationPolicies:
         # Load recommender.
         linkRecommender = pickle.load(open(classifier_file, 'rb'))
         # Get edge embeddings.
-        edges = pd.read_csv(input_file, header=0, names=["Sources", "Targets"]).to_numpy()
+        edges = pd.read_csv(input_file).to_numpy()
         edgeEmbeddings = edges[:, 2:]
         # Get scores.
         edgeRecommendationScores = linkRecommender.predict_proba(edgeEmbeddings)
