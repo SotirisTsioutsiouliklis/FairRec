@@ -115,8 +115,13 @@ if __name__ == "__main__":
         nodeEmbeddings = NodeEmbeddings.policy_run(graph_file, output_file)
     elif policy == "fairwalk":
         # if graph_file is test.edgelist the groups file should be test.groups
-        groups_file  = graph_file.split(".")[0] + ".groups"
+        with open("out_community.txt", "r") as fileOne, open("groups.txt", "w") as fileTwo:
+            fileOne.readline()
+            for line in fileOne:
+                fileTwo.write(line)
+        groups_file  = "groups.txt"
         nodeEmbeddings = NodeEmbeddings.policy_run(graph_file, output_file, groups_file)
+        run(["rm", "groups.txt"])
     else:
         InputErrors.valueError()
 
