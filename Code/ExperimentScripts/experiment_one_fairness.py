@@ -36,7 +36,7 @@ for i in range(len(scores)):
 
 # Sort targets.
 for key in scores_dict:
-    scores_dict[key] = scores_dict[key].sort(key=lambda x: x[1], reverse=True)
+    scores_dict[key].sort(key=lambda x: x[1], reverse=True)
 
 
 log = pd.DataFrame()
