@@ -57,7 +57,7 @@ int main()
     double red_pagerank = g.get_pagerank_per_community(pagerank)[1];
     
     // Write result.
-    ofstream log_file("temp_score.txt")
+    ofstream log_file("temp_score.txt");
     log_file << red_pagerank;
     
     
