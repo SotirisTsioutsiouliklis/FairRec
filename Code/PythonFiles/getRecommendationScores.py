@@ -96,12 +96,12 @@ class RecommendationPolicies:
         return [(source, target, score) for source, target, score in preds]
 
     @staticmethod
-    def fromClassifier(edges: np.array, classifier_file: str) -> List[Tuple[int, int, float]]:
+    def fromClassifier(edge_file: str, classifier_file: str) -> List[Tuple[int, int, float]]:
         # Load recommender.
         linkRecommender = pickle.load(open(classifier_file, 'rb'))
         # Get edge embeddings.
+        edges = pd.read_csv(input_file, header=0, names=["Sources", "Targets"]).to_numpy()
         edgeEmbeddings = edges[:, 2:]
-        print(edgeEmbeddings[0])
         # Get scores.
         edgeRecommendationScores = linkRecommender.predict_proba(edgeEmbeddings)
         return [(edges[i][0], edges[i][1], edgeRecommendationScores[i]) for i in range(len(edgeRecommendationScores))]
@@ -204,7 +204,7 @@ if __name__ == "__main__":
     elif policy == "resource-allocation":
         scores = RecommendationPolicies.resourceAllocation(edges)
     elif policy == "from-classifier":
-        scores = RecommendationPolicies.fromClassifier(edges, classifier_file)
+        scores = RecommendationPolicies.fromClassifier(input_file, classifier_file)
     elif policy == "fair":
         RecommendationPolicies.fair(input_file, output_file)
     elif policy == "multiplicative-hybrid":
