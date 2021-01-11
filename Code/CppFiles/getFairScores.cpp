@@ -16,13 +16,13 @@
 using namespace std;
 
 
-vector<string> split (const string &s, char delim) {
+vector<int> split (const string &s, char delim) {
     vector<int> result;
     stringstream ss (s);
     string item;
 
     while (getline(ss, item, delim)) {
-        result.push_back(atoi(item));
+        result.push_back(stoi(item));
     }
 
     return result;
