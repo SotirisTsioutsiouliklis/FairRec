@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <sstream>
 #include <unordered_map>
 #include <cmath>
 #include <cassert>
