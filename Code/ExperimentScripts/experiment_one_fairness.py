@@ -55,8 +55,8 @@ for i in range(rounds):
     run(["./compute_scores_per_round.out"])
     with open("temp_score.txt", "r") as file_one:
         score = float(file_one.readline())
-    r.append((i, edges, score))
-#run(["rm", "temp_edges.txt"])
+    r.append((i, str(edges), score))
+run(["rm", "temp_edges.txt"])
 
 # Save logs.
 logs = pd.DataFrame(r, columns=["Rounds", "Edges", "Scores"])
