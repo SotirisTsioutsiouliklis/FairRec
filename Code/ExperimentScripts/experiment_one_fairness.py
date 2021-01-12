@@ -45,10 +45,7 @@ r = list()
 for i in range(rounds):
     edges = list()
     for key in scores_dict:
-        try:
-            edges.append((key, scores_dict[key][i][0]))
-        except:
-            print(key, scores_dict[key])
+        edges.append((key, scores_dict[key][i][0]))
     # Write edges.
     with open("temp_edges.txt", "a") as edge_file:
         for i, j in edges:
@@ -59,7 +56,7 @@ for i in range(rounds):
     with open("temp_score.txt", "r") as file_one:
         score = float(file_one.readline())
     r.append((i, edges, score))
-run(["rm", "temp_edges.txt"])
+#run(["rm", "temp_edges.txt"])
 
 # Save logs.
 logs = pd.DataFrame(r, columns=["Rounds", "Edges", "Scores"])
