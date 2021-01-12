@@ -48,8 +48,8 @@ for i in range(rounds):
         edges.append((key, scores_dict[key][i][0]))
     # Write edges.
     with open("temp_edges.txt", "a") as edge_file:
-        for i, j in edges:
-            edge_file.write(f"{i},{j}\n")
+        for k, l in edges:
+            edge_file.write(f"{k},{l}\n")
     # Call cpp script.
     run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/CppFiles/compute_scores_per_round.out", "."])
     run(["./compute_scores_per_round.out"])
