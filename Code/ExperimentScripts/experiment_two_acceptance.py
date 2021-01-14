@@ -13,7 +13,7 @@ import sys
 # Parse arguments.
 if len(sys.argv) != 9:
     sys.exit("ERROR!")
-if sys.argv[1] == "-r" and sys.argv[3] == "-s" and sys.argv[5] == "-n" and sys.argv[5] == "-v":
+if sys.argv[1] == "-r" and sys.argv[3] == "-s" and sys.argv[5] == "-n" and sys.argv[7] == "-v":
     rounds = int(sys.argv[2])
     scores_file = sys.argv[4]
     node2vec_file = sys.argv[6]
