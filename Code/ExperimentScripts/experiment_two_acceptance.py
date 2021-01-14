@@ -13,7 +13,7 @@ import sys
 # Parse arguments.
 if len(sys.argv) != 9:
     sys.exit("ERROR!")
-if sys.argv[1] == "-r" and sys.argv[3] == "-s" and sys.argv[5] == "-n" and sys.argv[7] == "-v":
+if sys.argv[1] == "-r" and sys.argv[3] == "-s" and sys.argv[5] == "-n" and sys.argv[7] == "-o":
     rounds = int(sys.argv[2])
     scores_file = sys.argv[4]
     node2vec_file = sys.argv[6]
@@ -47,8 +47,8 @@ acceptance = 0
 for i in range(rounds):
     edges = list()
     for key in scores_dict:
-        edges.append((key, scores_dict[key][0]))
-        acceptance += scores_dict[key][2]
+        edges.append((key, scores_dict[key][i][0]))
+        acceptance += scores_dict[key][i][2]
     r.append((i, str(edges), acceptance / (len(scores_dict) * i)))
 
 # Save logs.
