@@ -37,9 +37,15 @@ public:
      * formula of the FairRec paper and it is accurate.
     */
     pagerank_v getObjectiveValues(int sourceNode);
+    pagerank_v getAproxObjectiveValues(int sourceNode);
+	pagerank_v getObjectivePersonalizedValues(int personalized_nodes, int sourceNode);
     pagerank_v getDeletionObjectiveValues(int sourceNode);
 
 	void sort_pagerank_vector(pagerank_v &pagerank);
+
+	//
+	void set_personalization_type(personalization_t personalize_type, int extra_info);
+
 
 	// Save various vectors.
     static void saveVector(std::string fileName, pagerank_v &logVector);

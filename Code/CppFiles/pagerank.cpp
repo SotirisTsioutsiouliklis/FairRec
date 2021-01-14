@@ -36,9 +36,8 @@ pagerank_v pagerank_algorithms::get_pagerank(const double C, const double eps, c
 	const unsigned int nnodes = g.get_num_nodes();
 	pagerank_v pagerankv(nnodes);
 	unsigned int i, node;
-#pragma omp parallel for firstprivate(nnodes)
-	for (i = 0; i < nnodes; ++i)
-	{
+	#pragma omp parallel for firstprivate(nnodes)
+	for (i = 0; i < nnodes; ++i) {
 		pagerankv[i].node_id = i;
 		pagerankv[i].pagerank = 1.0 / nnodes;
 	}
@@ -47,45 +46,40 @@ pagerank_v pagerank_algorithms::get_pagerank(const double C, const double eps, c
 	std::vector<double> tmp_pagerank(nnodes);
 	std::vector<double> tmp_pagerank_jump(nnodes); // for personalization
 	int iter = 0;
-	int neigh_degree;
-	for (; iter < max_iter; ++iter)
-	{
+	for (; iter < max_iter; ++iter) {
 		double sum = 0.0;
-#pragma omp parallel for firstprivate(nnodes) reduction(+ \
-														: sum)
-		for (node = 0; node < nnodes; ++node)
-		{
+		#pragma omp parallel for firstprivate(nnodes) reduction(+:sum)
+		for (node = 0; node < nnodes; ++node) {
 			tmp_pagerank[node] = 0.0;
-			for (const int &neighbor : g.get_in_neighbors(node))
-			{
-				neigh_degree = g.get_out_degree(neighbor);
+			for (const int &neighbor : g.get_in_neighbors(node)) {
+				int neigh_degree = g.get_out_degree(neighbor);
 				if (neigh_degree > 0)
 					tmp_pagerank[node] += pagerankv[neighbor].pagerank / neigh_degree;
 			}
 			tmp_pagerank[node] *= C;
 			sum += tmp_pagerank[node];
 		}
+
 		// re-insert "leaked" pagerank
 		double diff = 0.0, new_val;
 		const double leaked = (C - sum) / nnodes;
-
-		compute_pagerank_no_personalization_vector(tmp_pagerank_jump, 1 - C);
-#pragma omp parallel for firstprivate(nnodes, tmp_pagerank, tmp_pagerank_jump) private(new_val) reduction(+ \
-																										  : diff)
-		for (node = 0; node < nnodes; ++node)
-		{
+		if (personalization_type == personalization_t::NO_PERSONALIZATION)
+			compute_pagerank_no_personalization_vector(tmp_pagerank_jump, 1 - C);
+		else
+			compute_personalization_vector(tmp_pagerank_jump, 1 - C);
+		#pragma omp parallel for firstprivate(nnodes, tmp_pagerank, tmp_pagerank_jump) private(new_val) reduction(+:diff)
+		for (node = 0; node < nnodes; ++node) {
 			new_val = tmp_pagerank[node] + leaked + tmp_pagerank_jump[node];
 			diff += std::fabs(new_val - pagerankv[node].pagerank);
 			pagerankv[node].pagerank = new_val;
 		}
-		if (diff < eps)
-			break;
+		if (diff < eps) break;
 	}
 
 	if (iter == max_iter)
 		std::cerr << "[WARN]: Pagerank algorithm reached " << max_iter << " iterations." << std::endl;
-	//cached_pagerank = pagerankv;
-	//is_cache_valid = true;
+	cached_pagerank = pagerankv;
+	is_cache_valid = true;
 	return pagerankv;
 }
 
@@ -273,6 +267,13 @@ pagerank_v pagerank_algorithms::get_node_abs_prob(int abs_node, const double C, 
 	return pagerankv;
 }
 
+void pagerank_algorithms::set_personalization_type(personalization_t personalize_type, int extra_info)
+{
+	this->personalization_type = personalize_type;
+	personalization_extra_info = extra_info;
+	is_cache_valid = false;
+}
+
 void pagerank_algorithms::compute_pagerank_no_personalization_vector(std::vector<double> &pagerankv,
 																	 double total_pagerank)
 {
@@ -401,6 +402,148 @@ pagerank_v pagerank_algorithms::getObjectiveValues(int sourceNode)
 		objectiveDenominator = sourceOutDegree + 1 - objectiveDenominator;
 		objectiveValues[targetNode].node_id = targetNode;
 		objectiveValues[targetNode].pagerank = redPagerank + rankVector[sourceNode].pagerank * (objectiveNominator / objectiveDenominator);
+		// Theory check print.
+		if (objectiveDenominator < 0)
+			std::cout << "!!!NEGATIVE DENOMINATOR!!!\n";
+	}
+
+	//pagerank_algorithms::saveVector("objectiveValues.txt", objectiveValues);
+
+	return objectiveValues;
+}
+
+pagerank_v pagerank_algorithms::getAproxObjectiveValues(int sourceNode)
+{
+	// Declare local variables.
+	pagerank_v objectiveValues, rankVector, redAbsorbingProbs;
+	std::vector<int> neighbors;
+	double redPagerank, nominatorConst, denominatorConst, objectiveNominator, objectiveDenominator;
+	const double jumpProb = 0.15;
+	int sourceOutDegree, neighbor;
+	const int numberOfNodes = g.get_num_nodes();
+	objectiveValues.resize(numberOfNodes);
+	// Get source out degree.
+	sourceOutDegree = g.get_out_degree(sourceNode);
+
+	// Run pagerank.
+	rankVector = read_pagerank();
+	// Get red pagerank.
+	redPagerank = g.get_pagerank_per_community(rankVector)[1];
+
+	// Run absoring to Red.
+	redAbsorbingProbs = read_red_abs();//get_red_abs_prob();
+	// Get source neighbors.
+	neighbors = g.get_out_neighbors(sourceNode);
+
+	// Get average Red pagerank of neighbors for nominator.
+	nominatorConst = 0;
+
+	// Get average Source pagerank of neighbors for denominator.
+	denominatorConst = 0;
+
+	if (sourceOutDegree > 0) {
+		for (int nei = 0; nei < sourceOutDegree; nei++) {
+			neighbor = neighbors[nei];
+			nominatorConst += redAbsorbingProbs[neighbor].pagerank;
+			denominatorConst += g.get_out_degree(neighbor);
+		}
+		nominatorConst *= (1 / (float)sourceOutDegree);
+		denominatorConst *= (1 / (float)sourceOutDegree);
+	}
+	else {
+		for (int neighbor = 0; neighbor < numberOfNodes; neighbor++) {
+			nominatorConst += redAbsorbingProbs[neighbor].pagerank;
+			denominatorConst += g.get_out_degree(neighbor);
+		}
+		nominatorConst *= (1 / (float)numberOfNodes);
+		denominatorConst *= (1 / (float)numberOfNodes);
+	}
+
+	// Calculate the Quantity. Not just the important part but
+	// all so as to have a sanity check.
+	// For all nodes.
+	for (int targetNode = 0; targetNode < numberOfNodes; targetNode++) {
+		// Calculate nominator.
+		objectiveNominator = redAbsorbingProbs[targetNode].pagerank - nominatorConst;
+		objectiveNominator *= ((1 - jumpProb) / jumpProb);
+		// Calculate denominator.
+		objectiveDenominator = g.get_out_degree(targetNode) - denominatorConst;
+		objectiveDenominator *= ((1 - jumpProb) / jumpProb);
+		objectiveDenominator = sourceOutDegree + 1 - objectiveDenominator;
+		objectiveValues[targetNode].node_id = targetNode;
+		objectiveValues[targetNode].pagerank = redPagerank + rankVector[sourceNode].pagerank * (objectiveNominator / objectiveDenominator);
+		// Theory check print.
+		if (objectiveDenominator < 0)
+			std::cout << "!!!NEGATIVE DENOMINATOR!!!\n";
+	}
+
+	//pagerank_algorithms::saveVector("objectiveValues.txt", objectiveValues);
+
+	return objectiveValues;
+}
+
+pagerank_v pagerank_algorithms::getObjectivePersonalizedValues(int personalized_node, int sourceNode)
+{
+	// Declare local variables.
+	pagerank_v objectiveValues, rankVector, redAbsorbingProbs, sourceAbsorbingProbs;
+	std::vector<int> neighbors;
+	double redPagerank, nominatorConst, denominatorConst, objectiveNominator, objectiveDenominator;
+	const double jumpProb = 0.15;
+	int sourceOutDegree, neighbor;
+	const int numberOfNodes = g.get_num_nodes();
+	objectiveValues.resize(numberOfNodes);
+	// Get source out degree.
+	sourceOutDegree = g.get_out_degree(sourceNode);
+
+	// Run pagerank.
+	rankVector = read_pagerank();
+	// Get red pagerank.
+	redPagerank = g.get_pagerank_per_community(rankVector)[1];
+
+	// Run absoring to Red.
+	redAbsorbingProbs = read_red_abs();//get_red_abs_prob();
+	// Run absorbing to source.
+	sourceAbsorbingProbs = get_node_abs_prob(sourceNode);
+	// Get source neighbors.
+	neighbors = g.get_out_neighbors(sourceNode);
+
+	// Get average Red pagerank of neighbors for nominator.
+	nominatorConst = 0;
+
+	// Get average Source pagerank of neighbors for denominator.
+	denominatorConst = 0;
+
+	if (sourceOutDegree > 0) {
+		for (int nei = 0; nei < sourceOutDegree; nei++) {
+			neighbor = neighbors[nei];
+			nominatorConst += redAbsorbingProbs[neighbor].pagerank;
+			denominatorConst += sourceAbsorbingProbs[neighbor].pagerank;
+		}
+		nominatorConst *= (1 / (float)sourceOutDegree);
+		denominatorConst *= (1 / (float)sourceOutDegree);
+	}
+	else {
+		for (int neighbor = 0; neighbor < numberOfNodes; neighbor++) {
+			nominatorConst += redAbsorbingProbs[neighbor].pagerank;
+			denominatorConst += sourceAbsorbingProbs[neighbor].pagerank;
+		}
+		nominatorConst *= (1 / (float)numberOfNodes);
+		denominatorConst *= (1 / (float)numberOfNodes);
+	}
+
+	// Calculate the Quantity. Not just the important part but
+	// all so as to have a sanity check.
+	// For all nodes.
+	for (int targetNode = 0; targetNode < numberOfNodes; targetNode++) {
+		// Calculate nominator.
+		objectiveNominator = redAbsorbingProbs[targetNode].pagerank - nominatorConst;
+		objectiveNominator *= ((1 - jumpProb) / jumpProb);
+		// Calculate denominator.
+		objectiveDenominator = sourceAbsorbingProbs[targetNode].pagerank - denominatorConst;
+		objectiveDenominator *= ((1 - jumpProb) / jumpProb);
+		objectiveDenominator = sourceOutDegree + 1 - objectiveDenominator;
+		objectiveValues[targetNode].node_id = targetNode;
+		objectiveValues[targetNode].pagerank = redAbsorbingProbs[personalized_node] + sourceAbsorbingProbs[personalized_node] * (objectiveNominator / objectiveDenominator);
 		// Theory check print.
 		if (objectiveDenominator < 0)
 			std::cout << "!!!NEGATIVE DENOMINATOR!!!\n";
