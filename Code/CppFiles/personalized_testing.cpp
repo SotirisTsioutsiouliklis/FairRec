@@ -33,7 +33,7 @@ int main()
     double redPagerank;
     pagerank_v tempEdges, pagerank;
     std::ofstream edge_file("personalized_scores_predicted.txt");
-    std::ofstream edge_file_act("deletion_scores_actual.txt");
+    std::ofstream edge_file_act("personalized_scores_actual.txt");
     edge_file << "Source\tTarget\tExpected Fairness\n";
     edge_file_act << "Source\tTarget\tActual Fairness\n";
 
