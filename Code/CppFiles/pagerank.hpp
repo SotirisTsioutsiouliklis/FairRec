@@ -45,7 +45,7 @@ public:
 
 	//
 	void set_personalization_type(personalization_t personalize_type, int extra_info);
-
+	void compute_personalization_vector(std::vector<double> &pagerankv, double total_pagerank);
 
 	// Save various vectors.
     static void saveVector(std::string fileName, pagerank_v &logVector);
@@ -62,6 +62,13 @@ public:
 
 private:
 	void compute_pagerank_no_personalization_vector(std::vector<double> &pagerankv, double total_pagerank);
+	void compute_no_personalization_vector(std::vector<double> &pagerankv, double total_pagerank);
+	void compute_step_proportional_no_personalization_vector(std::vector<double> &pagerankv, double total_pagerank,
+			std::vector<node_info_t> &node_info);
+	void compute_attribute_personalization_vector(std::vector<double> &pagerankv, double total_pagerank, int attribute_id);
+	void compute_node_personalization_vector(std::vector<double> &pagerankv, double total_pagerank, int node_id);
+	void compute_custom_personalization_vector(std::vector<double> &pagerankv,
+		double total_pagerank);
 
 	graph &g;
 	personalization_t personalization_type;

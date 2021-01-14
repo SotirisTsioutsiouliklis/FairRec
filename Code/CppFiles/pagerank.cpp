@@ -802,3 +802,71 @@ std::vector<int> pagerank_algorithms::getBestBlueSourceNodes()
 
 	return sourceNodes;
 }
+
+//
+void pagerank_algorithms::compute_personalization_vector(std::vector<double> &pagerankv, double total_pagerank)
+{
+	switch (personalization_type)
+	{
+		case personalization_t::NO_PERSONALIZATION:
+			compute_no_personalization_vector(pagerankv, total_pagerank);
+			break;
+		case personalization_t::ATTRIBUTE_PERSONALIZATION:
+			compute_attribute_personalization_vector(pagerankv, total_pagerank, personalization_extra_info);
+			break;
+		case personalization_t::NODE_PERSONALIZATION:
+			compute_node_personalization_vector(pagerankv, total_pagerank, personalization_extra_info);
+			break;
+		case personalization_t::JUMP_OPT_PERSONALIZATION:
+			compute_custom_personalization_vector(pagerankv, total_pagerank);
+			break;
+		default:
+			std::cerr << "Invalid personalization option." << std::endl;
+			break;
+	}
+}
+
+
+void pagerank_algorithms::compute_no_personalization_vector(std::vector<double> &pagerankv, double total_pagerank)
+{
+	#pragma omp parallel for
+	for (unsigned int node = 0; node < pagerankv.size(); ++node) {
+		const int comm = g.get_community(node);
+		pagerankv[node] = total_pagerank * g.get_community_percentage(comm) / g.get_community_size(comm);
+	}
+}
+
+void pagerank_algorithms::compute_step_proportional_no_personalization_vector(std::vector<double> &pagerankv,
+		double total_pagerank, std::vector<node_info_t> &node_info)
+{
+	#pragma omp parallel for
+	for (unsigned int node = 0; node < pagerankv.size(); ++node) {
+		const int comm = g.get_community(node);
+		pagerankv[node] = total_pagerank * g.get_community_percentage(comm) * node_info[node].importance_in_community;;
+	}
+}
+
+void pagerank_algorithms::compute_attribute_personalization_vector(std::vector<double> &pagerankv,
+		double total_pagerank, int attribute_id)
+{
+	auto nodes = g.get_nodes_with_attribute(attribute_id);
+	for (const auto &node_id : nodes) {
+		pagerankv[node_id] = total_pagerank / (double)nodes.size();
+	}
+}
+
+void pagerank_algorithms::compute_node_personalization_vector(std::vector<double> &pagerankv,
+		double total_pagerank, int node_id)
+{
+	if ((node_id >= 0) && ((unsigned long)node_id < pagerankv.size()))
+		pagerankv[node_id] = total_pagerank;
+}
+
+void pagerank_algorithms::compute_custom_personalization_vector(std::vector<double> &pagerankv,
+		double total_pagerank)
+{
+	int nnodes = g.get_num_nodes();
+	for (int i = 0; i <nnodes; i++) {
+		pagerankv[i] = total_pagerank * jump_vector[i];
+	}
+}
