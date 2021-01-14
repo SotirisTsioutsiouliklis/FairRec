@@ -299,7 +299,34 @@ pagerank_v read_red_abs()
 	while (getline(my_file, info)) {
         score = split(info, ',')[1];
         red_probs.push_back(score);
-    }
+	}
+
+	// Convert to pagerank_v
+	for (int i = 0; i < red_probs.size(); ++i) {
+		node.node_id = i;
+		node.pagerank = red_probs[i];
+		result.push_back(node);
+	}
+
+	return result;
+}
+
+// Convention 
+pagerank_v read_pagerank()
+{
+	ifstream my_file("out_pagerank.csv");
+	vector<float> red_probs;
+	string info;
+	float score;
+	pagerank_v result;
+	pagerank_t node;
+
+	// Read scores.
+	getline(my_file, info);
+	while (getline(my_file, info)) {
+        score = split(info, ',')[1];
+        red_probs.push_back(score);
+	}
 
 	// Convert to pagerank_v
 	for (int i = 0; i < red_probs.size(); ++i) {
@@ -326,7 +353,7 @@ pagerank_v pagerank_algorithms::getObjectiveValues(int sourceNode)
 	sourceOutDegree = g.get_out_degree(sourceNode);
 
 	// Run pagerank.
-	rankVector = get_pagerank();
+	rankVector = read_pagerank();
 	// Get red pagerank.
 	redPagerank = g.get_pagerank_per_community(rankVector)[1];
 

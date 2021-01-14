@@ -15,11 +15,11 @@
 static void save_pagerank(std::string filename_prefix, pagerank_v &pagerankv)
 {
 	std::ofstream outfile_redPers;
-	outfile_redPers.open("out_" + filename_prefix + ".txt");
-	outfile_redPers << "Node\tSum of Red Pagerank\n";
+	outfile_redPers.open("out_" + filename_prefix + ".csv");
+	outfile_redPers << "Nodes,Pagerank\n";
 
 	for (const auto &node : pagerankv) {
-		outfile_redPers << node.node_id << "\t" << node.pagerank << std::endl;
+		outfile_redPers << node.node_id << "," << node.pagerank << std::endl;
 	}
 
 	outfile_redPers << std::fixed;

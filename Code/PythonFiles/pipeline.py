@@ -8,10 +8,19 @@ with open("log.txt", "w") as log_file:
     log_file.write("script,time\n")
     start = time()
 
+    # 0. Get PageRank.
+    run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/CppFiles/getPagerank.out", "."])
+    cp = run(["./getPagerank.out"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    log_file.write(f"getPagerank.out{time() - start}\n")
+    log_file.write(f"{cp.stdout}\n")
+    log_file.write(f"{cp.stderr}\n")
+    log_file.write(f"{cp.returncode}\n")
+    temp_start = time()
+
     # 1. Get source nodes.
     run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/PythonFiles/getSourceNodes.py", "."])
     cp = run(["python3", "getSourceNodes.py", "-p", "random", "-a", "10", "-o", "random_source_nodes.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    log_file.write(f"getSourceNodes.py{time() - start}\n")
+    log_file.write(f"getSourceNodes.py{time() - temp_start}\n")
     log_file.write(f"{cp.stdout}\n")
     log_file.write(f"{cp.stderr}\n")
     log_file.write(f"{cp.returncode}\n")
