@@ -1,6 +1,7 @@
 """ Basic pipeline for the computation of the recommendation scores.
 """
 from subprocess import run
+import subprocess
 from time import time
 
 with open("log.txt", "w") as log_file:
