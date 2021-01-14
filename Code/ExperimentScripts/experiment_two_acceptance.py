@@ -49,7 +49,7 @@ for i in range(rounds):
     for key in scores_dict:
         edges.append((key, scores_dict[key][i][0]))
         acceptance += scores_dict[key][i][2]
-    r.append((i, str(edges), acceptance / (len(scores_dict) * i)))
+    r.append((i, str(edges), acceptance / (len(scores_dict) * (i + 1))))
 
 # Save logs.
 logs = pd.DataFrame(r, columns=["Rounds", "Edges", "Acceptance_prob"])
