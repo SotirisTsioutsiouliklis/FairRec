@@ -6,4 +6,4 @@ python3 experiment_two_acceptance.py -r 10 -s resource_allocation_scores.csv -n 
 python3 experiment_two_acceptance.py -r 10 -s preferential_attachment_scores.csv -n node2vec_scores.csv -o accept_prob_preferential-attachment.csv
 python3 experiment_two_acceptance.py -r 10 -s fairwalk_scores.csv -n node2vec_scores.csv -o accept_prob_fairwalk.csv
 python3 experiment_two_acceptance.py -r 10 -s fair_scores.csv -n node2vec_scores.csv -o accept_prob_fair.csv
-python3 experiment_two_acceptance.py -r 10 -s hybrid_node2vec_scores.csv -o -n node2vec_scores.csv -o accept_prob_hybrid.csv
+python3 experiment_two_acceptance.py -r 10 -s hybrid_node2vec_scores.csv -n node2vec_scores.csv -o accept_prob_hybrid.csv
