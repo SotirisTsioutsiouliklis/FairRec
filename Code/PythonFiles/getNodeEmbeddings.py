@@ -119,7 +119,7 @@ if __name__ == "__main__":
             fileOne.readline()
             for line in fileOne:
                 fileTwo.write(line)
-        groups_file  = "groups.txt"
+        groups_file = "groups.txt"
         nodeEmbeddings = NodeEmbeddings.policy_run(graph_file, output_file, groups_file)
         run(["rm", "groups.txt"])
     else:
