@@ -1,5 +1,5 @@
-"" Basic pipeline for the computation of the recommendation scores.
-""
+""" Basic pipeline for the computation of the recommendation scores.
+"""
 from subprocess import run
 import subprocess
 from time import time

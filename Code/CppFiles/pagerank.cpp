@@ -494,7 +494,7 @@ pagerank_v pagerank_algorithms::getObjectivePersonalizedValues(int personalized_
 	objectiveValues.resize(numberOfNodes);
 	// Get source out degree.
 	sourceOutDegree = g.get_out_degree(sourceNode);
-
+std::cout << "1\n";
 	// Run pagerank.
 	rankVector = read_pagerank();
 	// Get red pagerank.
