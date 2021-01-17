@@ -55,10 +55,7 @@ r.append((-1, "", score))
 for i in range(rounds):
     edges = list()
     for key in scores_dict:
-        try:
-            edges.append((key, scores_dict[key][i][0]))
-        except:
-            print(f"{i}\n{key},\n {scores_dict[key]}")
+        edges.append((key, scores_dict[key][i][0]))
     # Write edges.
     with open("temp_edges.txt", "a") as edge_file:
         for k, l in edges:
