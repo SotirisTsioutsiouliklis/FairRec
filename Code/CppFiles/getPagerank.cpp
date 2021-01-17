@@ -35,6 +35,7 @@ int main() {
 	std::cout << "Initialize objects\n";
     graph g("out_graph.txt", "out_community.txt");
 	pagerank_algorithms algs(g);
+    algs.set_personalization_type(personalization_t::NO_PERSONALIZATION, 0);
 
 	pagerank_v pagerankv = algs.get_pagerank();
     save_pagerank("pagerank", pagerankv);
