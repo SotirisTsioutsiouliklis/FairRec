@@ -26,8 +26,8 @@ int main()
     graph g("out_graph.txt", "out_community.txt");
     pagerank_algorithms algs(g);
     personalization_t personalize_type = personalization_t::NODE_PERSONALIZATION;
-    int personalized_node = 50;
-    int source_node = 50;
+    int personalized_node = 15;
+    int source_node = 15;
     algs.set_personalization_type(personalize_type, personalized_node);
     int numberOfNodes = g.get_num_nodes();
     double redPagerank;
