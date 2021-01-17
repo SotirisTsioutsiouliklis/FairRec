@@ -497,15 +497,23 @@ pagerank_v pagerank_algorithms::getObjectivePersonalizedValues(int personalized_
 std::cout << "1\n";
 	// Run pagerank.
 	rankVector = read_pagerank();
+std::cout << "2\n";
+
 	// Get red pagerank.
 	redPagerank = g.get_pagerank_per_community(rankVector)[1];
+std::cout << "3\n";
 
 	// Run absoring to Red.
 	redAbsorbingProbs = read_red_abs();//get_red_abs_prob();
+std::cout << "4\n";
+
 	// Run absorbing to source.
 	sourceAbsorbingProbs = get_node_abs_prob(sourceNode);
+std::cout << "5\n";
+
 	// Get source neighbors.
 	neighbors = g.get_out_neighbors(sourceNode);
+std::cout << "6\n";
 
 	// Get average Red pagerank of neighbors for nominator.
 	nominatorConst = 0;
