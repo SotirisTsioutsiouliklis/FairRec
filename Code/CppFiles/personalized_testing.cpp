@@ -26,7 +26,7 @@ int main()
     graph g("out_graph.txt", "out_community.txt");
     pagerank_algorithms algs(g);
     personalization_t personalize_type = personalization_t::NODE_PERSONALIZATION;
-    int personalized_node = 33;
+    int personalized_node = 50;
     int source_node = 50;
     algs.set_personalization_type(personalize_type, personalized_node);
     int numberOfNodes = g.get_num_nodes();
@@ -46,7 +46,7 @@ int main()
             edge_file << source_node << "\t" << e.node_id << "\t" << e.pagerank << "\n";
             edge_file.flush();
 
-            // Remove edge.
+            // Add edge.
             g.add_edge(source_node, e.node_id);
 
             // Get peagerank after edge removal
@@ -59,7 +59,7 @@ int main()
             edge_file_act << source_node << "\t" << e.node_id << "\t" << redPagerank << "\n";
             edge_file_act.flush();
 
-            // readd edge
+            // remove edge
             g.remove_edge(source_node, e.node_id);
         }
     
