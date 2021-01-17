@@ -43,9 +43,6 @@ for key in scores_dict:
 log = pd.DataFrame()
 r = list()
 
-# Write edges.
-with open("temp_edges.txt", "a") as edge_file:
-    pass
 # Call cpp script.
 run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/CppFiles/compute_scores_per_round.out", "."])
 run(["./compute_scores_per_round.out"])
@@ -53,14 +50,17 @@ with open("temp_score.txt", "r") as file_one:
     score = float(file_one.readline())
 r.append((-1, "", score))
 
-temp_edges_file = 'temp_edges.txt';
+temp_edges_file = 'temp_edges.txt'
 if os.path.exists(temp_edges_file):
     os.remove(temp_edges_file)
 
 for i in range(rounds):
     edges = list()
     for key in scores_dict:
-        edges.append((key, scores_dict[key][i][0]))
+        try:
+            edges.append((key, scores_dict[key][i][0]))
+        except:
+            print(f"{key},\n {scores_dict[key]}")
     # Write edges.
     with open(temp_edges_file, "a") as edge_file:
         for k, l in edges:
