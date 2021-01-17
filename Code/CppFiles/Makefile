@@ -1,9 +1,9 @@
 # Very simple Makefile to compile everything
 
 all:
-	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o compute_scores_per_round.out graph.cpp pagerank.cpp compute_scores_per_round.cpp
-	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o deletionScores.out graph.cpp pagerank.cpp experimentDel.cpp
-	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o getFairScores.out graph.cpp pagerank.cpp getFairScores.cpp
+	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o compute_scores_per_round.out graph.cpp pagerank.cpp compute_scores_per_round.cpp
+	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o deletionScores.out graph.cpp pagerank.cpp experimentDel.cpp
+	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o getFairScores.out graph.cpp pagerank.cpp getFairScores.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o testFormula.out graph.cpp pagerank.cpp testFormula.cpp
 	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o getPagerank.out graph.cpp pagerank.cpp getPagerank.cpp
 	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o personalized_testing.out graph.cpp pagerank.cpp personalized_testing.cpp
@@ -15,7 +15,7 @@ all:
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentOneGreedyRandom.out graph.cpp pagerank.cpp experimentOneGreedyRandom.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentOneGreedyRed.out graph.cpp pagerank.cpp experimentOneGreedyRed.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o experimentOneGreedyBlue.out graph.cpp pagerank.cpp experimentOneGreedyBlue.cpp
-	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o absorbingProbs.out graph.cpp pagerank.cpp absorbingProbs.cpp
+	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o absorbingProbs.out graph.cpp pagerank.cpp absorbingProbs.cpp
 
 clean:
 	#rm -f jump_optimization
