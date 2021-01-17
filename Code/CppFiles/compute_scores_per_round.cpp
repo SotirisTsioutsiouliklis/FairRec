@@ -33,6 +33,7 @@ int main()
 
     graph g("out_graph.txt", "out_community.txt");
     pagerank_algorithms algs(g);
+    algs.set_personalization_type(personalization_t::NO_PERSONALIZATION);
     recEdge edge;
     vector<recEdge> edges;
     vector<int> info;
