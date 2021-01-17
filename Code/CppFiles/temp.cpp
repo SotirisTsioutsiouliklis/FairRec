@@ -37,6 +37,7 @@ int main() {
 	pagerank_algorithms algs(g);
     personalization_t personalize_type = personalization_t::NODE_PERSONALIZATION;
     int personalized_node = 33;
+    algs.set_personalization_type(personalize_type, personalized_node);
 
 	pagerank_v pagerankv = algs.get_pagerank();
     save_pagerank("pagerank", pagerankv);
