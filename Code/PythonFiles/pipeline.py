@@ -241,7 +241,7 @@ with open("log.txt", "w") as log_file:
     # 23. Run Experiment Score and Acceptance probabilities
     run(["cp", path+"ExperimentScripts/fair_score.sh", "."])
     run(["cp", path+"ExperimentScripts/accept_prob.sh", "."])
-    run(["chmod 755", "*.sh"])
+    run(["chmod", "755", "*.sh"])
     cp = run(["./fair_score.sh"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log_file.write(f"{cp.stdout}\n")
     log_file.write(f"{cp.stderr}\n")
