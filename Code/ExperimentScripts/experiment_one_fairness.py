@@ -8,6 +8,7 @@ Examples:
 """
 import pandas as pd
 import sys
+import os
 from subprocess import run
 
 
@@ -52,6 +53,10 @@ with open("temp_score.txt", "r") as file_one:
     score = float(file_one.readline())
 r.append((-1, "", score))
 
+temp_edges_file = 'temp_edges.txt';
+if os.path.exists(temp_edges_file):
+    os.remove(temp_edges_file)
+
 for i in range(rounds):
     edges = list()
     for key in scores_dict:
@@ -60,7 +65,7 @@ for i in range(rounds):
         except:
             print(f"{key},\n {scores_dict[key]}")
     # Write edges.
-    with open("temp_edges.txt", "a") as edge_file:
+    with open(temp_edges_file, "a") as edge_file:
         for k, l in edges:
             edge_file.write(f"{k},{l}\n")
     # Call cpp script.
@@ -69,7 +74,7 @@ for i in range(rounds):
     with open("temp_score.txt", "r") as file_one:
         score = float(file_one.readline())
     r.append((i, str(edges), score))
-run(["rm", "temp_edges.txt"])
+run(["rm", temp_edges_file])
 
 # Save logs.
 logs = pd.DataFrame(r, columns=["Rounds", "Edges", "Scores"])
