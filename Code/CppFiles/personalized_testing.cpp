@@ -39,6 +39,7 @@ int main()
 
         // Get scores for out edges.
         tempEdges = algs.getObjectivePersonalizedValues(personalized_node, source_node);
+std::cout << "1\n";
 
         // Log edges and scores.
         for (pagerank_t &e : tempEdges) {
@@ -46,6 +47,7 @@ int main()
             edge_file << source_node << "\t" << e.node_id << "\t" << e.pagerank << "\n";
             edge_file.flush();
 
+std::cout << "2\n";
             // Add edge.
             g.add_edge(source_node, e.node_id);
 
