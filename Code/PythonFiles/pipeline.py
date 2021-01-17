@@ -1,8 +1,10 @@
-""" Basic pipeline for the computation of the recommendation scores.
-"""
+"" Basic pipeline for the computation of the recommendation scores.
+""
 from subprocess import run
 import subprocess
 from time import time
+
+path = "/mnt/sdb1/tsiou/FairRec/Code/"
 
 with open("log.txt", "w") as log_file:
     log_file.write("script,time\n")
@@ -10,7 +12,7 @@ with open("log.txt", "w") as log_file:
 
     # 0. Get PageRank.
     print("Get PageRank")
-    run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/CppFiles/getPagerank.out", "."])
+    run(["cp", path+"CppFiles/getPagerank.out", "."])
     cp = run(["./getPagerank.out"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log_file.write(f"getPagerank.out{time() - start}\n")
     log_file.write(f"{cp.stdout}\n")
@@ -20,7 +22,7 @@ with open("log.txt", "w") as log_file:
 
     # 1. Get source nodes.
     print("Get source nodes")
-    run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/PythonFiles/getSourceNodes.py", "."])
+    run(["cp", path+"PythonFiles/getSourceNodes.py", "."])
     cp = run(["python3", "getSourceNodes.py", "-p", "random", "-a", "10", "-o", "random_source_nodes.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log_file.write(f"getSourceNodes.py{time() - temp_start}\n")
     log_file.write(f"{cp.stdout}\n")
@@ -30,7 +32,7 @@ with open("log.txt", "w") as log_file:
 
     # 2. Get candidate edges.
     print("Get candidate edges")
-    run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/PythonFiles/getCandidateEdges.py", "."])
+    run(["cp", path+"PythonFiles/getCandidateEdges.py", "."])
     cp = run(["python3", "getCandidateEdges.py", "-i", "random_source_nodes.csv", "-d", "5", "-o", "candidate_edges.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log_file.write(f"getCandidateEdges.py{time() - temp_start}\n")
     log_file.write(f"{cp.stdout}\n")
@@ -40,7 +42,7 @@ with open("log.txt", "w") as log_file:
 
     # 3. Get positive edge sample.
     print("Get positive edge sample")
-    run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/PythonFiles/getPositiveEdgeSample.py", "."])
+    run(["cp", path+"PythonFiles/getPositiveEdgeSample.py", "."])
     cp = run(["python3", "getPositiveEdgeSample.py", "-g", "out_graph.txt", "-p", "100", "-o", "positive_edge_sample.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log_file.write(f"getPositiveEdgeSample.py{time() - temp_start}\n")
     log_file.write(f"{cp.stdout}\n")
@@ -50,7 +52,7 @@ with open("log.txt", "w") as log_file:
 
     # 4. Get negative edges sample.
     print("Get negative edge sample")
-    run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/PythonFiles/getNegativeEdgeSample.py", "."])
+    run(["cp", path+"PythonFiles/getNegativeEdgeSample.py", "."])
     cp = run(["python3", "getNegativeEdgeSample.py", "-g", "out_graph.txt", "-p", "100", "-o", "negative_edge_sample.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log_file.write(f"getNegativeEdgeSample.py{time() - temp_start}\n")
     log_file.write(f"{cp.stdout}\n")
@@ -60,7 +62,7 @@ with open("log.txt", "w") as log_file:
 
     # 5. Get node2vec node embeddings.
     print("Get node2vec node embeddings")
-    run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/PythonFiles/getNodeEmbeddings.py", "."])
+    run(["cp", path+"PythonFiles/getNodeEmbeddings.py", "."])
     cp = run(["python3", "getNodeEmbeddings.py", "-g", "out_graph.txt", "-p", "node2vec", "-o", "node2vec_node_embeddings.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log_file.write(f"getNodeEmbeddings.py{time() - temp_start}\n")
     log_file.write(f"{cp.stdout}\n")
@@ -79,7 +81,7 @@ with open("log.txt", "w") as log_file:
 
     # 7. Get candidates edges node2vec embeddings.
     print("Get node2vec edge embeddings")
-    run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/PythonFiles/getEdgeEmbeddings.py", "."])
+    run(["cp", path+"PythonFiles/getEdgeEmbeddings.py", "."])
     cp = run(["python3", "getEdgeEmbeddings.py", "-i", "node2vec_node_embeddings.csv", "-e", "candidate_edges.csv", "-p", "hadamart", "-o", "candidate_edges_node2vec_embeddings.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log_file.write(f"getEdgeEmbeddings.py{time() - temp_start}\n")
     log_file.write(f"{cp.stdout}\n")
@@ -134,7 +136,7 @@ with open("log.txt", "w") as log_file:
 
     # 12. Get node2vec classifier.
     print("Get node2vec classifier")
-    run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/PythonFiles/getClassifier.py", "."])
+    run(["cp", path+"PythonFiles/getClassifier.py", "."])
     cp = run(["python3", "getClassifier.py", "-p", "positive_sample_edges_node2vec_embeddings.csv", "-n", "negative_sample_edges_node2vec_embeddings.csv", "-o", "node2vec_recommender.sav"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log_file.write(f"getClassifier.py{time() - temp_start}\n")
     log_file.write(f"{cp.stdout}\n")
@@ -153,7 +155,7 @@ with open("log.txt", "w") as log_file:
 
     # 14. Get red absorbing probabilities.
     print("Get red absorbing probabilites.")
-    run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/PythonFiles/getRedAbsorbingProbs.py", "."])
+    run(["cp", path+"PythonFiles/getRedAbsorbingProbs.py", "."])
     cp = run(["python3", "getRedAbsorbingProbs.py", "-g", "out_graph.txt", "-o", "red_absorbing_probabilities.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log_file.write(f"getRedAbsorbingProbs.py{time() - temp_start}\n")
     log_file.write(f"{cp.stdout}\n")
@@ -163,7 +165,7 @@ with open("log.txt", "w") as log_file:
 
     # 15. Get Adamic Adar scores.
     print("Get adamic adar scores")
-    run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/PythonFiles/getRecommendationScores.py", "."])
+    run(["cp", path+"PythonFiles/getRecommendationScores.py", "."])
     cp = run(["python3", "getRecommendationScores.py", "-i", "candidate_edges.csv", "-p", "adamic-adar", "-o", "adamic_adar_scores.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log_file.write(f"getRecommendationScores.py{time() - temp_start}\n")
     log_file.write(f"{cp.stdout}\n")
@@ -234,3 +236,17 @@ with open("log.txt", "w") as log_file:
     log_file.write(f"{cp.returncode}\n")
     temp_start = time()
     log_file.write(f"Total: {time() - start}\n")
+
+
+    # 23. Run Experiment Score and Acceptance probabilities
+    run(["cp", path+"ExperimentScripts/fair_score.sh", "."])
+    run(["cp", path+"ExperimentScripts/accept_prob.sh", "."])
+    run(["chmod 755", "*.sh"])
+    cp = run(["./fair_score.sh"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    log_file.write(f"{cp.stdout}\n")
+    log_file.write(f"{cp.stderr}\n")
+    log_file.write(f"{cp.returncode}\n")
+    cp = run(["./accept_prob.sh"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    log_file.write(f"{cp.stdout}\n")
+    log_file.write(f"{cp.stderr}\n")
+    log_file.write(f"{cp.returncode}\n")
