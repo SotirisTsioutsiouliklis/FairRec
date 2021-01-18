@@ -38,19 +38,23 @@ class EdgeEmbeding:
     def hadamart(input_file: str, edges: List[Tuple[int, int]]) -> pd.DataFrame:
         """ Edge embeding with the hadamard distance.
         """
+        print("Reading")
         node_embeddings = pd.read_csv(input_file)
+        print("Dropping Nodes header")
         node_embeddings = node_embeddings.drop(["Nodes"], axis=1)
+        print("to numpy")
         node_embeddings = node_embeddings.to_numpy()
 
         edge_embeddings = list()
 
-        for i, j in edges:
-            edge_embeddings.append(np.concatenate(([i, j], np.multiply(node_embeddings[i], node_embeddings[j]))))
+        try:
+            for i, j in edges:
+                edge_embeddings.append(np.multiply(node_embeddings[i], node_embeddings[j]))
+        except Exception as e:
+            print("Error while concatenating")
+            print(e)
 
-        edge_embeddings = pd.DataFrame(edge_embeddings, columns=["Sources", "Targets"] + [i for i in range(len(node_embeddings[0]))])
-        edge_embeddings = edge_embeddings.astype({"Sources": "int", "Targets": "int"})
-
-        return edge_embeddings
+        return node_embeddings, edge_embeddings
 
     @staticmethod
     def concatenate(input_file: str, edges: List[Tuple[int, int]]) -> pd.DataFrame:
@@ -62,13 +66,14 @@ class EdgeEmbeding:
 
         edge_embeddings = list()
 
-        for i, j in edges:
-            edge_embeddings.append(np.concatenate(([i, j], np.concatenatee((node_embeddings[i], node_embeddings[j])))))
+        try:
+            for i, j in edges:
+                edge_embeddings.append(np.concatenate(([i, j], np.concatenatee((node_embeddings[i], node_embeddings[j])))))
+        except Exception as e:
+            print("Error while concatenating")
+            print(e)
 
-        edge_embeddings = pd.DataFrame(edge_embeddings, columns=["Sources", "Targets"] + [i for i in range(2 * len(node_embeddings[0]))])
-        edge_embeddings = edge_embeddings.astype({"Sources": "int", "Targets": "int"})
-
-        return edge_embeddings
+        return node_embeddings, edge_embeddings
 
 
 # Adjust print message according to the new features added.
@@ -130,10 +135,23 @@ if __name__ == "__main__":
 
     # Get edge embeddings.
     if policy == "hadamart":
-        edgeEmbeddings = EdgeEmbeding.hadamart(input_file, edges)
+        nodeEmbeddings, edgeEmbeddings = EdgeEmbeding.hadamart(input_file, edges)
     elif policy == "concatenate":
-        edgeEmbeddings = EdgeEmbeding.concatenate(input_file, edges)
+        nodeEmbeddings, edgeEmbeddings = EdgeEmbeding.concatenate(input_file, edges)
     else:
         InputErrors.valueError()
 
-    edgeEmbeddings.to_csv(output_file, index=False)
+    import os
+    if os.path.exists(output_file+"_tmp"):
+        os.remove(output_file+"_tmp")
+
+    np.savetxt(output_file+"_tmp", edgeEmbeddings, delimiter=',')
+    w = open(output_file, "w")
+    w.write("Sources,Targets," + ",".join([str(i) for i in range(len(nodeEmbeddings[0]))]))
+    i = 0
+    with open(output_file+"_tmp", "r") as rT:
+        for x in rT:
+            w.write(f"{edges[i][0]},{edges[i][1]},{x}\n")
+            i += 1
+    w.close()
+    os.remove(output_file+"_tmp")
