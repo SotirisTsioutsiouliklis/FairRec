@@ -249,7 +249,7 @@ with open("log.txt", "w") as log_file:
         log_file.write(f"{cp.returncode}\n")
 
     for sf in scores_files:
-        cp = run(["python3", "experiment_two_fairness.py", "-r", str(rounds), "-s", f"{sf}_scores.csv", "-n", "node2vec_scores" "-o", f"accept_prob_{sf}.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        cp = run(["python3", "experiment_two_acceptance.py", "-r", str(rounds), "-s", f"{sf}_scores.csv", "-n", "node2vec_scores" "-o", f"accept_prob_{sf}.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         log_file.write(f"experiment_one_fairness -> policy: {sf}\n")
         log_file.write(f"{cp.stdout}\n")
         log_file.write(f"{cp.stderr}\n")
