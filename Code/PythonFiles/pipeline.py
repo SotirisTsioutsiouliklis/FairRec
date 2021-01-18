@@ -240,21 +240,16 @@ with open("log.txt", "w") as log_file:
 
 
     # 23. Run Experiment Score and Acceptance probabilities
-    run(["cp", path+"ExperimentScripts/fair_score.sh", "."])
-    run(["cp", path+"ExperimentScripts/accept_prob.sh", "."])
-    run(["chmod", "755", "fair_score.sh"])
-    run(["chmod", "755", "accept_prob.sh"])
-
     scores_files = ["fair", "adamic_adar", "jaccard_coefficient", "resource_allocation", "preferential_attachment", "node2vec", "fairwalk", "hybrid_node2vec"]
     for sf in scores_files:
-        cp = run(["python3", "experiment_one_fairness.py", "-r", rounds, "-s", f"{sf}_scores.csv", "-o", f"sc_{sf}.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        cp = run(["python3", "experiment_one_fairness.py", "-r", str(rounds), "-s", f"{sf}_scores.csv", "-o", f"sc_{sf}.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         log_file.write(f"experiment_one_fairness -> policy: {sf}\n")
         log_file.write(f"{cp.stdout}\n")
         log_file.write(f"{cp.stderr}\n")
         log_file.write(f"{cp.returncode}\n")
 
     for sf in scores_files:
-        cp = run(["python3", "experiment_two_fairness.py", "-r", rounds, "-s", f"{sf}_scores.csv", "-n", "node2vec_scores" "-o", f"accept_prob_{sf}.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        cp = run(["python3", "experiment_two_fairness.py", "-r", str(rounds), "-s", f"{sf}_scores.csv", "-n", "node2vec_scores" "-o", f"accept_prob_{sf}.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         log_file.write(f"experiment_one_fairness -> policy: {sf}\n")
         log_file.write(f"{cp.stdout}\n")
         log_file.write(f"{cp.stderr}\n")
