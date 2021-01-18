@@ -56,7 +56,6 @@ class EdgeEmbeding:
             for i, j in edges:
                 mult = np.multiply(node_embeddings[i], node_embeddings[j])
                 em = ""
-                print(str(i) + "," +  str(j))
                 for k in mult.tolist(): em+= "," + str(k)
                 w.write(f"{str(i)},{str(j)}{em}\n")
         except Exception as e:
