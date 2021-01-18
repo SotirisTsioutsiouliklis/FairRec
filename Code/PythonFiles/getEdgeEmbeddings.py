@@ -25,6 +25,7 @@ TODO:
     2. Add location to fairwalk executable.
     3. Add dependency errors and fix error messages.
 """
+import os
 import sys
 import numpy as np
 import pandas as pd
@@ -35,7 +36,7 @@ class EdgeEmbeding:
     """ Computes the edge embeddings for the specified edges.
     """
     @staticmethod
-    def hadamart(input_file: str, edges: List[Tuple[int, int]]) -> pd.DataFrame:
+    def hadamart(input_file: str, output_file: str, edges: List[Tuple[int, int]]):
         """ Edge embeding with the hadamard distance.
         """
         print("Reading")
@@ -47,14 +48,22 @@ class EdgeEmbeding:
 
         edge_embeddings = list()
 
+        if os.path.exists(output_file):
+            os.remove(output_file)
+        w = open(output_file, "w")
+        w.write("Sources,Targets," + ",".join([str(i) for i in range(len(node_embeddings[0]))]) + "\n")
         try:
             for i, j in edges:
-                edge_embeddings.append(np.multiply(node_embeddings[i], node_embeddings[j]))
+                mult = np.multiply(node_embeddings[i], node_embeddings[j])
+                em = ""
+                print(str(i) + "," +  str(j))
+                for k in mult.tolist(): em+= "," + str(k)
+                w.write(f"{str(i)},{str(j)}{em}\n")
         except Exception as e:
             print("Error while concatenating")
             print(e)
 
-        return node_embeddings, edge_embeddings
+        w.close()
 
     @staticmethod
     def concatenate(input_file: str, edges: List[Tuple[int, int]]) -> pd.DataFrame:
@@ -66,14 +75,13 @@ class EdgeEmbeding:
 
         edge_embeddings = list()
 
-        try:
-            for i, j in edges:
-                edge_embeddings.append(np.concatenate(([i, j], np.concatenatee((node_embeddings[i], node_embeddings[j])))))
-        except Exception as e:
-            print("Error while concatenating")
-            print(e)
+        for i, j in edges:
+            edge_embeddings.append(np.concatenate(([i, j], np.concatenatee((node_embeddings[i], node_embeddings[j])))))
 
-        return node_embeddings, edge_embeddings
+        edge_embeddings = pd.DataFrame(edge_embeddings, columns=["Sources", "Targets"] + [i for i in range(2 * len(node_embeddings[0]))])
+        edge_embeddings = edge_embeddings.astype({"Sources": "int", "Targets": "int"})
+
+        return edge_embeddings
 
 
 # Adjust print message according to the new features added.
@@ -135,23 +143,8 @@ if __name__ == "__main__":
 
     # Get edge embeddings.
     if policy == "hadamart":
-        nodeEmbeddings, edgeEmbeddings = EdgeEmbeding.hadamart(input_file, edges)
+        EdgeEmbeding.hadamart(input_file, output_file, edges)
     elif policy == "concatenate":
-        nodeEmbeddings, edgeEmbeddings = EdgeEmbeding.concatenate(input_file, edges)
+        EdgeEmbeding.concatenate(input_file, edges)
     else:
         InputErrors.valueError()
-
-    import os
-    if os.path.exists(output_file+"_tmp"):
-        os.remove(output_file+"_tmp")
-
-    np.savetxt(output_file+"_tmp", edgeEmbeddings, delimiter=',')
-    w = open(output_file, "w")
-    w.write("Sources,Targets," + ",".join([str(i) for i in range(len(nodeEmbeddings[0]))]))
-    i = 0
-    with open(output_file+"_tmp", "r") as rT:
-        for x in rT:
-            w.write(f"{edges[i][0]},{edges[i][1]},{x}\n")
-            i += 1
-    w.close()
-    os.remove(output_file+"_tmp")
