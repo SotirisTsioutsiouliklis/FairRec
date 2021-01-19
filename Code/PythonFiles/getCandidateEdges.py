@@ -98,22 +98,17 @@ if __name__ == "__main__":
     source_nodes = pd.read_csv(input_file)["Nodes"].to_numpy()
     # Load graph as undirected.
     unGraph = nx.read_edgelist("out_graph.txt", create_using=nx.Graph(), nodetype=int)
-    # Find candidate neighbors for each source node.
-    candidate_sources = list()
-    candidate_targets = list()
     order = 0
     total_nodes = len(source_nodes)
     sys.stdout.write(f"{order / total_nodes}%")
+    w = open(output_file, "w")
+    w.write("Sources,Targes\n")
     for source in source_nodes:
         candidate_neighbors = get_candidates(unGraph, source, distance)
         for target in candidate_neighbors:
-            candidate_sources.append(source)
-            candidate_targets.append(target)
+            w.write(f"{source},{target}\n")
         # Progress bar.
         order += 1
         sys.stdout.write("\r")
         sys.stdout.write(f"{(order / total_nodes) * 100}%")
         sys.stdout.flush()
-    # Write candidates in a file.
-    candidates = pd.DataFrame(data={"Sources": candidate_sources, "Targets": candidate_targets}, dtype=int)
-    candidates.to_csv(output_file, index=False)
