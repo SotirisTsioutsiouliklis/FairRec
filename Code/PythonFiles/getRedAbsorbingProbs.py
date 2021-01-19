@@ -60,8 +60,14 @@ if __name__ == "__main__":
     run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/CppFiles/absorbingProbs.out", "."])
     run(["./absorbingProbs.out", "-r"])
 
-    # Convert result to pandas DataFrame.
-    df = pd.read_csv("out_personilized_red.txt", sep="\t", header=0, names=["Nodes", "Red Pagerank"])
+    f = open("out_personilized_red.txt", "r")
+    w = open(output_file, "w")
+    w.write("Nodes,Red Pagerank\n")
+    f.readline()
+    for line in f:
+        tokens = line.split()
+        w.write(f"{tokens[0]},{tokens[1]}\n")
+    f.close()
+    w.close()
     # Delete old file.
     run(["rm", "out_personilized_red.txt"])
-    df.to_csv(output_file, index=False)
