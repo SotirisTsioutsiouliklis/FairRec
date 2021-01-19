@@ -67,13 +67,16 @@ def getRandomSourceNodes(percentage: int, output_file: str = None):
     # Keep 10% of them.
     number_of_source_nodes = int((number_of_nodes * percentage) // 100)
     ids = ids[:number_of_source_nodes]
-    # Converts to pandas DataFrame.
-    ids_df = pd.DataFrame(ids, columns=['Nodes'], dtype=int)
+
     # Set the name of the output file.
     if output_file is None:
         output_file = f"random_source_nodes_{percentage}.csv"
-    # Stores nodes.
-    ids_df.to_csv(output_file, index=False)
+    w = open(output_file, "w")
+    w.write("Nodes\n")
+
+    for i in ids:
+        w.write(f"{i}\n")
+    w.close()
 
 
 # Adjust input check according to the new features added.
