@@ -64,47 +64,71 @@ from sklearn.linear_model import LogisticRegression
 
 class RecommendationPolicies:
     @staticmethod
-    def random(edges: np.array) -> List[Tuple[int, int, float]]:
-        return [(source, target, random()) for source, target in edges]
+    def writeNpToFile(output_file, data):
+        w = open(output_file, "w")
+        w.write("Sources,Targets,Scores\n")
+        for source, target, score in data:
+            w.write(f"{source},{target},{score}\n")
+        w.close()
 
     @staticmethod
-    def adamicAdar(edges: np.array) -> List[Tuple[int, int, float]]:
+    def random(edges: np.array, output_file: str):
+        w = open(output_file, "w")
+        w.write("Sources,Targets,Scores\n")
+        for source, target in edges:
+            w.writer(f"{source},{target},{random()}\n")
+        w.close()
+
+    @staticmethod
+    def adamicAdar(edges: np.array, output_file: str):
         # Initialize graph.
         graph = nx.read_edgelist("out_graph.txt", nodetype=int, create_using=nx.Graph())
         preds = nx.adamic_adar_index(graph, edges)
-        return [(source, target, score) for source, target, score in preds]
+        writeNpToFile(output_file, preds)
 
     @staticmethod
-    def jaccardCoefficient(edges: np.array) -> List[Tuple[int, int, float]]:
+    def jaccardCoefficient(edges: np.array, output_file: str):
         # Initialize graph.
         graph = nx.read_edgelist("out_graph.txt", nodetype=int, create_using=nx.Graph())
         preds = nx.jaccard_coefficient(graph, edges)
-        return [(source, target, score) for source, target, score in preds]
+        writeNpToFile(output_file, preds)
 
     @staticmethod
-    def preferentialAttachment(edges: np.array) -> List[Tuple[int, int, float]]:
+    def preferentialAttachment(edges: np.array, output_file: str):
         # Initialize graph.
         graph = nx.read_edgelist("out_graph.txt", nodetype=int, create_using=nx.Graph())
         preds = nx.preferential_attachment(graph, edges)
-        return [(source, target, score) for source, target, score in preds]
+        writeNpToFile(output_file, preds)
 
     @staticmethod
-    def resourceAllocation(edges: np.array) -> List[Tuple[int, int, float]]:
+    def resourceAllocation(edges: np.array, output_file: str):
         # Initialize graph.
         graph = nx.read_edgelist("out_graph.txt", nodetype=int, create_using=nx.Graph())
         preds = nx.resource_allocation_index(graph, edges)
-        return [(source, target, score) for source, target, score in preds]
+        writeNpToFile(output_file, preds)
 
     @staticmethod
-    def fromClassifier(edge_file: str, classifier_file: str) -> List[Tuple[int, int, float]]:
+    def fromClassifier(edge_file: str, output_file: str, classifier_file: str):
         # Load recommender.
         linkRecommender = pickle.load(open(classifier_file, 'rb'))
-        # Get edge embeddings.
-        edges = pd.read_csv(input_file).to_numpy()
-        edgeEmbeddings = edges[:, 2:]
-        # Get scores.
+
+        # Get edge embeddings with the pairs
+        edgeEmbeddings = pd.read_csv(input_file).to_numpy()
+
+        # Get edge pairs
+        edge_pairs = edgeEmbeddings[:, :2]
+
+        # Get only the embeddings
+        edgeEmbeddings = edgeEmbeddings[:, 2:]
+
+        # Get scores
         edgeRecommendationScores = linkRecommender.predict_proba(edgeEmbeddings)
-        return [(edges[i][0], edges[i][1], edgeRecommendationScores[i][1]) for i in range(len(edgeRecommendationScores))]
+
+        w = open(output_file, "w")
+        w.write("Sources,Targets,Scores\n")
+        for i in range(len(edgeRecommendationScores)):
+            w.write(f"{edge_pairs[i][0]},{edge_pairs[i][1]},{edgeRecommendationScores[i][1]}\n")
+        w.close()
 
     @staticmethod
     def fair(edge_file: str, output_file: str):
@@ -112,14 +136,16 @@ class RecommendationPolicies:
         run(["./getFairScores.out", "-e", f"{edge_file}", "-o", f"{output_file}"])
 
     @staticmethod
-    def multiplicativeHybrid(edges: np.array, fair_scores_file: str, clasiffier_scores_file: str) -> List[Tuple[int, int, float]]:
+    def multiplicativeHybrid(edges: np.array, output_file: str, fair_scores_file: str, clasiffier_scores_file: str):
         fair_scores = pd.read_csv(fair_scores_file)
         clasiffier_scores = pd.read_csv(clasiffier_scores_file)
         hybrid = pd.merge(fair_scores, clasiffier_scores, "inner", on=["Sources", "Targets"])
         hybrid["Scores"] = hybrid["Scores_x"] * hybrid["Scores_y"]
         hybrid.drop(columns=["Scores_x", "Scores_y"])
-        return [(hybrid.iloc[i, 0], hybrid.iloc[i, 1], hybrid.iloc[i, 2]) for i in range(len(hybrid))]
-
+        w = open(output_file, "w")
+        w.write("Sources,Targets,Scores\n")
+        for i in range(len(hybrid)):
+            w.write(f"{hybrid.iloc[i, 0]},{hybrid.iloc[i, 1]},{hybrid.iloc[i, 2]}\n")
 
 # Adjust print message according to the new features added.
 class InputErrors:
@@ -206,25 +232,20 @@ if __name__ == "__main__":
 
     # Get recommendation scores.
     if policy == "random":
-        scores = RecommendationPolicies.random(edges)
+        RecommendationPolicies.random(edges, output_file)
     elif policy == "adamic-adar":
-        scores = RecommendationPolicies.adamicAdar(edges)
+        RecommendationPolicies.adamicAdar(edges, output_file)
     elif policy == "jaccard-coefficient":
-        scores = RecommendationPolicies.jaccardCoefficient(edges)
+        RecommendationPolicies.jaccardCoefficient(edges, output_file)
     elif policy == "preferential-attachment":
-        scores = RecommendationPolicies.preferentialAttachment(edges)
+        RecommendationPolicies.preferentialAttachment(edges, output_file)
     elif policy == "resource-allocation":
-        scores = RecommendationPolicies.resourceAllocation(edges)
+        RecommendationPolicies.resourceAllocation(edges, output_file)
     elif policy == "from-classifier":
-        scores = RecommendationPolicies.fromClassifier(input_file, classifier_file)
+        RecommendationPolicies.fromClassifier(input_file, output_file, classifier_file)
     elif policy == "fair":
         RecommendationPolicies.fair(input_file, output_file)
     elif policy == "multiplicative-hybrid":
-        scores = RecommendationPolicies.multiplicativeHybrid(edges, fair_scores_file, classifier_score_file)
+        RecommendationPolicies.multiplicativeHybrid(edges, output_file, fair_scores_file, classifier_score_file)
     else:
         InputErrors.valueError()
-
-    # Save scores.
-    if policy != "fair":
-        scores = pd.DataFrame(scores, columns=["Sources", "Targets", "Scores"])
-        scores.to_csv(output_file, index=False)
