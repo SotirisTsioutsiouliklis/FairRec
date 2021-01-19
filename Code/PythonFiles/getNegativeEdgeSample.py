@@ -75,16 +75,16 @@ if __name__ == "__main__":
 
     # Generate negative sample.
     edge_order = 0
+    w = open(output_file, "w")
+    w.write("Sources,Targets\n")
     print("Generate Negative sample of edges. Progress:")
     while len(negative_edge_sample) < wanted_number_of_edges:
         e = (randint(0, number_of_nodes - 1), randint(0, number_of_nodes - 1))
         if e not in edges and e not in negative_edge_sample:
             negative_edge_sample.add(e)
+            w.write(f"{e[0]},{e[1]}\n")
             edge_order += 1
             sys.stdout.write("\r")
             sys.stdout.write(f"{(edge_order / wanted_number_of_edges) * 100}%")
             sys.stdout.flush()
-
-    # Save edges.
-    negative_edge_sample = pd.DataFrame(negative_edge_sample, columns=["Sources", "Targets"])
-    negative_edge_sample.to_csv(output_file, index=False)
+    w.close()
