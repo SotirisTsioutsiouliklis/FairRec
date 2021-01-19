@@ -73,6 +73,8 @@ if __name__ == "__main__":
     wanted_number_of_edges = int(number_of_edges * (percentage / 100))
     positive_edge_sample = edges[0:wanted_number_of_edges]
 
-    # Save edges.
-    negative_edge_sample = pd.DataFrame(positive_edge_sample, columns=["Sources", "Targets"])
-    negative_edge_sample.to_csv(output_file, index=False)
+    w = open(output_file, "w")
+    w.write("Sources,Targets\n")
+    for e in positive_edge_sample:
+        w.write(f"{e[0]},{e[1]}\n")
+    w.close()
