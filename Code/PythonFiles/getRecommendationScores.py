@@ -129,7 +129,7 @@ class RecommendationPolicies:
 
             # Get scores
             edgeRecommendationScores = linkRecommender.predict_proba([edgeEmbeddings])
-            w.write(f"{edge_pair[0]},{edge_pair[1]},{edgeRecommendationScores[0][1]}\n")
+            w.write(f"{int(edge_pair[0])},{int(edge_pair[1])},{edgeRecommendationScores[0][1]}\n")
         w.close()
 
     @staticmethod
