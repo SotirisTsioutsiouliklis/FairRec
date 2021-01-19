@@ -116,7 +116,7 @@ class RecommendationPolicies:
         w.write("Sources,Targets,Scores\n")
 
         # Get edge embeddings for each pairs
-        f = open(input_file, "r")
+        f = open(edge_file, "r")
         f.readline()
         for line in f:
             edgeEmbeddings = np.fromstring(line, sep=',')
@@ -138,7 +138,7 @@ class RecommendationPolicies:
         run(["./getFairScores.out", "-e", f"{edge_file}", "-o", f"{output_file}"])
 
     @staticmethod
-    def multiplicativeHybrid(edges: np.array, output_file: str, fair_scores_file: str, clasiffier_scores_file: str):
+    def multiplicativeHybrid(output_file: str, fair_scores_file: str, clasiffier_scores_file: str):
         fair_scores = pd.read_csv(fair_scores_file)
         clasiffier_scores = pd.read_csv(clasiffier_scores_file)
         hybrid = pd.merge(fair_scores, clasiffier_scores, "inner", on=["Sources", "Targets"])
@@ -231,7 +231,8 @@ if __name__ == "__main__":
             InputErrors.argumentError()
 
     # Load candidate edges.
-    edges = pd.read_csv(input_file, header=0, names=["Sources", "Targets"]).to_numpy()
+    if policy != "from-classifier" and policy != "fair" and policy != "multiplicative-hybrid":
+        edges = pd.read_csv(input_file, header=0, names=["Sources", "Targets"]).to_numpy()
 
     # Get recommendation scores.
     if policy == "random":
@@ -249,6 +250,6 @@ if __name__ == "__main__":
     elif policy == "fair":
         RecommendationPolicies.fair(input_file, output_file)
     elif policy == "multiplicative-hybrid":
-        RecommendationPolicies.multiplicativeHybrid(edges, output_file, fair_scores_file, classifier_score_file)
+        RecommendationPolicies.multiplicativeHybrid(output_file, fair_scores_file, classifier_score_file)
     else:
         InputErrors.valueError()
