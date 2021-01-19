@@ -112,22 +112,24 @@ class RecommendationPolicies:
         # Load recommender.
         linkRecommender = pickle.load(open(classifier_file, 'rb'))
 
-        # Get edge embeddings with the pairs
-        edgeEmbeddings = pd.read_csv(input_file).to_numpy()
-
-        # Get edge pairs
-        edge_pairs = edgeEmbeddings[:, :2]
-
-        # Get only the embeddings
-        edgeEmbeddings = edgeEmbeddings[:, 2:]
-
-        # Get scores
-        edgeRecommendationScores = linkRecommender.predict_proba(edgeEmbeddings)
-
         w = open(output_file, "w")
         w.write("Sources,Targets,Scores\n")
-        for i in range(len(edgeRecommendationScores)):
-            w.write(f"{edge_pairs[i][0]},{edge_pairs[i][1]},{edgeRecommendationScores[i][1]}\n")
+
+        # Get edge embeddings for each pairs
+        f = open(input_file, "r")
+        f.readline()
+        for line in f:
+            edgeEmbeddings = np.fromstring(line, sep=',')
+
+            # Get edge pair
+            edge_pair = edgeEmbeddings[:2]
+
+            # Get only the embeddings
+            edgeEmbeddings = edgeEmbeddings[2:]
+
+            # Get scores
+            edgeRecommendationScores = linkRecommender.predict_proba([edgeEmbeddings])
+            w.write(f"{edge_pair[0]},{edge_pair[1]},{edgeRecommendationScores[0][1]}\n")
         w.close()
 
     @staticmethod
@@ -146,6 +148,7 @@ class RecommendationPolicies:
         w.write("Sources,Targets,Scores\n")
         for i in range(len(hybrid)):
             w.write(f"{hybrid.iloc[i, 0]},{hybrid.iloc[i, 1]},{hybrid.iloc[i, 2]}\n")
+        w.close()
 
 # Adjust print message according to the new features added.
 class InputErrors:
