@@ -144,11 +144,7 @@ class RecommendationPolicies:
         hybrid = pd.merge(fair_scores, clasiffier_scores, "inner", on=["Sources", "Targets"])
         hybrid["Scores"] = hybrid["Scores_x"] * hybrid["Scores_y"]
         hybrid = hybrid.drop(columns=["Scores_x", "Scores_y"])
-        w = open(output_file, "w")
-        w.write("Sources,Targets,Scores\n")
-        for i in range(len(hybrid)):
-            w.write(f"{hybrid.iloc[i, 0]},{hybrid.iloc[i, 1]},{hybrid.iloc[i, 2]}\n")
-        w.close()
+        hybrid.to_csv(output_file, index=False)
 
 # Adjust print message according to the new features added.
 class InputErrors:
