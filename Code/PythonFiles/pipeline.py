@@ -64,7 +64,7 @@ with open("log.txt", "w") as log_file:
     # 5. Get node2vec node embeddings.
     print("Get node2vec node embeddings")
     run(["cp", path+"PythonFiles/getNodeEmbeddings.py", "."])
-    cp = run(["python3", "getNodeEmbeddings.py", "-g", "out_graph.txt", "-p", "node2vec", "-o", "node2vec_node_embeddings.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    cp = run(["python3", "getNodeEmbeddings.py", "-g", "out_graph.txt", "-p", "node2vec", "--l", "5", "--pp", "1.0", "--qp", "1.0", "-o", "node2vec_node_embeddings.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log_file.write(f"getNodeEmbeddings.py{time() - temp_start}\n")
     log_file.write(f"{cp.stdout}\n")
     log_file.write(f"{cp.stderr}\n")
@@ -73,7 +73,7 @@ with open("log.txt", "w") as log_file:
 
     # 6. Get fairwalk node embeddings.
     print("Get fairwalk node embeddings")
-    cp = run(["python3", "getNodeEmbeddings.py", "-g", "out_graph.txt", "-p", "fairwalk", "-o", "fairwalk_node_embeddings.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    cp = run(["python3", "getNodeEmbeddings.py", "-g", "out_graph.txt", "-p", "fairwalk", "--l", "5", "--pp", "1.0", "--qp", "1.0", "-o", "fairwalk_node_embeddings.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log_file.write(f"getNodeEmbeddings.py{time() - temp_start}\n")
     log_file.write(f"{cp.stdout}\n")
     log_file.write(f"{cp.stderr}\n")
