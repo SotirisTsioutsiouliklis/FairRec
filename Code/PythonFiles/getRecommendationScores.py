@@ -143,7 +143,7 @@ class RecommendationPolicies:
         clasiffier_scores = pd.read_csv(clasiffier_scores_file)
         hybrid = pd.merge(fair_scores, clasiffier_scores, "inner", on=["Sources", "Targets"])
         hybrid["Scores"] = hybrid["Scores_x"] * hybrid["Scores_y"]
-        hybrid.drop(columns=["Scores_x", "Scores_y"])
+        hybrid = hybrid.drop(columns=["Scores_x", "Scores_y"])
         w = open(output_file, "w")
         w.write("Sources,Targets,Scores\n")
         for i in range(len(hybrid)):
