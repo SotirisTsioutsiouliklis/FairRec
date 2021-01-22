@@ -63,7 +63,6 @@ from sklearn.linear_model import LogisticRegression
 
 
 class RecommendationPolicies:
-    @staticmethod
     def writeNpToFile(output_file, data):
         w = open(output_file, "w")
         w.write("Sources,Targets,Scores\n")
@@ -84,7 +83,7 @@ class RecommendationPolicies:
         # Initialize graph.
         graph = nx.read_edgelist("out_graph.txt", nodetype=int, create_using=nx.Graph())
         preds = nx.adamic_adar_index(graph, edges)
-        self.writeNpToFile(output_file, preds)
+        writeNpToFile(output_file, preds)
 
     @staticmethod
     def jaccardCoefficient(edges: np.array, output_file: str):
@@ -98,14 +97,14 @@ class RecommendationPolicies:
         # Initialize graph.
         graph = nx.read_edgelist("out_graph.txt", nodetype=int, create_using=nx.Graph())
         preds = nx.preferential_attachment(graph, edges)
-        self.writeNpToFile(output_file, preds)
+        writeNpToFile(output_file, preds)
 
     @staticmethod
     def resourceAllocation(edges: np.array, output_file: str):
         # Initialize graph.
         graph = nx.read_edgelist("out_graph.txt", nodetype=int, create_using=nx.Graph())
         preds = nx.resource_allocation_index(graph, edges)
-        self.writeNpToFile(output_file, preds)
+        writeNpToFile(output_file, preds)
 
     @staticmethod
     def fromClassifier(edge_file: str, output_file: str, classifier_file: str):
