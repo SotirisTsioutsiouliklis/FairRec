@@ -144,6 +144,7 @@ class RecommendationPolicies:
         hybrid = pd.merge(fair_scores, clasiffier_scores, "inner", on=["Sources", "Targets"])
         hybrid["Scores"] = hybrid["Scores_x"] * hybrid["Scores_y"]
         hybrid = hybrid.drop(columns=["Scores_x", "Scores_y"])
+        hybrid = hybrid["Scores"].sort_values(by="Scores", ascending=False)
         hybrid.to_csv(output_file, index=False)
 
 # Adjust print message according to the new features added.
