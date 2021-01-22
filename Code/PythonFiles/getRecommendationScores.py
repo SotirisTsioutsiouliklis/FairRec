@@ -84,28 +84,28 @@ class RecommendationPolicies:
         # Initialize graph.
         graph = nx.read_edgelist("out_graph.txt", nodetype=int, create_using=nx.Graph())
         preds = nx.adamic_adar_index(graph, edges)
-        writeNpToFile(output_file, preds)
+        self.writeNpToFile(output_file, preds)
 
     @staticmethod
     def jaccardCoefficient(edges: np.array, output_file: str):
         # Initialize graph.
         graph = nx.read_edgelist("out_graph.txt", nodetype=int, create_using=nx.Graph())
         preds = nx.jaccard_coefficient(graph, edges)
-        writeNpToFile(output_file, preds)
+        self.writeNpToFile(output_file, preds)
 
     @staticmethod
     def preferentialAttachment(edges: np.array, output_file: str):
         # Initialize graph.
         graph = nx.read_edgelist("out_graph.txt", nodetype=int, create_using=nx.Graph())
         preds = nx.preferential_attachment(graph, edges)
-        writeNpToFile(output_file, preds)
+        self.writeNpToFile(output_file, preds)
 
     @staticmethod
     def resourceAllocation(edges: np.array, output_file: str):
         # Initialize graph.
         graph = nx.read_edgelist("out_graph.txt", nodetype=int, create_using=nx.Graph())
         preds = nx.resource_allocation_index(graph, edges)
-        writeNpToFile(output_file, preds)
+        self.writeNpToFile(output_file, preds)
 
     @staticmethod
     def fromClassifier(edge_file: str, output_file: str, classifier_file: str):
