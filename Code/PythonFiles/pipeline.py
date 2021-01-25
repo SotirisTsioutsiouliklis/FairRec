@@ -4,7 +4,8 @@ from subprocess import run
 import subprocess
 from time import time
 
-rounds = 10
+rounds = "10"
+distance = "10"
 path = "/mnt/sdb1/tsiou/FairRec/Code/"
 
 with open("log.txt", "w") as log_file:
@@ -24,7 +25,7 @@ with open("log.txt", "w") as log_file:
     # 1. Get source nodes.
     print("Get source nodes")
     run(["cp", path+"PythonFiles/getSourceNodes.py", "."])
-    cp = run(["python3", "getSourceNodes.py", "-p", "random", "-a", "10", "-o", "random_source_nodes.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    cp = run(["python3", "getSourceNodes.py", "-p", "random", "-a", rounds, "-o", "random_source_nodes.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log_file.write(f"getSourceNodes.py{time() - temp_start}\n")
     log_file.write(f"{cp.stdout}\n")
     log_file.write(f"{cp.stderr}\n")
@@ -34,7 +35,7 @@ with open("log.txt", "w") as log_file:
     # 2. Get candidate edges.
     print("Get candidate edges")
     run(["cp", path+"PythonFiles/getCandidateEdges.py", "."])
-    cp = run(["python3", "getCandidateEdges.py", "-i", "random_source_nodes.csv", "-d", "5", "-o", "candidate_edges.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    cp = run(["python3", "getCandidateEdges.py", "-i", "random_source_nodes.csv", "-d", distance, "-o", "candidate_edges.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log_file.write(f"getCandidateEdges.py{time() - temp_start}\n")
     log_file.write(f"{cp.stdout}\n")
     log_file.write(f"{cp.stderr}\n")
@@ -64,7 +65,7 @@ with open("log.txt", "w") as log_file:
     # 5. Get node2vec node embeddings.
     print("Get node2vec node embeddings")
     run(["cp", path+"PythonFiles/getNodeEmbeddings.py", "."])
-    cp = run(["python3", "getNodeEmbeddings.py", "-g", "out_graph.txt", "-p", "node2vec", "--l", "5", "--pp", "1.0", "--qp", "1.0", "-o", "node2vec_node_embeddings.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    cp = run(["python3", "getNodeEmbeddings.py", "-g", "out_graph.txt", "-p", "node2vec", "--l", distance, "--pp", "1.0", "--qp", "1.0", "-o", "node2vec_node_embeddings.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log_file.write(f"getNodeEmbeddings.py{time() - temp_start}\n")
     log_file.write(f"{cp.stdout}\n")
     log_file.write(f"{cp.stderr}\n")
@@ -73,7 +74,7 @@ with open("log.txt", "w") as log_file:
 
     # 6. Get fairwalk node embeddings.
     print("Get fairwalk node embeddings")
-    cp = run(["python3", "getNodeEmbeddings.py", "-g", "out_graph.txt", "-p", "fairwalk", "--l", "5", "--pp", "1.0", "--qp", "1.0", "-o", "fairwalk_node_embeddings.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    cp = run(["python3", "getNodeEmbeddings.py", "-g", "out_graph.txt", "-p", "fairwalk", "--l", distance, "--pp", "1.0", "--qp", "1.0", "-o", "fairwalk_node_embeddings.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log_file.write(f"getNodeEmbeddings.py{time() - temp_start}\n")
     log_file.write(f"{cp.stdout}\n")
     log_file.write(f"{cp.stderr}\n")
@@ -242,14 +243,14 @@ with open("log.txt", "w") as log_file:
     # 23. Run Experiment Score and Acceptance probabilities
     scores_files = ["fair", "adamic_adar", "jaccard_coefficient", "resource_allocation", "preferential_attachment", "node2vec", "fairwalk", "hybrid_node2vec"]
     for sf in scores_files:
-        cp = run(["python3", "experiment_one_fairness.py", "-r", str(rounds), "-s", f"{sf}_scores.csv", "-o", f"sc_{sf}.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        cp = run(["python3", "experiment_one_fairness.py", "-r", rounds, "-s", f"{sf}_scores.csv", "-o", f"sc_{sf}.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         log_file.write(f"experiment_one_fairness -> policy: {sf}\n")
         log_file.write(f"{cp.stdout}\n")
         log_file.write(f"{cp.stderr}\n")
         log_file.write(f"{cp.returncode}\n")
 
     for sf in scores_files:
-        cp = run(["python3", "experiment_two_acceptance.py", "-r", str(rounds), "-s", f"{sf}_scores.csv", "-n", "node2vec_scores.csv", "-o", f"accept_prob_{sf}.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        cp = run(["python3", "experiment_two_acceptance.py", "-r", rounds, "-s", f"{sf}_scores.csv", "-n", "node2vec_scores.csv", "-o", f"accept_prob_{sf}.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         log_file.write(f"experiment_two_fairness -> policy: {sf}\n")
         log_file.write(f"{cp.stdout}\n")
         log_file.write(f"{cp.stderr}\n")
