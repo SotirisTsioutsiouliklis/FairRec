@@ -401,7 +401,9 @@ pagerank_v pagerank_algorithms::getObjectiveValues(int sourceNode)
 		objectiveDenominator *= ((1 - jumpProb) / jumpProb);
 		objectiveDenominator = sourceOutDegree + 1 - objectiveDenominator;
 		objectiveValues[targetNode].node_id = targetNode;
-		objectiveValues[targetNode].pagerank = redPagerank + rankVector[sourceNode].pagerank * (objectiveNominator / objectiveDenominator);
+		// objectiveValues[targetNode].pagerank = redPagerank + rankVector[sourceNode].pagerank * (objectiveNominator / objectiveDenominator);
+		// Not pagerank, just the difference.
+		objectiveValues[targetNode].pagerank = rankVector[sourceNode].pagerank * (objectiveNominator / objectiveDenominator);
 		// Theory check print.
 		if (objectiveDenominator < 0)
 			std::cout << "!!!NEGATIVE DENOMINATOR!!!\n";
@@ -546,7 +548,9 @@ pagerank_v pagerank_algorithms::getObjectivePersonalizedValues(int personalized_
 		objectiveDenominator *= ((1 - jumpProb) / jumpProb);
 		objectiveDenominator = sourceOutDegree + 1 - objectiveDenominator;
 		objectiveValues[targetNode].node_id = targetNode;
-		objectiveValues[targetNode].pagerank = redAbsorbingProbs[personalized_node].pagerank + sourceAbsorbingProbs[personalized_node].pagerank * (objectiveNominator / objectiveDenominator);
+		// objectiveValues[targetNode].pagerank = redAbsorbingProbs[personalized_node].pagerank + sourceAbsorbingProbs[personalized_node].pagerank * (objectiveNominator / objectiveDenominator);
+		// Not pagerank, just the difference.
+		objectiveValues[targetNode].pagerank = sourceAbsorbingProbs[personalized_node].pagerank * (objectiveNominator / objectiveDenominator);
 		// Theory check print.
 		if (objectiveDenominator < 0)
 			std::cout << "!!!NEGATIVE DENOMINATOR!!!\n";
