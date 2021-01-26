@@ -100,15 +100,9 @@ if __name__ == "__main__":
     unGraph = nx.read_edgelist("out_graph.txt", create_using=nx.Graph(), nodetype=int)
     order = 0
     total_nodes = len(source_nodes)
-    sys.stdout.write(f"{order / total_nodes}%")
     w = open(output_file, "w")
     w.write("Sources,Targes\n")
     for source in source_nodes:
         candidate_neighbors = get_candidates(unGraph, source, distance)
         for target in candidate_neighbors:
             w.write(f"{source},{target}\n")
-        # Progress bar.
-        order += 1
-        sys.stdout.write("\r")
-        sys.stdout.write(f"{(order / total_nodes) * 100}%")
-        sys.stdout.flush()

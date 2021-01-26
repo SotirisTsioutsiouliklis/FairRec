@@ -83,8 +83,4 @@ if __name__ == "__main__":
         if e not in edges and e not in negative_edge_sample:
             negative_edge_sample.add(e)
             w.write(f"{e[0]},{e[1]}\n")
-            edge_order += 1
-            sys.stdout.write("\r")
-            sys.stdout.write(f"{(edge_order / wanted_number_of_edges) * 100}%")
-            sys.stdout.flush()
     w.close()
