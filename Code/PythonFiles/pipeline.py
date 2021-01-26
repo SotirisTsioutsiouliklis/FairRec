@@ -241,6 +241,8 @@ with open("log.txt", "w") as log_file:
 
 
     # 23. Run Experiment Score and Acceptance probabilities
+    run(["cp", path+"ExperimentScripts/experiment_one_fairness.py", "."])
+    run(["cp", path+"ExperimentScripts/experiment_two_acceptance.py", "."])
     scores_files = ["fair", "adamic_adar", "jaccard_coefficient", "resource_allocation", "preferential_attachment", "node2vec", "fairwalk", "hybrid_node2vec"]
     for sf in scores_files:
         cp = run(["python3", "experiment_one_fairness.py", "-r", rounds, "-s", f"{sf}_scores.csv", "-o", f"sc_{sf}.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
