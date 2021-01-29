@@ -14,7 +14,6 @@ f.close()
 G = nx.parse_edgelist(lines[1:], nodetype=int, create_using=nx.DiGraph)
 
 if path.exists("names.txt"):
-    f = open("names.txt")
     names = pd.read_csv("names.txt", sep='\t')
     print(names.info())
 
