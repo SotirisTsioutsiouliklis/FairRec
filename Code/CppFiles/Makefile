@@ -5,6 +5,7 @@ all:
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o temp.out graph.cpp pagerank.cpp temp.cpp
 	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o deletionScores.out graph.cpp pagerank.cpp experimentDel.cpp
 	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o getFairScores.out graph.cpp pagerank.cpp getFairScores.cpp
+	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o getDyadicFairScores.out graph.cpp pagerank.cpp getDyadicFairScores.cpp
 	#g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o testFormula.out graph.cpp pagerank.cpp testFormula.cpp
 	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o getPagerank.out graph.cpp pagerank.cpp getPagerank.cpp
 	g++ --std=c++11 -Wall -Wextra -O3 -fopenmp -o personalized_testing.out graph.cpp pagerank.cpp personalized_testing.cpp
