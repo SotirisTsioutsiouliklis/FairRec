@@ -138,6 +138,11 @@ class RecommendationPolicies:
         run(["./getFairScores.out", "-e", f"{edge_file}", "-o", f"{output_file}"])
 
     @staticmethod
+    def dyadic_fair(edge_file: str, output_file: str):
+        run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/CppFiles/getFairScores.out", "."])
+        run(["./getDyadicFairScores.out", "-e", f"{edge_file}", "-o", f"{output_file}"])
+
+    @staticmethod
     def multiplicativeHybrid(output_file: str, fair_scores_file: str, clasiffier_scores_file: str):
         fair_scores = pd.read_csv(fair_scores_file)
         clasiffier_scores = pd.read_csv(clasiffier_scores_file)
