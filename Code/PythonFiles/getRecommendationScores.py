@@ -251,6 +251,8 @@ if __name__ == "__main__":
         RecommendationPolicies.fromClassifier(input_file, output_file, classifier_file)
     elif policy == "fair":
         RecommendationPolicies.fair(input_file, output_file)
+    elif policy == "dyadic-fair":
+        RecommendationPolicies.dyadic_fair(input_file, output_file)
     elif policy == "multiplicative-hybrid":
         RecommendationPolicies.multiplicativeHybrid(output_file, fair_scores_file, classifier_score_file)
     else:

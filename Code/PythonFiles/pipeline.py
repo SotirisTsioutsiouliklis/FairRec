@@ -229,6 +229,15 @@ with open("log.txt", "w") as log_file:
     log_file.write(f"{cp.returncode}\n")
     temp_start = time()
 
+    # 21. Get dyadic fair scores.
+    print("Get dyadic fair scores.")
+    cp = run(["python3", "getRecommendationScores.py", "-i", "candidate_edges.csv", "-p", "fair", "-o", "fair_scores.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    log_file.write(f"getRecommendationScores.py{time() - temp_start}\n")
+    log_file.write(f"{cp.stdout}\n")
+    log_file.write(f"{cp.stderr}\n")
+    log_file.write(f"{cp.returncode}\n")
+    temp_start = time()
+
     # 22. Get multiplicative hybrid node2vec scores.
     print("Get hybrid scores.")
     cp = run(["python3", "getRecommendationScores.py", "-i", "candidate_edges.csv", "-p", "multiplicative-hybrid", "-f", "fair_scores.csv", "-c", "node2vec_scores.csv", "-o", "hybrid_node2vec_scores.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
