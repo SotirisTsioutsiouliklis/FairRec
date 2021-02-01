@@ -185,7 +185,7 @@ class InputErrors:
 
 # Valid recommendation policies.
 policies = ["random", "adamic-adar", "jaccard-coefficient", "preferential-attachment", "resource-allocation",
-            "from-classifier", "fair", "multiplicative-hybrid"]
+            "from-classifier", "fair", "dyadic-fair", "multiplicative-hybrid"]
 
 # Adjust input check according to the new features added.
 if __name__ == "__main__":
@@ -233,7 +233,7 @@ if __name__ == "__main__":
             InputErrors.argumentError()
 
     # Load candidate edges.
-    if policy != "from-classifier" and policy != "fair" and policy != "multiplicative-hybrid":
+    if policy != "from-classifier" and policy != "fair" and policy != "dyadic-fair" and policy != "multiplicative-hybrid":
         edges = pd.read_csv(input_file, header=0, names=["Sources", "Targets"]).to_numpy()
 
     # Get recommendation scores.
