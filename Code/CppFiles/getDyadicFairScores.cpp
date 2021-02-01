@@ -28,13 +28,13 @@ vector<int> split_int (const string &s, char delim) {
     return result;
 }
 
-vector<int> split_float (const string &s, char delim) {
-    vector<int> result;
+vector<double> split_double (const string &s, char delim) {
+    vector<double> result;
     stringstream ss (s);
     string item;
 
     while (getline(ss, item, delim)) {
-        result.push_back(stof(item));
+        result.push_back(stod(item));
     }
 
     return result;
@@ -62,7 +62,7 @@ int main(int argc, char **argv)
     ifstream red_file("red_absorbing_probabilities.csv");
     getline(red_file, str_edge);
     while (getline(red_file, str_edge)) {
-        red_pageranks.push_back(split_float(str_edge, ',')[1]);
+        red_pageranks.push_back(split_double(str_edge, ',')[1]);
     }
 
     // Get average == network's fairness.
@@ -70,8 +70,7 @@ int main(int argc, char **argv)
     for (double i : red_pageranks) {
         red_pagerank += i;
     }
-    red_pagerank /= red_pageranks.size();
-
+    red_pagerank /= (double)red_pageranks.size();
     // Read edges.
     ifstream source_nodes(edge_file);
     getline(source_nodes, str_edge);
@@ -92,7 +91,7 @@ int main(int argc, char **argv)
         // If Node is unfair towards blue, inverse the scores.
         if (red_pageranks[source] > red_pagerank) {
             for (int target : targets) {
-                obj_values[target].pagerank = 1 - obj_values[target].pagerank;
+                obj_values[target].pagerank = - obj_values[target].pagerank;
             }
         }
         for (int target : targets) {

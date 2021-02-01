@@ -139,7 +139,7 @@ class RecommendationPolicies:
 
     @staticmethod
     def dyadic_fair(edge_file: str, output_file: str):
-        run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/CppFiles/getFairScores.out", "."])
+        run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/CppFiles/getDyadicFairScores.out", "."])
         run(["./getDyadicFairScores.out", "-e", f"{edge_file}", "-o", f"{output_file}"])
 
     @staticmethod
