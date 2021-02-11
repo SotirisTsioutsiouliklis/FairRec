@@ -18,6 +18,11 @@ Examples:
 
             >>> python3 getSourceNodes.py -p random -a 10 -o random_source_nodes.csv
 
+        2. pagerank:
+            >>> python3 getSourceNodes.py -p pagerank -a <percentage_of_nodes> [-o <output_file>]
+
+            >>> python3 getSourceNodes.py -p pagerank -a 10 -o random_source_nodes.csv
+
 Notes:
     1. Additional arguments should be given in the specified order,
     as in the examples.
@@ -79,6 +84,26 @@ def getRandomSourceNodes(percentage: int, output_file: str = None):
     w.close()
 
 
+def getBestByPagerankSourceNodes(percentage: int, output_file: str = None):
+    # Read pagerank.
+    pagerank = pd.read_csv("", sep="\t")["Pagerank"].to_numpy()
+    sorted_nodes = np.argsort(-pagerank)
+    # Keep 10% of them.
+    number_of_nodes = pagerank.size
+    number_of_source_nodes = int((number_of_nodes * percentage) // 100)
+    sorted_nodes = sorted_nodes[0:number_of_source_nodes]
+
+    # Set the name of the output file.
+    if output_file is None:
+        output_file = f"pagerank_source_nodes_{percentage}.csv"
+    w = open(output_file, "w")
+    w.write("Nodes\n")
+
+    for i in sorted_nodes:
+        w.write(f"{i}\n")
+    w.close()
+
+
 # Adjust input check according to the new features added.
 if __name__ == "__main__":
     #############################
@@ -108,6 +133,20 @@ if __name__ == "__main__":
                     InputErrors.argumentError()
             else:
                 getRandomSourceNodes(percentage)
+    elif sys.argv[2] == "pagerank":
+        percentage = float(sys.argv[4])
+        # Check for valid percentage input.
+        if not (percentage > 0 and percentage < 100):
+            InputErrors.percentage_error()
+        else:
+            if len(sys.argv) == 7:
+                if sys.argv[5] == "-o":
+                    output_file = sys.argv[6]
+                    getRandomSourceNodes(percentage, output_file)
+                else:
+                    InputErrors.argumentError()
+            else:
+                getBestByPagerankSourceNodes(percentage)
     # Handles all other incorrect inputs.
     else:
         InputErrors.argumentError()
