@@ -111,7 +111,7 @@ def getRandomSourceNodes(percentage: int, output_file: str = None):
 
 def getBestByPagerankSourceNodes(percentage: int, output_file: str = None):
     # Read pagerank.
-    pagerank = pd.read_csv("", sep="\t")["Pagerank"].to_numpy()
+    pagerank = pd.read_csv("out_pagerank.csv")["Pagerank"].to_numpy()
     sorted_nodes = np.argsort(-pagerank)
     # Keep 10% of them.
     number_of_nodes = pagerank.size
@@ -131,7 +131,7 @@ def getBestByPagerankSourceNodes(percentage: int, output_file: str = None):
 
 def getWorstByPagerankSourceNodes(percentage: int, output_file: str = None):
     # Read pagerank.
-    pagerank = pd.read_csv("", sep="\t")["Pagerank"].to_numpy()
+    pagerank = pd.read_csv("out_pagerank.csv", sep="\t")["Pagerank"].to_numpy()
     sorted_nodes = np.argsort(pagerank)
     # Keep 10% of them.
     number_of_nodes = pagerank.size

@@ -25,7 +25,9 @@ with open("log.txt", "w") as log_file:
     # 1. Get source nodes.
     print("Get source nodes")
     run(["cp", path+"PythonFiles/getSourceNodes.py", "."])
-    cp = run(["python3", "getSourceNodes.py", "-p", "random", "-a", rounds, "-o", "random_source_nodes.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # cp = run(["python3", "getSourceNodes.py", "-p", "random", "-a", rounds, "-o", "random_source_nodes.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    cp = run(["python3", "getSourceNodes.py", "-p", "best-pagerank", "-a", rounds, "-o", "best_by_pagerank_nodes.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # cp = run(["python3", "getSourceNodes.py", "-p", "worst-pagerank", "-a", rounds, "-o", "worst_by_pagerank_nodes.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log_file.write(f"getSourceNodes.py{time() - temp_start}\n")
     log_file.write(f"{cp.stdout}\n")
     log_file.write(f"{cp.stderr}\n")
@@ -35,7 +37,9 @@ with open("log.txt", "w") as log_file:
     # 2. Get candidate edges.
     print("Get candidate edges")
     run(["cp", path+"PythonFiles/getCandidateEdges.py", "."])
-    cp = run(["python3", "getCandidateEdges.py", "-i", "random_source_nodes.csv", "-d", distance, "-o", "candidate_edges.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # cp = run(["python3", "getCandidateEdges.py", "-i", "random_source_nodes.csv", "-d", distance, "-o", "candidate_edges.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    cp = run(["python3", "getCandidateEdges.py", "-i", "best_by_pagerank_nodes.csv", "-d", distance, "-o", "candidate_edges.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    # cp = run(["python3", "getCandidateEdges.py", "-i", "worst_by_pagerank_nodes.csv", "-d", distance, "-o", "candidate_edges.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log_file.write(f"getCandidateEdges.py{time() - temp_start}\n")
     log_file.write(f"{cp.stdout}\n")
     log_file.write(f"{cp.stderr}\n")
