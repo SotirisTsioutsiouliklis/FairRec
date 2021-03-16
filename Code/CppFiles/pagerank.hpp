@@ -36,6 +36,8 @@ public:
      * in case we add an edge in the graph. The prediction is based on the
      * formula of the FairRec paper and it is accurate.
     */
+   	vector<int> getSumFormulaEdges(int sourceNode, vector<int> targets);
+	pagerank_v getSumObjectiveValues(int sourceNode, vector<int> new_neighbors)
     pagerank_v getObjectiveValues(int sourceNode);
     pagerank_v getAproxObjectiveValues(int sourceNode);
 	pagerank_v getObjectivePersonalizedValues(int personalized_nodes, int sourceNode);
