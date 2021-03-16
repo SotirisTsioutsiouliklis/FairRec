@@ -70,19 +70,20 @@ int main(int argc, char **argv)
             // Get objective values.
             obj_values = algs.getSumObjectiveValues(source, new_nei);
             // Find best edge.
-            new_target.node_id = obj_values[0].node_id;
-            new_target.pagerank = obj_values[0].pagerank;
+            new_target.node_id = -1;
+            new_target.pagerank = -1;
             for (int target : targets)
             {
                 if (obj_values[target].pagerank > new_target.pagerank) {
-                    new_target = obj_values[target];
+                    new_target.node_id = obj_values[target].node_id;
+                    new_target.pagerank = obj_values[target].pagerank;
                 }
             }
             // Add it to new neighbors.
             new_nei.push_back(new_target.node_id);
             // Remove it from targets.
             for (int p = 0; p < targets.size(); p++) {
-                if (targtes[p] == new_target.node_id) {
+                if (targets[p] == new_target.node_id) {
                     position = p;
                 }
             }
@@ -90,7 +91,7 @@ int main(int argc, char **argv)
             // Repeat!
         }
         // Store the edges for the particular source node.
-        edges_to_add.insert(source, new_nei);
+        edges_to_add.insert({source, new_nei});
         // Repeat!
     }
 

@@ -404,7 +404,7 @@ pagerank_v pagerank_algorithms::getSumObjectiveValues(int sourceNode, vector<int
 		{
 			objectiveNominator += redAbsorbingProbs[nei].pagerank;
 		}
-		objectiveNominator /= (new_neighbors.size() + 1)
+		objectiveNominator /= (new_neighbors.size() + 1);
 		objectiveNominator -= nominatorConst;
 		objectiveNominator *= ((1 - jumpProb) / jumpProb);
 		// Calculate denominator.

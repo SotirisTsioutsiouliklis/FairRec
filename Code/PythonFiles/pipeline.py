@@ -237,7 +237,16 @@ with open("log.txt", "w") as log_file:
     log_file.write(f"{cp.returncode}\n")
     temp_start = time()
 
-    # 21. Get dyadic fair scores.
+    # 21.b Get sum fair scores.
+    print("Get sum fair scores.")
+    cp = run(["python3", "getRecommendationScores.py", "-i", "candidate_edges.csv", "-p", "sum-fair", "-o", "sum_fair_scores.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    log_file.write(f"getRecommendationScores.py{time() - temp_start}\n")
+    log_file.write(f"{cp.stdout}\n")
+    log_file.write(f"{cp.stderr}\n")
+    log_file.write(f"{cp.returncode}\n")
+    temp_start = time()
+
+    # 21.c Get dyadic fair scores.
     print("Get dyadic fair scores.")
     cp = run(["python3", "getRecommendationScores.py", "-i", "candidate_edges.csv", "-p", "dyadic-fair", "-o", "dyadic_fair_scores.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log_file.write(f"getRecommendationScores.py{time() - temp_start}\n")
@@ -261,7 +270,7 @@ with open("log.txt", "w") as log_file:
     run(["cp", path + "ExperimentScripts/experiment_two_acceptance.py", "."])
     run(["cp", path + "ExperimentScripts/experiment_three_personalized.py", "."])
     scores_files = ["fair", "adamic_adar", "jaccard_coefficient", "resource_allocation", "preferential_attachment", "node2vec",
-                    "fairwalk", "hybrid_node2vec", "dyadic_fair"]
+                    "fairwalk", "hybrid_node2vec", "dyadic_fair", "sum_fair"]
     print("Run experiment one.")
     for sf in scores_files:
         cp = run(["python3", "experiment_one_fairness.py", "-r", rounds, "-s", f"{sf}_scores.csv", "-o", f"sc_{sf}.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

@@ -138,6 +138,11 @@ class RecommendationPolicies:
         run(["./getFairScores.out", "-e", f"{edge_file}", "-o", f"{output_file}"])
 
     @staticmethod
+    def sum_fair(edge_file: str, output_file: str):
+        run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/CppFiles/getSumFairScores.out", "."])
+        run(["./getSumFairScores.out", "-e", f"{edge_file}", "-o", f"{output_file}"])
+
+    @staticmethod
     def dyadic_fair(edge_file: str, output_file: str):
         run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/CppFiles/getDyadicFairScores.out", "."])
         run(["./getDyadicFairScores.out", "-e", f"{edge_file}", "-o", f"{output_file}"])
@@ -185,7 +190,7 @@ class InputErrors:
 
 # Valid recommendation policies.
 policies = ["random", "adamic-adar", "jaccard-coefficient", "preferential-attachment", "resource-allocation",
-            "from-classifier", "fair", "dyadic-fair", "multiplicative-hybrid"]
+            "from-classifier", "fair", "dyadic-fair", "multiplicative-hybrid", "sum-fair"]
 
 # Adjust input check according to the new features added.
 if __name__ == "__main__":
@@ -251,6 +256,8 @@ if __name__ == "__main__":
         RecommendationPolicies.fromClassifier(input_file, output_file, classifier_file)
     elif policy == "fair":
         RecommendationPolicies.fair(input_file, output_file)
+    elif policy == "sum-fair":
+        RecommendationPolicies.sum_fair(input_file, output_file)
     elif policy == "dyadic-fair":
         RecommendationPolicies.dyadic_fair(input_file, output_file)
     elif policy == "multiplicative-hybrid":
