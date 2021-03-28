@@ -267,7 +267,7 @@ with open("log.txt", "w") as log_file:
 
     # 22.b Get multiplicative hybrid node2vec scores.
     print("Get balanced hybrid scores.")
-    cp = run(["python3", "getRecommendationScores.py", "-i", "candidate_edges.csv", "-p", "multiplicative-balanced-hybrid", "-f", "dyadic_fair_scores.csv", "-c", "node2vec_scores.csv", "-o", "hybrid_balanced_node2vec_scores.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    cp = run(["python3", "getRecommendationScores.py", "-i", "candidate_edges.csv", "-p", "multiplicative-hybrid", "-f", "dyadic_fair_scores.csv", "-c", "node2vec_scores.csv", "-o", "hybrid_balanced_node2vec_scores.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     log_file.write(f"getRecommendationScores.py{time() - temp_start}\n")
     log_file.write(f"{cp.stdout}\n")
     log_file.write(f"{cp.stderr}\n")
