@@ -265,12 +265,22 @@ with open("log.txt", "w") as log_file:
     temp_start = time()
     log_file.write(f"Total: {time() - start}\n")
 
+    # 22.b Get multiplicative hybrid node2vec scores.
+    print("Get balanced hybrid scores.")
+    cp = run(["python3", "getRecommendationScores.py", "-i", "candidate_edges.csv", "-p", "multiplicative-balanced-hybrid", "-f", "dyadic_fair_scores.csv", "-c", "node2vec_scores.csv", "-o", "hybrid_balanced_node2vec_scores.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    log_file.write(f"getRecommendationScores.py{time() - temp_start}\n")
+    log_file.write(f"{cp.stdout}\n")
+    log_file.write(f"{cp.stderr}\n")
+    log_file.write(f"{cp.returncode}\n")
+    temp_start = time()
+    log_file.write(f"Total: {time() - start}\n")
+
     # 23. Run Experiment Score and Acceptance probabilities
     run(["cp", path + "ExperimentScripts/experiment_one_fairness.py", "."])
     run(["cp", path + "ExperimentScripts/experiment_two_acceptance.py", "."])
     run(["cp", path + "ExperimentScripts/experiment_three_personalized.py", "."])
     scores_files = ["fair", "adamic_adar", "jaccard_coefficient", "resource_allocation", "preferential_attachment", "node2vec",
-                    "fairwalk", "hybrid_node2vec", "dyadic_fair", "sum_fair"]
+                    "fairwalk", "hybrid_node2vec", "dyadic_fair", "hybrid_balanced_node2vec"]  # , "sum_fair"
     print("Run experiment one.")
     for sf in scores_files:
         cp = run(["python3", "experiment_one_fairness.py", "-r", rounds, "-s", f"{sf}_scores.csv", "-o", f"sc_{sf}.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -286,7 +296,7 @@ with open("log.txt", "w") as log_file:
         log_file.write(f"{cp.stdout}\n")
         log_file.write(f"{cp.stderr}\n")
         log_file.write(f"{cp.returncode}\n")
-    
+
     print("Run experiment three.")
     for sf in scores_files:
         cp = run(["python3", "experiment_three_personalized.py", "-r", rounds, "-s", f"{sf}_scores.csv", "-o", f"sc_personalized_{sf}.csv"], universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
