@@ -19,22 +19,26 @@ from subprocess import run
 class InputErrors:
     @staticmethod
     def argumentError():
-        """ Terminates script due to input error and prints message
+        """Terminates script due to input error and prints message
         with use instructions.
         """
-        sys.exit("ERROR! No valid command line arguments\n\
+        sys.exit(
+            "ERROR! No valid command line arguments\n\
                 use:\n\
                 >>> python3 getClassifier.py -p <negative edge embeddings file> -n <negative edge embeddings file> -o <output file>\n\
                 e.g.\n\
-                >>> python3 getClassifier.py -p positive_edge_sample.csv -n negative_edge_sample.csv -o node2vec_recommender.sav")
+                >>> python3 getClassifier.py -p positive_edge_sample.csv -n negative_edge_sample.csv -o node2vec_recommender.sav"
+        )
 
     @staticmethod
     def valueError():
-        """ Terminates script and print message for acceptable
+        """Terminates script and print message for acceptable
         values.
         """
-        sys.exit("Error! Not valid percentage.\n\
-                 0 < percentage <= 100")
+        sys.exit(
+            "Error! Not valid percentage.\n\
+                 0 < percentage <= 100"
+        )
 
     @staticmethod
     def dependencyError(algorithm, dependency):
@@ -48,7 +52,7 @@ if __name__ == "__main__":
     #############################
 
     # Check valid number of command line arguments.
-    if (len(sys.argv) != 5):
+    if len(sys.argv) != 5:
         InputErrors.argumentError()
 
     # Check obligatory arguments.

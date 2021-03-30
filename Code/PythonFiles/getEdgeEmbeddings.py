@@ -33,12 +33,11 @@ from typing import List, Tuple
 
 
 class EdgeEmbeding:
-    """ Computes the edge embeddings for the specified edges.
-    """
+    """Computes the edge embeddings for the specified edges."""
+
     @staticmethod
     def hadamart(input_file: str, output_file: str, edges: List[Tuple[int, int]]):
-        """ Edge embeding with the hadamard distance.
-        """
+        """Edge embeding with the hadamard distance."""
         print("Reading")
         node_embeddings = pd.read_csv(input_file)
         print("Dropping Nodes header")
@@ -51,12 +50,17 @@ class EdgeEmbeding:
         if os.path.exists(output_file):
             os.remove(output_file)
         w = open(output_file, "w")
-        w.write("Sources,Targets," + ",".join([str(i) for i in range(len(node_embeddings[0]))]) + "\n")
+        w.write(
+            "Sources,Targets,"
+            + ",".join([str(i) for i in range(len(node_embeddings[0]))])
+            + "\n"
+        )
         try:
             for i, j in edges:
                 mult = np.multiply(node_embeddings[i], node_embeddings[j])
                 em = ""
-                for k in mult.tolist(): em+= "," + str(k)
+                for k in mult.tolist():
+                    em += "," + str(k)
                 w.write(f"{str(i)},{str(j)}{em}\n")
         except Exception as e:
             print("Error while concatenating")
@@ -66,8 +70,7 @@ class EdgeEmbeding:
 
     @staticmethod
     def concatenate(input_file: str, edges: List[Tuple[int, int]]) -> pd.DataFrame:
-        """ Edge embeding by concatenating node embeddings.
-        """
+        """Edge embeding by concatenating node embeddings."""
         node_embeddings = pd.read_csv(input_file)
         node_embeddings = node_embeddings.drop(["Nodes"], axis=1)
         node_embeddings = node_embeddings.to_numpy()
@@ -75,9 +78,17 @@ class EdgeEmbeding:
         edge_embeddings = list()
 
         for i, j in edges:
-            edge_embeddings.append(np.concatenate(([i, j], np.concatenatee((node_embeddings[i], node_embeddings[j])))))
+            edge_embeddings.append(
+                np.concatenate(
+                    ([i, j], np.concatenatee((node_embeddings[i], node_embeddings[j])))
+                )
+            )
 
-        edge_embeddings = pd.DataFrame(edge_embeddings, columns=["Sources", "Targets"] + [i for i in range(2 * len(node_embeddings[0]))])
+        edge_embeddings = pd.DataFrame(
+            edge_embeddings,
+            columns=["Sources", "Targets"]
+            + [i for i in range(2 * len(node_embeddings[0]))],
+        )
         edge_embeddings = edge_embeddings.astype({"Sources": "int", "Targets": "int"})
 
         return edge_embeddings
@@ -87,26 +98,30 @@ class EdgeEmbeding:
 class InputErrors:
     @staticmethod
     def argumentError():
-        """ Terminates script due to input error and prints message
+        """Terminates script due to input error and prints message
         with use instructions.
         """
-        sys.exit("ERROR! No valid command line arguments\n\
+        sys.exit(
+            "ERROR! No valid command line arguments\n\
                 use:\n\
                 python3 getRecommendationScores.py -i <input_file> -c <source column name> <target column name> -p <recommendation policy> -o <output_file>\n\
                 e.g.\n\
                 >>> python3 getRecommendationScores.py -i candidate_edges_random_10.csv -c Sources Targets -p adamic-adar -o adamic_adar_10.csv\n\n\
                     acceptable policies:\n\
                     random, adamic-adar, jaccard-coefficient, preferential-attachment, resource-allocation,\
-                    node2vec, fairwalk, fair, hybrid-node2vec")
+                    node2vec, fairwalk, fair, hybrid-node2vec"
+        )
 
     @staticmethod
     def valueError():
-        """ Terminates script and print message for acceptable
+        """Terminates script and print message for acceptable
         values.
         """
-        sys.exit("Error! Policy not valid.\n\
+        sys.exit(
+            "Error! Policy not valid.\n\
                  acceptable policies:\n\
-                 node2vec, fairwalk")
+                 node2vec, fairwalk"
+        )
 
     @staticmethod
     def dependencyError(algorithm, dependency):
@@ -123,11 +138,16 @@ if __name__ == "__main__":
     #############################
 
     # Check valid number of command line arguments.
-    if (len(sys.argv) != 9):
+    if len(sys.argv) != 9:
         InputErrors.argumentError()
 
     # Check obligatory arguments.
-    if sys.argv[1] == "-i" and sys.argv[3] == "-e" and sys.argv[5] == "-p" and sys.argv[7] == "-o":
+    if (
+        sys.argv[1] == "-i"
+        and sys.argv[3] == "-e"
+        and sys.argv[5] == "-p"
+        and sys.argv[7] == "-o"
+    ):
         input_file = sys.argv[2]
         edge_file = sys.argv[4]
         policy = sys.argv[6]
@@ -137,7 +157,9 @@ if __name__ == "__main__":
         InputErrors.argumentError()
 
     # Read edges.
-    edges = pd.read_csv(edge_file, usecols=edge_columns, header=0, names=["Sources", "Targets"])
+    edges = pd.read_csv(
+        edge_file, usecols=edge_columns, header=0, names=["Sources", "Targets"]
+    )
     edges = [(i, j) for i, j in edges.to_numpy()]
 
     # Get edge embeddings.

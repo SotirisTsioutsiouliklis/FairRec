@@ -61,30 +61,33 @@ import pandas as pd
 class InputErrors:
     @staticmethod
     def argumentError():
-        """ Terminates script due to input error and prints message
+        """Terminates script due to input error and prints message
         with use instructions.
         """
-        sys.exit("ERROR! No valid command line arguments\n\
+        sys.exit(
+            "ERROR! No valid command line arguments\n\
                 use:\n\
                 >>> python3 getSourceNodes.py -p random -a <percentage_of_nodes> -of <output_file>\n\
                 e.g. random\n\
-                >>> python3 getSourceNodes.py -p random -a 10 -of random_source_nodes.csv")
+                >>> python3 getSourceNodes.py -p random -a 10 -of random_source_nodes.csv"
+        )
 
     @staticmethod
     def percentage_error():
-        """ Terminates script and print message for acceptable
+        """Terminates script and print message for acceptable
         <percentage_of_nodes> values
         """
-        sys.exit("Error! No valid argument for percentage in random selection.\n\
+        sys.exit(
+            "Error! No valid argument for percentage in random selection.\n\
                  when\n\
                  \t>>> python3 getSourceNodes.py -p random -a <percentage_of_nodes> -of <output_file>\n\
                  then\n\
-                 0 < <percentage_of_nodes> < 100")
+                 0 < <percentage_of_nodes> < 100"
+        )
 
 
 def getRandomSourceNodes(percentage: int, output_file: str = None):
-    """ Selects randomly percentage % source nodes of the network.
-    """
+    """Selects randomly percentage % source nodes of the network."""
     # Read number of nodes.
     number_of_nodes = 0
     with open("out_graph.txt", "r") as file_one:

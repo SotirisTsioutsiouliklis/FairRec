@@ -110,7 +110,7 @@ class RecommendationPolicies:
     @staticmethod
     def fromClassifier(edge_file: str, output_file: str, classifier_file: str):
         # Load recommender.
-        linkRecommender = pickle.load(open(classifier_file, 'rb'))
+        linkRecommender = pickle.load(open(classifier_file, "rb"))
 
         w = open(output_file, "w")
         w.write("Sources,Targets,Scores\n")
@@ -119,7 +119,7 @@ class RecommendationPolicies:
         f = open(edge_file, "r")
         f.readline()
         for line in f:
-            edgeEmbeddings = np.fromstring(line, sep=',')
+            edgeEmbeddings = np.fromstring(line, sep=",")
 
             # Get edge pair
             edge_pair = edgeEmbeddings[:2]
@@ -129,7 +129,9 @@ class RecommendationPolicies:
 
             # Get scores
             edgeRecommendationScores = linkRecommender.predict_proba([edgeEmbeddings])
-            w.write(f"{int(edge_pair[0])},{int(edge_pair[1])},{edgeRecommendationScores[0][1]}\n")
+            w.write(
+                f"{int(edge_pair[0])},{int(edge_pair[1])},{edgeRecommendationScores[0][1]}\n"
+            )
         w.close()
 
     @staticmethod
@@ -144,44 +146,55 @@ class RecommendationPolicies:
 
     @staticmethod
     def dyadic_fair(edge_file: str, output_file: str):
-        run(["cp", "/mnt/sdb1/tsiou/FairRec/Code/CppFiles/getDyadicFairScores.out", "."])
+        run(
+            ["cp", "/mnt/sdb1/tsiou/FairRec/Code/CppFiles/getDyadicFairScores.out", "."]
+        )
         run(["./getDyadicFairScores.out", "-e", f"{edge_file}", "-o", f"{output_file}"])
 
     @staticmethod
-    def multiplicativeHybrid(output_file: str, fair_scores_file: str, clasiffier_scores_file: str):
+    def multiplicativeHybrid(
+        output_file: str, fair_scores_file: str, clasiffier_scores_file: str
+    ):
         fair_scores = pd.read_csv(fair_scores_file)
         clasiffier_scores = pd.read_csv(clasiffier_scores_file)
-        hybrid = pd.merge(fair_scores, clasiffier_scores, "inner", on=["Sources", "Targets"])
+        hybrid = pd.merge(
+            fair_scores, clasiffier_scores, "inner", on=["Sources", "Targets"]
+        )
         hybrid["Scores"] = hybrid["Scores_x"] * hybrid["Scores_y"]
         hybrid = hybrid.drop(columns=["Scores_x", "Scores_y"])
         hybrid = hybrid.sort_values(by="Scores", ascending=False)
         hybrid.to_csv(output_file, index=False)
 
+
 # Adjust print message according to the new features added.
 class InputErrors:
     @staticmethod
     def argumentError():
-        """ Terminates script due to input error and prints message
+        """Terminates script due to input error and prints message
         with use instructions.
         """
-        sys.exit("ERROR! No valid command line arguments\n\
+        sys.exit(
+            "ERROR! No valid command line arguments\n\
                 use:\n\
                 python3 getRecommendationScores.py -i <input_file> -c <source column name> <target column name> -p <recommendation policy> -o <output_file>\n\
                 e.g.\n\
                 >>> python3 getRecommendationScores.py -i candidate_edges_random_10.csv -c Sources Targets -p adamic-adar -o adamic_adar_10.csv\n\n\
                     acceptable policies:\n\
                     random, adamic-adar, jaccard-coefficient, preferential-attachment, resource-allocation,\
-                    node2vec, fairwalk, fair, hybrid-node2vec")
+                    node2vec, fairwalk, fair, hybrid-node2vec"
+        )
 
     @staticmethod
     def valueError():
-        """ Terminates script and print message for acceptable
+        """Terminates script and print message for acceptable
         values.
         """
-        sys.exit("Error! Policy not valid.\n\
+        sys.exit(
+            "Error! Policy not valid.\n\
                  acceptable policies:\n\
                  random, adamic-adar, jaccard-coefficient, preferential-attachment, resource-allocation,\
-                 node2vec, fairwalk, fair, hybrid-node2vec")
+                 node2vec, fairwalk, fair, hybrid-node2vec"
+        )
 
     @staticmethod
     def dependencyError(algorithm, dependency):
@@ -189,8 +202,18 @@ class InputErrors:
 
 
 # Valid recommendation policies.
-policies = ["random", "adamic-adar", "jaccard-coefficient", "preferential-attachment", "resource-allocation",
-            "from-classifier", "fair", "dyadic-fair", "multiplicative-hybrid", "sum-fair"]
+policies = [
+    "random",
+    "adamic-adar",
+    "jaccard-coefficient",
+    "preferential-attachment",
+    "resource-allocation",
+    "from-classifier",
+    "fair",
+    "dyadic-fair",
+    "multiplicative-hybrid",
+    "sum-fair",
+]
 
 # Adjust input check according to the new features added.
 if __name__ == "__main__":
@@ -214,7 +237,12 @@ if __name__ == "__main__":
         else:
             InputErrors.argumentError()
     elif len(sys.argv) == 9:
-        if sys.argv[1] == "-i" and sys.argv[3] == "-p" and sys.argv[5] == "-c" and sys.argv[7] == "-o":
+        if (
+            sys.argv[1] == "-i"
+            and sys.argv[3] == "-p"
+            and sys.argv[5] == "-c"
+            and sys.argv[7] == "-o"
+        ):
             input_file = sys.argv[2]
             policy = sys.argv[4]
             classifier_file = sys.argv[6]
@@ -225,7 +253,13 @@ if __name__ == "__main__":
         else:
             InputErrors.argumentError()
     elif len(sys.argv) == 11:
-        if sys.argv[1] == "-i" and sys.argv[3] == "-p" and sys.argv[5] == "-f" and sys.argv[7] == "-c" and sys.argv[9] == "-o":
+        if (
+            sys.argv[1] == "-i"
+            and sys.argv[3] == "-p"
+            and sys.argv[5] == "-f"
+            and sys.argv[7] == "-c"
+            and sys.argv[9] == "-o"
+        ):
             input_file = sys.argv[2]
             policy = sys.argv[4]
             fair_scores_file = sys.argv[6]
@@ -238,8 +272,15 @@ if __name__ == "__main__":
             InputErrors.argumentError()
 
     # Load candidate edges.
-    if policy != "from-classifier" and policy != "fair" and policy != "dyadic-fair" and policy != "multiplicative-hybrid":
-        edges = pd.read_csv(input_file, header=0, names=["Sources", "Targets"]).to_numpy()
+    if (
+        policy != "from-classifier"
+        and policy != "fair"
+        and policy != "dyadic-fair"
+        and policy != "multiplicative-hybrid"
+    ):
+        edges = pd.read_csv(
+            input_file, header=0, names=["Sources", "Targets"]
+        ).to_numpy()
 
     # Get recommendation scores.
     if policy == "random":
@@ -261,6 +302,8 @@ if __name__ == "__main__":
     elif policy == "dyadic-fair":
         RecommendationPolicies.dyadic_fair(input_file, output_file)
     elif policy == "multiplicative-hybrid":
-        RecommendationPolicies.multiplicativeHybrid(output_file, fair_scores_file, classifier_score_file)
+        RecommendationPolicies.multiplicativeHybrid(
+            output_file, fair_scores_file, classifier_score_file
+        )
     else:
         InputErrors.valueError()

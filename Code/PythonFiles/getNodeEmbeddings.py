@@ -27,23 +27,62 @@ from subprocess import run
 
 class NodeEmbeddings:
     @staticmethod
-    def policy_run(graph_file: str, output_file: str, groups_file=None, d=128, l=3, r=10, p=1.0, q=1.0):
+    def policy_run(
+        graph_file: str,
+        output_file: str,
+        groups_file=None,
+        d=128,
+        l=3,
+        r=10,
+        p=1.0,
+        q=1.0,
+    ):
         if groups_file is not None:
             # Copy fairwalk executale from snap.
-            run(["cp", "/mnt/sdb1/tsiou/snap-fair/examples/node2vec/fairwalk", "."], cwd=".")
+            run(
+                ["cp", "/mnt/sdb1/tsiou/snap-fair/examples/node2vec/fairwalk", "."],
+                cwd=".",
+            )
             # Run fairwalk executable.
-            run(["./fairwalk", f"-i:{graph_file}", f"-g:{groups_file}", f"-o:{output_file}", f"-l:{l}", f"-d:{d}", f"-p:{p}", f"-q:{q}", "-dr", "-v"])
+            run(
+                [
+                    "./fairwalk",
+                    f"-i:{graph_file}",
+                    f"-g:{groups_file}",
+                    f"-o:{output_file}",
+                    f"-l:{l}",
+                    f"-d:{d}",
+                    f"-p:{p}",
+                    f"-q:{q}",
+                    "-dr",
+                    "-v",
+                ]
+            )
         else:
             # Copy node2vec executale from snap.
             run(["cp", "/mnt/sdb1/tsiou/snap/examples/node2vec/node2vec", "."], cwd=".")
             # Run node2vec executable.
-            run(["./node2vec", f"-i:{graph_file}", f"-o:{output_file}", f"-l:{l}", f"-d:{d}", f"-p:{p}", f"-q:{q}", "-dr", "-v"])
+            run(
+                [
+                    "./node2vec",
+                    f"-i:{graph_file}",
+                    f"-o:{output_file}",
+                    f"-l:{l}",
+                    f"-d:{d}",
+                    f"-p:{p}",
+                    f"-q:{q}",
+                    "-dr",
+                    "-v",
+                ]
+            )
         # Convert output to conventional output.
         with open(output_file, "r") as file_one:
             info = file_one.readline().split()
             numberOfNodes = int(info[0])
             embeddingDimension = int(info[1])
-            nodeEmbeddings = np.array([np.zeros(embeddingDimension) for i in range(numberOfNodes)])
+            nodeEmbeddings = np.array(
+                [np.zeros(embeddingDimension) for i in range(numberOfNodes)]
+            )
 
             for line in file_one:
                 info = line.split()
@@ -54,7 +93,9 @@ class NodeEmbeddings:
 
         # nodeEmbeddins are on id based order
         nodeEmbeddings = pd.DataFrame(nodeEmbeddings)
-        nodeEmbeddings.insert(loc=0, column="Nodes", value=np.arange(0, numberOfNodes, 1, dtype=int))
+        nodeEmbeddings.insert(
+            loc=0, column="Nodes", value=np.arange(0, numberOfNodes, 1, dtype=int)
+        )
         nodeEmbeddings.to_csv(output_file, index=False)
 
 
@@ -62,25 +103,29 @@ class NodeEmbeddings:
 class InputErrors:
     @staticmethod
     def argumentError():
-        """ Terminates script due to input error and prints message
+        """Terminates script due to input error and prints message
         with use instructions.
         """
-        sys.exit("ERROR! No valid command line arguments\n\
+        sys.exit(
+            "ERROR! No valid command line arguments\n\
                 use:\n\
                 python3 getRecommendationScores.py -g <graph_file> -p <recommendation policy> -o <output_file>\n\
                 e.g.\n\
                 >>> python3 getRecommendationScores.py -g out_graph.txt -p node2vec -o adamic_adar_10.csv\n\n\
                     acceptable policies:\n\
-                    node2vec, fairwalk")
+                    node2vec, fairwalk"
+        )
 
     @staticmethod
     def valueError():
-        """ Terminates script and print message for acceptable
+        """Terminates script and print message for acceptable
         values.
         """
-        sys.exit("Error! Policy not valid.\n\
+        sys.exit(
+            "Error! Policy not valid.\n\
                  acceptable policies:\n\
-                 node2vec, fairwalk")
+                 node2vec, fairwalk"
+        )
 
     @staticmethod
     def dependencyError(algorithm, dependency):
@@ -96,15 +141,16 @@ if __name__ == "__main__":
     # Parse command line inputs #
     #############################
     import optparse
+
     parser = optparse.OptionParser()
-    parser.add_option('-g')
-    parser.add_option('-p')
-    parser.add_option('--qp', default=1.0)
-    parser.add_option('--pp', default=1.0)
-    parser.add_option('--l', default=3)
-    parser.add_option('--r', default=10)
-    parser.add_option('--d', default=128)
-    parser.add_option('-o')
+    parser.add_option("-g")
+    parser.add_option("-p")
+    parser.add_option("--qp", default=1.0)
+    parser.add_option("--pp", default=1.0)
+    parser.add_option("--l", default=3)
+    parser.add_option("--r", default=10)
+    parser.add_option("--d", default=128)
+    parser.add_option("-o")
     options, args = parser.parse_args()
 
     # Check obligatory arguments
@@ -117,15 +163,35 @@ if __name__ == "__main__":
 
     # Get node embeddings
     if policy == "node2vec":
-        NodeEmbeddings.policy_run(graph_file, output_file, None, options.d, options.l, options.r, options.pp, options.qp)
+        NodeEmbeddings.policy_run(
+            graph_file,
+            output_file,
+            None,
+            options.d,
+            options.l,
+            options.r,
+            options.pp,
+            options.qp,
+        )
     elif policy == "fairwalk":
         # if graph_file is test.edgelist the groups file should be test.groups
-        with open("out_community.txt", "r") as fileOne, open("groups.txt", "w") as fileTwo:
+        with open("out_community.txt", "r") as fileOne, open(
+            "groups.txt", "w"
+        ) as fileTwo:
             fileOne.readline()
             for line in fileOne:
                 fileTwo.write(line)
         groups_file = "groups.txt"
-        NodeEmbeddings.policy_run(graph_file, output_file, groups_file, options.d, options.l, options.r, options.pp, options.qp)
+        NodeEmbeddings.policy_run(
+            graph_file,
+            output_file,
+            groups_file,
+            options.d,
+            options.l,
+            options.r,
+            options.pp,
+            options.qp,
+        )
         run(["rm", "groups.txt"])
     else:
         InputErrors.valueError()

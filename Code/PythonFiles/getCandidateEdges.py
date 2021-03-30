@@ -25,23 +25,27 @@ import networkx as nx
 class InputErrors:
     @staticmethod
     def argumentError():
-        """ Terminates script due to input error and prints message
+        """Terminates script due to input error and prints message
         with use instructions.
         """
-        sys.exit("ERROR! No valid command line arguments\n\
+        sys.exit(
+            "ERROR! No valid command line arguments\n\
                 use:\n\
                 python3 getCandidateEdges.py -i <input_file> -c <column_name> -d <distance> -o <output_file>\n\
                 e.g.\n\
-                >>> python3 getCandidateEdges.py -i random_source_nodes_10.csv -c Nodes -d 3 -o candidate_edges_random_10.csv")
+                >>> python3 getCandidateEdges.py -i random_source_nodes_10.csv -c Nodes -d 3 -o candidate_edges_random_10.csv"
+        )
 
     @staticmethod
     def valueError():
-        """ Terminates script and print message for acceptable
+        """Terminates script and print message for acceptable
         <distance> values
         """
-        sys.exit("Error! No valid argument for distance.\n\
+        sys.exit(
+            "Error! No valid argument for distance.\n\
                  when\n\
-                 distance > 1")
+                 distance > 1"
+        )
 
 
 def get_candidates(graph: nx.Graph, source: int, distance: int) -> set:
@@ -53,7 +57,9 @@ def get_candidates(graph: nx.Graph, source: int, distance: int) -> set:
     candidate_edges = neighbors.copy()
     for i in range(2, distance + 1):
         for j in candidate_edges:
-            candidate_edges = candidate_edges.union(set([n for n in graph.neighbors(j)]))
+            candidate_edges = candidate_edges.union(
+                set([n for n in graph.neighbors(j)])
+            )
     candidate_edges = candidate_edges - neighbors
 
     # Comment out section computes neighbors of distance = , not <=.

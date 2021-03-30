@@ -25,22 +25,26 @@ import sys
 class InputErrors:
     @staticmethod
     def argumentError():
-        """ Terminates script due to input error and prints message
+        """Terminates script due to input error and prints message
         with use instructions.
         """
-        sys.exit("ERROR! No valid command line arguments\n\
+        sys.exit(
+            "ERROR! No valid command line arguments\n\
                 use:\n\
                 >>> python3 getPositiveEdgeSample.py -g <graph file> -p <percentage> -o <output file>\n\
                 e.g.\n\
-                >>> python3 getPositiveEdgeSample.py -g out_graph.txt -p 100 -o edge_negative_sample.csv")
+                >>> python3 getPositiveEdgeSample.py -g out_graph.txt -p 100 -o edge_negative_sample.csv"
+        )
 
     @staticmethod
     def valueError():
-        """ Terminates script and print message for acceptable
+        """Terminates script and print message for acceptable
         values.
         """
-        sys.exit("Error! Not valid percentage.\n\
-                 0 < percentage <= 100")
+        sys.exit(
+            "Error! Not valid percentage.\n\
+                 0 < percentage <= 100"
+        )
 
     @staticmethod
     def dependencyError(algorithm, dependency):
