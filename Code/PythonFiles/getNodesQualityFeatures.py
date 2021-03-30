@@ -3,6 +3,7 @@ Quality features: pagerank, red pagerank, group, degree (in-out),
 red neighbors ratio.
 """
 import numpy as np
+import pandas as pd
 import networkx as nx
 import time
 import sys
@@ -10,7 +11,8 @@ import sys
 
 def getNodesRedPagerank(pagerank, communities):
     """Reads the redPagerank of all nodes and store it."""
-    redPagerank = np.loadtxt("out_personilized_red.txt", skiprows=1, usecols=1)
+    # redPagerank = np.loadtxt("out_personilized_red.txt", skiprows=1, usecols=1)
+    redPagerank = pd.read_csv("red_absorbing_probabilities.csv")["Red Pagerank"].to_numpy()
 
     return redPagerank
 
@@ -63,7 +65,8 @@ startTime = time.time()
 # Load graph.
 graph = nx.read_edgelist("out_graph.txt", nodetype=int, create_using=nx.DiGraph())
 # Get pagerank.
-pagerank = np.loadtxt("out_pagerank.txt", skiprows=1)[:, 1]
+# pagerank = np.loadtxt("out_pagerank.txt", skiprows=1)[:, 1]
+pagerank = pd.read_csv("out_pagerank.csv")["Pagerank"].to_numpy()
 # Get communities. TODO: improve.
 preCommunities = np.loadtxt("out_community.txt", skiprows=1, dtype=int)
 communities = np.zeros(graph.number_of_nodes())

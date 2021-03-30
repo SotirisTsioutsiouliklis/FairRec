@@ -3,9 +3,9 @@ Quality features: #nodes, #edges, homophily,
 degree distribution (in -out), red ratio, red pagerank. 
 """
 import numpy as np
+import pandas as pd
 import networkx as nx
 import time
-import sys
 
 
 def getNodeCommunities():
@@ -83,7 +83,8 @@ def getOutDegreeDistribution(graph):
 
 def getRedPagerank():
     """Calculates the redPagerank of the network."""
-    pagerank = np.loadtxt("out_pagerank.txt", skiprows=1)[:, 1]
+    # pagerank = np.loadtxt("out_pagerank.txt", skiprows=1)[:, 1]
+    pagerank = pd.read_csv("out_pagerank.csv")["Pagerank"].to_numpy()
     communities = np.loadtxt("out_community.txt", skiprows=1, dtype=int)
 
     redPagerank = 0.0
