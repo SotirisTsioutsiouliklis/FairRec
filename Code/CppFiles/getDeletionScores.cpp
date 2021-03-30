@@ -1,25 +1,16 @@
 /**
  * Computes edge deletion scores for source nodes.
  * 
- * @file getScoreForK.cpp
- * @author Sotiris Tsioutsiouliklis.
- * @version 0.0.1 09/06/2020.
- * 
- * It reads the source nodes from the files and creates an edge score
- * file for each node. Edges in file i are all edges with source node
- * i that don't already exist in the network.
- * 
- * @param k (int): Number of nodes.
- * @return <node i>EdgeScores.txt (text): Filesdescribed above.
 */
 #include <iostream>
+#include <map>
 #include "graph.hpp"
 #include "pagerank.hpp"
 #include <vector>
 #include <algorithm>
 #include <fstream>
+#include <sstream>
 #include <string>
-#include <iostream>
 #include <set>
 #include <omp.h>
 
@@ -46,21 +37,40 @@ vector<int> read_source_nodes(string source_file)
 int main(int argc, char **argv)
 {
     // Variables.
+    graph g("out_graph.txt", "out_community.txt");
+    pagerank_algorithms algs(g);
+    pagerank_v temp_scores;
 
     // Parse command line arguments.
     string source_file = argv[1];
 
     // Read source nodes.
     vector<int> source_nodes = read_source_nodes(source_file);
-    // For each source node get neighbors.
+    // Init out file.
+    std::ofstream scores_file("deletion_scores.txt");
+    scores_file << "Source,Target,Score\n";
+    // For each source node.
+    int progress = 0;
+    int no_nodes = source_nodes.size();
     for (int node : source_nodes)
     {
-        cout << node;
-    }
-        // Compute deletion scores.
+        // Print progress bar.
+        progress++;
+        cout << (progress / (float)no_nodes) * 100 << "%\r";
+        cout.flush();
+
+        // Compute deletion scores for out neighbors.
+        temp_scores = algs.getDeletionObjectiveValues(node);
 
         // Store/Write edges.
+        for (pagerank_t node_info : temp_scores)
+        {
+            scores_file << node << "," << node_info.node_id << "," << node_info.pagerank << "\n";
+        }
+        scores_file.flush();
 
-    
+    }
+    cout << "\n";
+
     return 0;
 }

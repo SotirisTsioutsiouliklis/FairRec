@@ -339,12 +339,6 @@ pagerank_v read_pagerank()
 	return result;
 }
 
-vector<int> pagerank_algorithms::getSumFormulaEdges(int sourceNode, vector<int> targets)
-{
-	
-	
-}
-
 pagerank_v pagerank_algorithms::getSumObjectiveValues(int sourceNode, vector<int> new_neighbors)
 {
 	// Declare local variables.
@@ -711,8 +705,8 @@ pagerank_v pagerank_algorithms::getDeletionObjectiveValues(int sourceNode)
 			objectiveDenominator = sourceOutDegree - 1 - objectiveDenominator;
 
 			tempNode.node_id = targetNode;
-			// P(R)' = ....
-			tempNode.pagerank = redPagerank + rankVector[sourceNode].pagerank * (objectiveNominator / objectiveDenominator);
+			// P(R) - P(R)' = ....
+			tempNode.pagerank = - rankVector[sourceNode].pagerank * (objectiveNominator / objectiveDenominator);
 			objectiveValues.push_back(tempNode);
 		}
 	}
