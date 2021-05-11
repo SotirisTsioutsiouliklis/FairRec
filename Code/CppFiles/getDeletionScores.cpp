@@ -34,18 +34,37 @@ vector<int> read_source_nodes(string source_file)
     return nodes;
 }
 
-int main(int argc, char **argv)
+
+vector<int> read_nodes()
+{
+    // Variables.
+    string str_node;
+    int node1, node2, nnodes;
+    set<int> snodes;
+
+    // Read nodes.
+    ifstream infile("out_graph.txt");
+    infile >> nnodes; // Skip first line with infos.
+    while (infile >> node1 >> node2) {
+        snodes.insert(node1);
+        snodes.insert(node2);
+    }
+
+    vector<int> nodes(snodes.begin(), snodes.end());
+
+    return nodes;
+}
+
+
+int main()
 {
     // Variables.
     graph g("out_graph.txt", "out_community.txt");
     pagerank_algorithms algs(g);
     pagerank_v temp_scores;
 
-    // Parse command line arguments.
-    string source_file = argv[1];
-
     // Read source nodes.
-    vector<int> source_nodes = read_source_nodes(source_file);
+    vector<int> source_nodes = read_nodes();
     // Init out file.
     std::ofstream scores_file("deletion_scores.txt");
     scores_file << "Source,Target,Score\n";
