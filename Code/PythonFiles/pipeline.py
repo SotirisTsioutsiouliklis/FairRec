@@ -761,3 +761,8 @@ with open("log.txt", "w") as log_file:
         log_file.write(f"{cp.stdout}\n")
         log_file.write(f"{cp.stderr}\n")
         log_file.write(f"{cp.returncode}\n")
+
+    # 24 deletion edges.
+    print("Get deletion scores.")
+    run(["cp", path + "/CppFiles/get_deletion_scores.out", "."])
+    run(["./get_deletion_scores.out", "."])
