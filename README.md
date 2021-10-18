@@ -89,10 +89,3 @@ All the experiments were made in linux Ubuntu. To compile cpp we used gcc compil
     Produces the following:
 
     1. Pending.
-
-TODO:
------
-
-- [ ] Add to pre experiment script or to get edges scores or  - most probable - to separate edges to delete old fairness scores per node.
-
-- [ ] Add specific details about the files produced etc. in the pre experiment script.
